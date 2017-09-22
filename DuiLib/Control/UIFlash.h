@@ -7,7 +7,8 @@
 #define __UIFLASH_H__
 #pragma once
 // \Utils\Flash11.tlb 为Flash11接口文件，部分方法在低版本不存在，使用需注意
-#import "../Utils/Flash11.tlb" raw_interfaces_only, named_guids
+//#import "../Utils/Flash11.tlb" raw_interfaces_only, named_guids
+#import "..\Utils/Flash11.tlb" raw_interfaces_only, named_guids, rename("IDispatchEx", "IMyDispatchEx")
 using namespace ShockwaveFlashObjects;
 #include "Utils/FlashEventHandler.h"
 class CActiveXCtrl;
