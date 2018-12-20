@@ -18,11 +18,12 @@
 	named_guids,           /* Named guids and declspecs */    \  
 	rename("IDispatchEx","IMyDispatchEx")/* fix conflicting with IDispatchEx ant dispex.h */    
 #else                  //vs2013  
-	#import "PROGID:ShockwaveFlash.ShockwaveFlash"  \  
-	raw_interfaces_only,       /* Don't add raw_ to method names */ \  
-	named_guids,           /* Named guids and declspecs */    \  
-	rename("IDispatchEx", "IMyDispatchEx")/* fix conflicting with IDispatchEx ant dispex.h */\  
-	rename("ICanHandleException", "IMyICanHandleException")  
+	#import "..\Utils/Flash11.tlb" raw_interfaces_only, named_guids, rename("IDispatchEx","IMyDispatchEx") rename("ICanHandleException", "IMyICanHandleException")
+	//#import "PROGID:ShockwaveFlash.ShockwaveFlash"  \  
+	//raw_interfaces_only,       /* Don't add raw_ to method names */ \  
+	//named_guids,           /* Named guids and declspecs */    \  
+	//rename("IDispatchEx", "IMyDispatchEx")/* fix conflicting with IDispatchEx ant dispex.h */\  
+	//rename("ICanHandleException", "IMyICanHandleException")  
 #endif  
 
 using namespace ShockwaveFlashObjects;
