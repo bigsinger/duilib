@@ -240,6 +240,8 @@ namespace DuiLib
 			}
 			else if(m_dwSelectedBkColor != 0) {
 				CRenderEngine::DrawColor(hDC, m_rcPaint, GetAdjustColor(m_dwSelectedBkColor));
+				if (!m_sForeImage.IsEmpty())
+					goto Label_ForeImage;
 				return;
 			}	
 		}

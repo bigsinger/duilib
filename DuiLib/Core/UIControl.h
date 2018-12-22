@@ -43,6 +43,7 @@ public:
     // 文本相关
     virtual CDuiString GetText() const;
     virtual void SetText(LPCTSTR pstrText);
+	virtual void SetTextV(const LPCTSTR lpszFormat, ...) final;
 
     // 图形相关
     DWORD GetBkColor() const;

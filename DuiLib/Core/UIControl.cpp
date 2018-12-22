@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include <atlstr.h>
 
 namespace DuiLib {
 
@@ -113,6 +114,17 @@ void CControlUI::SetText(LPCTSTR pstrText)
 
     m_sText = pstrText;
     Invalidate();
+}
+
+void CControlUI::SetText(const LPCTSTR lpszFormat, ...) {
+	CString strText;
+	va_list argList;
+
+	va_start(argList, lpszFormat);
+	strText.FormatV(lpszFormat, argList);
+	va_end(argList);
+	m_sText = strText;
+	Invalidate();
 }
 
 DWORD CControlUI::GetBkColor() const
