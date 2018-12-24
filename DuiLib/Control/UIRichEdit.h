@@ -36,8 +36,8 @@ public:
     void SetFont(LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
     LONG GetWinStyle();
     void SetWinStyle(LONG lStyle);
-    DWORD GetTextColor();
-    void SetTextColor(DWORD dwTextColor);
+	ARGB GetTextColor();
+    void SetTextColor(ARGB dwTextColor);
     int GetLimitText();
     void SetLimitText(int iChars);
     long GetTextLength(DWORD dwFlags = GTL_DEFAULT) const;
@@ -137,7 +137,7 @@ protected:
     bool m_bRich;
     bool m_bReadOnly;
     bool m_bWordWrap;
-    DWORD m_dwTextColor;
+	ARGB m_dwTextColor;
     int m_iFont;
     int m_iLimitText;
     LONG m_lTwhStyle;

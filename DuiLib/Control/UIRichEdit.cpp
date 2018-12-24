@@ -1164,12 +1164,12 @@ void CRichEditUI::SetWinStyle(LONG lStyle)
     m_lTwhStyle = lStyle;
 }
 
-DWORD CRichEditUI::GetTextColor()
+ARGB CRichEditUI::GetTextColor()
 {
     return m_dwTextColor;
 }
 
-void CRichEditUI::SetTextColor(DWORD dwTextColor)
+void CRichEditUI::SetTextColor(ARGB dwTextColor)
 {
     m_dwTextColor = dwTextColor;
     if( m_pTwh ) {

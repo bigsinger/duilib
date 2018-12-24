@@ -1349,15 +1349,23 @@ void CListHeaderItemUI::SetTextStyle(UINT uStyle)
     Invalidate();
 }
 
-DWORD CListHeaderItemUI::GetTextColor() const
+ARGB CListHeaderItemUI::GetTextColor() const
 {
 	return m_dwTextColor;
 }
 
 
-void CListHeaderItemUI::SetTextColor(DWORD dwTextColor)
+void CListHeaderItemUI::SetTextColor(ARGB dwTextColor)
 {
     m_dwTextColor = dwTextColor;
+}
+
+void CListHeaderItemUI::SetTextColor(IN BYTE r, IN BYTE g, IN BYTE b) {
+	m_dwTextColor = Color::MakeARGB(255, r, g, b);
+}
+
+void CListHeaderItemUI::SetTextColorRGB(COLORREF rgb) {
+	m_dwTextColor = Color::MakeARGB(255, GetRValue(rgb), GetGValue(rgb), GetBValue(rgb));
 }
 
 RECT CListHeaderItemUI::GetTextPadding() const

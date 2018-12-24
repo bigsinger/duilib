@@ -90,13 +90,23 @@ namespace DuiLib
 		return m_uTextStyle;
 	}
 
-	void CLabelUI::SetTextColor(DWORD dwTextColor)
+	void CLabelUI::SetTextColor(IN BYTE r, IN BYTE g, IN BYTE b) {
+		m_dwTextColor = Color::MakeARGB(255, r, g, b);
+		Invalidate();
+	}
+
+	void CLabelUI::SetTextColorRGB(COLORREF rgb) {
+		m_dwTextColor = Color::MakeARGB(255, GetRValue(rgb), GetGValue(rgb), GetBValue(rgb));
+		Invalidate();
+	}
+
+	void CLabelUI::SetTextColor(ARGB dwTextColor)
 	{
 		m_dwTextColor = dwTextColor;
 		Invalidate();
 	}
 
-	DWORD CLabelUI::GetTextColor() const
+	ARGB CLabelUI::GetTextColor() const
 	{
 		return m_dwTextColor;
 	}

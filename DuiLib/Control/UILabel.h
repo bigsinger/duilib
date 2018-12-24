@@ -4,6 +4,7 @@
 #pragma once
 
 #include <GdiPlus.h>
+#include <gdipluscolor.h>
 #pragma comment( lib, "GdiPlus.lib" )
 using namespace Gdiplus;
 class UILIB_API Gdiplus::RectF;
@@ -22,8 +23,19 @@ namespace DuiLib
 
 		void SetTextStyle(UINT uStyle);
 		UINT GetTextStyle() const;
-		void SetTextColor(DWORD dwTextColor);
-		DWORD GetTextColor() const;
+
+		// 设置了一个易于理解的接口，如果只是设置简单的rgb可以安装这个接口调
+		void SetTextColor(IN BYTE r, IN BYTE g, IN BYTE b);
+
+		// 如果是从其他地方获取的RGB格式颜色，可以直接使用，内部会转换
+		void SetTextColorRGB(COLORREF rgb);
+
+		// 设置的是ARGB（Photoshop格式），不是RGB（VC格式）！
+		void SetTextColor(ARGB dwTextColor);
+
+		// 返回的是ARGB，注意区别RGB的字节组织结构
+		ARGB GetTextColor() const;
+
 		void SetDisabledTextColor(DWORD dwTextColor);
 		DWORD GetDisabledTextColor() const;
 		void SetFont(int index);
@@ -75,7 +87,7 @@ namespace DuiLib
 		bool		GetEnabledShadow();
 		
 	protected:
-		DWORD	m_dwTextColor;
+		ARGB	m_dwTextColor;
 		DWORD	m_dwDisabledTextColor;
 		int		m_iFont;
 		UINT	m_uTextStyle;

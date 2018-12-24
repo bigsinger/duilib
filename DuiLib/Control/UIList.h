@@ -2,6 +2,9 @@
 #define __UILIST_H__
 
 #pragma once
+#include <GdiPlus.h>
+#include <gdipluscolor.h>
+using namespace Gdiplus;
 #include "Layout/UIVerticalLayout.h"
 #include "Layout/UIHorizontalLayout.h"
 
@@ -107,8 +110,19 @@ public:
 	void SetSepWidth(int iWidth);
 	DWORD GetTextStyle() const;
 	void SetTextStyle(UINT uStyle);
-	DWORD GetTextColor() const;
-	void SetTextColor(DWORD dwTextColor);
+
+	// 返回的是ARGB，注意区别RGB的字节组织结构
+	ARGB GetTextColor() const;
+
+	// 设置的是ARGB（Photoshop格式），不是RGB（VC格式）！
+	void SetTextColor(ARGB dwTextColor);
+
+	// 设置了一个易于理解的接口，如果只是设置简单的rgb可以安装这个接口调
+	void SetTextColor(IN BYTE r, IN BYTE g, IN BYTE b);
+
+	// 如果是从其他地方获取的RGB格式颜色，可以直接使用，内部会转换
+	void SetTextColorRGB(COLORREF rgb);
+
 	void SetTextPadding(RECT rc);
 	RECT GetTextPadding() const;
 	void SetFont(int index);
@@ -138,7 +152,7 @@ protected:
 	bool m_bDragable;
 	UINT m_uButtonState;
 	int m_iSepWidth;
-	DWORD m_dwTextColor;
+	ARGB m_dwTextColor;
 	int m_iFont;
 	UINT m_uTextStyle;
 	bool m_bShowHtml;

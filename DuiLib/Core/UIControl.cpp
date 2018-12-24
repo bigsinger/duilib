@@ -116,7 +116,7 @@ void CControlUI::SetText(LPCTSTR pstrText)
     Invalidate();
 }
 
-void CControlUI::SetText(const LPCTSTR lpszFormat, ...) {
+void CControlUI::SetTextV(const LPCTSTR lpszFormat, ...) {
 	CString strText;
 	va_list argList;
 

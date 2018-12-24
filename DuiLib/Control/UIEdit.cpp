@@ -115,7 +115,7 @@ namespace DuiLib
 		else if( uMsg == OCM__BASE + WM_CTLCOLOREDIT  || uMsg == OCM__BASE + WM_CTLCOLORSTATIC ) {
 			if( m_pOwner->GetNativeEditBkColor() == 0xFFFFFFFF ) return NULL;
 			::SetBkMode((HDC)wParam, TRANSPARENT);
-			DWORD dwTextColor = m_pOwner->GetTextColor();
+			ARGB dwTextColor = m_pOwner->GetTextColor();
 			::SetTextColor((HDC)wParam, RGB(GetBValue(dwTextColor),GetGValue(dwTextColor),GetRValue(dwTextColor)));
 			if( m_hBkBrush == NULL ) {
 				DWORD clrColor = m_pOwner->GetNativeEditBkColor();
