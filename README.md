@@ -40,8 +40,8 @@
 
 ## 拖放缩小窗口时隐藏优先级
 如果主窗口界面允许拖放，在拖放缩小时，可以通过如下规则隐藏控件：
-- 水平缩小时，优先隐藏水平布局（HorizontalLayout）中**不带width**属性的子垂直布局（VerticalLayout），其次缩小隐藏带**width**属性的子垂直布局（VerticalLayout），最后才是子水平布局。
-- 垂直缩小时，优先隐藏垂直布局（VerticalLayout）中**不带height**属性的子水平布局（HorizontalLayout），其次缩小隐藏带**不带height**属性的子水平布局（HorizontalLayout），最后才是子垂直布局。
+- 水平缩小时，优先隐藏水平布局（HorizontalLayout）中**不带width**属性的子垂直布局（VerticalLayout），其次缩小隐藏**带width**属性的子垂直布局（VerticalLayout），最后才是子水平布局。
+- 垂直缩小时，优先隐藏垂直布局（VerticalLayout）中**不带height**属性的子水平布局（HorizontalLayout），其次缩小隐藏**带height**属性的子水平布局（HorizontalLayout），最后才是子垂直布局。
 
 举例说明：
 ```xml
