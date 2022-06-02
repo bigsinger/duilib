@@ -257,6 +257,8 @@ BOOL CTxtWinHost::Init(CRichEditUI *re, const CREATESTRUCT *pcs)
 {
     IUnknown *pUnk = NULL;
     HRESULT hr;
+    HMODULE hmod = NULL;
+    PCreateTextServices TextServicesProc = NULL;
 
     m_re = re;
     // Initialize Reference count
@@ -303,8 +305,7 @@ BOOL CTxtWinHost::Init(CRichEditUI *re, const CREATESTRUCT *pcs)
     //if(FAILED(CreateTextServices(NULL, this, &pUnk)))
     //    goto err;
 
-	PCreateTextServices TextServicesProc = NULL;
-	HMODULE hmod = LoadLibrary(_T("msftedit.dll"));
+	hmod = LoadLibrary(_T("msftedit.dll"));
 	if (hmod)
 	{
 		TextServicesProc = (PCreateTextServices)GetProcAddress(hmod,"CreateTextServices");
