@@ -2,3 +2,5 @@
 DuiDesigner.suo
 *.user
 /.vs
+*/build
+/temp

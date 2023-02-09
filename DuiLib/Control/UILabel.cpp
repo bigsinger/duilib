@@ -2,6 +2,9 @@
 #include "UILabel.h"
 
 #include <atlconv.h>
+#include <string>
+using namespace std;
+
 namespace DuiLib
 {
 
