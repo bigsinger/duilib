@@ -117,9 +117,6 @@
     <ClCompile Include="Control\UIEdit.cpp">
       <Filter>Source Files\Control</Filter>
     </ClCompile>
-    <ClCompile Include="Control\UIFlash.cpp">
-      <Filter>Source Files\Control</Filter>
-    </ClCompile>
     <ClCompile Include="Control\UILabel.cpp">
       <Filter>Source Files\Control</Filter>
     </ClCompile>
@@ -234,9 +231,6 @@
       <Filter>Header Files\Control</Filter>
     </ClInclude>
     <ClInclude Include="Control\UIEdit.h">
-      <Filter>Header Files\Control</Filter>
-    </ClInclude>
-    <ClInclude Include="Control\UIFlash.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
     <ClInclude Include="Control\UILabel.h">
