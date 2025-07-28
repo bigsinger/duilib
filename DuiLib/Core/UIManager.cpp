@@ -478,7 +478,9 @@ bool CPaintManagerUI::PreMessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam,
            // Tabbing between controls
            if( wParam == VK_TAB ) {
                if( m_pFocus && m_pFocus->IsVisible() && m_pFocus->IsEnabled() && _tcsstr(m_pFocus->GetClass(), _T("RichEditUI")) != NULL ) {
-                   if( static_cast<CRichEditUI*>(m_pFocus)->IsWantTab() ) return false;
+#ifdef FULL_DUILIB
+                   if (static_cast<CRichEditUI*>(m_pFocus)->IsWantTab()) return false;
+#endif // !FULL_DUILIB
                }
                SetNextTabControl(::GetKeyState(VK_SHIFT) >= 0);
                return true;

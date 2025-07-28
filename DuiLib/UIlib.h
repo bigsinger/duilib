@@ -95,15 +95,17 @@
 #include "Control/UIButton.h"
 #include "Control/UIOption.h"
 #include "Control/UICheckBox.h"
+#include "Control/UIComboBox.h"
 
+
+#ifdef FULL_DUILIB
 #include "Control/UIProgress.h"
 #include "Control/UISlider.h"
-
-#include "Control/UIComboBox.h"
 #include "Control/UIRichEdit.h"
 #include "Control/UIDateTime.h"
 
 #include "Control/UIActiveX.h"
 #include "Control/UIWebBrowser.h"
 //#include "Control/UIFlash.h"
+#endif // !FULL_DUILIB
 
