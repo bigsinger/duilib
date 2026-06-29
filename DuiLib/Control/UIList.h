@@ -1,4 +1,4 @@
-#ifndef __UILIST_H__
+﻿#ifndef __UILIST_H__
 #define __UILIST_H__
 
 #pragma once
@@ -112,16 +112,16 @@ public:
 	DWORD GetTextStyle() const;
 	void SetTextStyle(UINT uStyle);
 
-	// ���ص���ARGB��ע������RGB���ֽ���֯�ṹ
+	// 返回的是ARGB，注意区别RGB的字节组织结构
 	ARGB GetTextColor() const;
 
-	// ���õ���ARGB��Photoshop��ʽ��������RGB��VC��ʽ����
+	// 设置的是ARGB（Photoshop格式），不是RGB（VC格式）！
 	void SetTextColor(ARGB dwTextColor);
 
-	// ������һ����������Ľӿڣ����ֻ�����ü򵥵�rgb���԰�װ����ӿڵ�
+	// 设置了一个易于理解的接口，如果只是设置简单的rgb可以安装这个接口调
 	void SetTextColor(IN BYTE r, IN BYTE g, IN BYTE b);
 
-	// ����Ǵ������ط���ȡ��RGB��ʽ��ɫ������ֱ��ʹ�ã��ڲ���ת��
+	// 如果是从其他地方获取的RGB格式颜色，可以直接使用，内部会转换
 	void SetTextColorRGB(COLORREF rgb);
 
 	void SetTextPadding(RECT rc);
@@ -187,7 +187,7 @@ public:
     bool SelectItem(int iIndex, bool bTakeFocus = false);
     bool SelectRange(int iIndex, bool bTakeFocus = false);
 
-    CListHeaderUI* GetHeader() const;  
+    CListHeaderUI* GetHeader() const;
     CContainerUI* GetList() const;
     TListInfoUI* GetListInfo();
 
@@ -197,14 +197,14 @@ public:
     int GetCount() const;
 	//////////////////////////////////////////////////////////////////////////
 	/**
-	 * ������,�վ�,��0��ʼ
-	 * 
-	 * @param	nCol					����,��Ҫ��0��ʼ���β���
-	 * @param	lpszColumnHeaderStr		ÿһ�б���
-	 * @param	uTextStyle				�������ֶ��뷽ʽ
-	 * @param	nWidth					�п�
-	 * 
-	 * @return	����TrueΪ�ɹ�,FalseΪʧ��
+	 * 插入列,照旧,从0开始
+	 *
+	 * @param	nCol					列数,需要从0开始依次插入
+	 * @param	lpszColumnHeaderStr		每一列标题
+	 * @param	uTextStyle				标题文字对齐方式
+	 * @param	nWidth					列宽
+	 *
+	 * @return	返回True为成功,False为失败
 	 */
 	BOOL InsertColumn(
 		int nCol,
@@ -220,21 +220,21 @@ public:
 	bool SetSubItem(int nItem, int nSubItem, CControlUI* pControl);
 
 	/**
-	 * ����������ȡ�пؼ�
-	 * 
-	 * @param	iIndex					����,��0���������
-	 * 
-	 * @return	�ɹ�ʱ�����ӿؼ���ַ,���򷵻�NULL
+	 * 根据索引获取行控件
+	 *
+	 * @param	iIndex					行数,从0到最大行数
+	 *
+	 * @return	成功时返回子控件地址,否则返回NULL
 	 */
 	CListContainerElementUI* GetListItemElement(int iIndex);
 
 	/**
-	 * ��ȡ����λ�õĿؼ�
-	 * 
-	 * @param	iIndex					����,��0���������
-	 * @param	iSubIndex					����,��0���������
-	 * 
-	 * @return	�ɹ�ʱ�����ӿؼ���ַ,���򷵻�NULL
+	 * 获取具体位置的控件
+	 *
+	 * @param	iIndex					行数,从0到最大行数
+	 * @param	iSubIndex					列数,从0到最大行数
+	 *
+	 * @return	成功时返回子控件地址,否则返回NULL
 	 */
 	CHorizontalLayoutUI* GetListSubItem(int iIndex, int iSubIndex);
 	//////////////////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ public:
     void SetAlternateBk(bool bAlternateBk);
     void SetSelectedItemTextColor(DWORD dwTextColor);
     void SetSelectedItemBkColor(DWORD dwBkColor);
-    void SetSelectedItemImage(LPCTSTR pStrImage); 
+    void SetSelectedItemImage(LPCTSTR pStrImage);
     void SetHotItemTextColor(DWORD dwTextColor);
     void SetHotItemBkColor(DWORD dwBkColor);
     void SetHotItemImage(LPCTSTR pStrImage);
@@ -285,7 +285,7 @@ public:
 	LPCTSTR GetDisabledItemImage() const;
 	DWORD GetItemLineColor() const;
 
-    void SetMultiExpanding(bool bMultiExpandable); 
+    void SetMultiExpanding(bool bMultiExpandable);
     int GetExpandedItem() const;
     bool ExpandItem(int iIndex, bool bExpand = true);
 
@@ -388,7 +388,7 @@ public:
     bool IsExpanded() const;
     bool Expand(bool bExpand = true);
 
-    void Invalidate(); // ֱ��CControl::Invalidate�ᵼ�¹�����ˢ�£���д����ˢ������
+    void Invalidate(); // 直接CControl::Invalidate会导致滚动条刷新，重写减少刷新区域
     bool Activate();
 
     void DoEvent(TEventUI& event);
@@ -482,20 +482,20 @@ public:
     bool IsExpanded() const;
     bool Expand(bool bExpand = true);
 
-    void Invalidate(); // ֱ��CControl::Invalidate�ᵼ�¹�����ˢ�£���д����ˢ������
+    void Invalidate(); // 直接CControl::Invalidate会导致滚动条刷新，重写减少刷新区域
     bool Activate();
 
     void DoEvent(TEventUI& event);
     void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
     void DoPaint(HDC hDC, const RECT& rcPaint);
 
-    void DrawItemText(HDC hDC, const RECT& rcItem);    
+    void DrawItemText(HDC hDC, const RECT& rcItem);
     void DrawItemBk(HDC hDC, const RECT& rcItem);
-	//added,//todo...�Ƿ�����Ż�
+	//added,//todo...是否可以优化
 	void SetPos(RECT rc)
 	{
 		CContainerUI::SetPos(rc);
-		if( m_pOwner == NULL ) return;		
+		if( m_pOwner == NULL ) return;
 
 		if (m_pHeader == NULL)
 		{
@@ -532,7 +532,7 @@ protected:
     int m_iIndex;
     bool m_bSelected;
     UINT m_uButtonState;
-    IListOwnerUI* m_pOwner;	
+    IListOwnerUI* m_pOwner;
 };
 
 } // namespace DuiLib

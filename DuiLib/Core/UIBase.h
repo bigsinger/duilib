@@ -1,4 +1,4 @@
-#ifndef __UIBASE_H__
+﻿#ifndef __UIBASE_H__
 #define __UIBASE_H__
 
 
@@ -77,7 +77,7 @@ public:
     void ShowWindow(bool bShow = true, bool bTakeFocus = true);
     UINT ShowModal();
     void Close(UINT nRet = IDOK);
-    void CenterWindow();	// ���У�֧����չ��Ļ
+    void CenterWindow();	// 居中，支持扩展屏幕
     void SetIcon(UINT nRes);
 
     LRESULT SendMessage(UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L);

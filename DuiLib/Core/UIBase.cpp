@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 
 #ifdef _DEBUG
 #include <shlwapi.h>
@@ -20,7 +20,7 @@ void UILIB_API DUI__Trace(LPCTSTR pstrFormat, ...)
     va_start(Args, pstrFormat);
     DuiStringFormatV(strMsg, pstrFormat, Args);
     va_end(Args);
-    
+
     strMsg += _T("\n");
     OutputDebugString(strMsg.c_str());
 
@@ -35,14 +35,14 @@ LPCTSTR DUI__TraceMsg(UINT uMsg)
     MSGDEF(WM_NCPAINT);
     MSGDEF(WM_PAINT);
     MSGDEF(WM_ERASEBKGND);
-    MSGDEF(WM_NCMOUSEMOVE);  
+    MSGDEF(WM_NCMOUSEMOVE);
     MSGDEF(WM_MOUSEMOVE);
     MSGDEF(WM_MOUSELEAVE);
-    MSGDEF(WM_MOUSEHOVER);   
+    MSGDEF(WM_MOUSEHOVER);
     MSGDEF(WM_NOTIFY);
     MSGDEF(WM_COMMAND);
     MSGDEF(WM_MEASUREITEM);
-    MSGDEF(WM_DRAWITEM);   
+    MSGDEF(WM_DRAWITEM);
     MSGDEF(WM_LBUTTONDOWN);
     MSGDEF(WM_LBUTTONUP);
     MSGDEF(WM_LBUTTONDBLCLK);
@@ -50,7 +50,7 @@ LPCTSTR DUI__TraceMsg(UINT uMsg)
     MSGDEF(WM_RBUTTONUP);
     MSGDEF(WM_RBUTTONDBLCLK);
     MSGDEF(WM_SETFOCUS);
-    MSGDEF(WM_KILLFOCUS);  
+    MSGDEF(WM_KILLFOCUS);
     MSGDEF(WM_MOVE);
     MSGDEF(WM_SIZE);
     MSGDEF(WM_SIZING);
@@ -58,7 +58,7 @@ LPCTSTR DUI__TraceMsg(UINT uMsg)
     MSGDEF(WM_GETMINMAXINFO);
     MSGDEF(WM_CAPTURECHANGED);
     MSGDEF(WM_WINDOWPOSCHANGED);
-    MSGDEF(WM_WINDOWPOSCHANGING);   
+    MSGDEF(WM_WINDOWPOSCHANGING);
     MSGDEF(WM_NCCALCSIZE);
     MSGDEF(WM_NCCREATE);
     MSGDEF(WM_NCDESTROY);
@@ -78,12 +78,12 @@ LPCTSTR DUI__TraceMsg(UINT uMsg)
     MSGDEF(WM_CREATE);
     MSGDEF(WM_NCACTIVATE);
     MSGDEF(WM_ACTIVATE);
-    MSGDEF(WM_ACTIVATEAPP);   
+    MSGDEF(WM_ACTIVATEAPP);
     MSGDEF(WM_CLOSE);
     MSGDEF(WM_DESTROY);
-    MSGDEF(WM_GETICON);   
+    MSGDEF(WM_GETICON);
     MSGDEF(WM_GETTEXT);
-    MSGDEF(WM_GETTEXTLENGTH);   
+    MSGDEF(WM_GETTEXTLENGTH);
     static TCHAR szMsg[10];
     ::wsprintf(szMsg, _T("0x%04X"), uMsg);
     return szMsg;
@@ -193,7 +193,7 @@ LDispatch:
 
 void CNotifyPump::NotifyPump(TNotifyUI& msg)
 {
-	///�������ⴰ��
+	///遍历虚拟窗口
 	if( !msg.sVirtualWnd.empty() ){
 		for( int i = 0; i< m_VirtualWndMap.GetSize(); i++ ) {
 			if( LPCTSTR key = m_VirtualWndMap.GetAt(i) ) {
@@ -207,7 +207,7 @@ void CNotifyPump::NotifyPump(TNotifyUI& msg)
 	}
 
 	///
-	//����������
+	//遍历主窗口
 	LoopDispatch( msg );
 }
 
@@ -217,9 +217,9 @@ CWindowWnd::CWindowWnd() : m_hWnd(NULL), m_OldWndProc(::DefWindowProc), m_bSubcl
 {
 }
 
-HWND CWindowWnd::GetHWND() const 
-{ 
-    return m_hWnd; 
+HWND CWindowWnd::GetHWND() const
+{
+    return m_hWnd;
 }
 
 UINT CWindowWnd::GetClassStyle() const
@@ -332,7 +332,7 @@ void CWindowWnd::CenterWindow()
 	if (hWndCenter!=NULL)
 		hWnd=hWndCenter;
 
-	// ��������ʾ��ģʽ����Ļ����
+	// 处理多显示器模式下屏幕居中
 	MONITORINFO oMonitor = {};
 	oMonitor.cbSize = sizeof(oMonitor);
 	::GetMonitorInfo(::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
@@ -361,13 +361,13 @@ void CWindowWnd::CenterWindow()
 void CWindowWnd::SetIcon(UINT nRes)
 {
 	HICON hIcon = (HICON)::LoadImage(CPaintManagerUI::GetInstance(), MAKEINTRESOURCE(nRes), IMAGE_ICON,
-		(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// ��ֹ��DPI��ͼ��ģ��
+		(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// 防止高DPI下图标模糊
 		LR_DEFAULTCOLOR);
 	ASSERT(hIcon);
 	::SendMessage(m_hWnd, WM_SETICON, (WPARAM) TRUE, (LPARAM) hIcon);
 
 	hIcon = (HICON)::LoadImage(CPaintManagerUI::GetInstance(), MAKEINTRESOURCE(nRes), IMAGE_ICON,
-		(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// ��ֹ��DPI��ͼ��ģ��
+		(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// 防止高DPI下图标模糊
 		LR_DEFAULTCOLOR);
 	ASSERT(hIcon);
 	::SendMessage(m_hWnd, WM_SETICON, (WPARAM) FALSE, (LPARAM) hIcon);
@@ -420,7 +420,7 @@ LRESULT CALLBACK CWindowWnd::__WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
         pThis = static_cast<CWindowWnd*>(lpcs->lpCreateParams);
         pThis->m_hWnd = hWnd;
         ::SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LPARAM>(pThis));
-    } 
+    }
     else {
         pThis = reinterpret_cast<CWindowWnd*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
         if( uMsg == WM_NCDESTROY && pThis != NULL ) {
@@ -434,7 +434,7 @@ LRESULT CALLBACK CWindowWnd::__WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
     }
     if( pThis != NULL ) {
         return pThis->HandleMessage(uMsg, wParam, lParam);
-    } 
+    }
     else {
         return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
@@ -448,7 +448,7 @@ LRESULT CALLBACK CWindowWnd::__ControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
         pThis = static_cast<CWindowWnd*>(lpcs->lpCreateParams);
         ::SetProp(hWnd, _T("WndX"), (HANDLE) pThis);
         pThis->m_hWnd = hWnd;
-    } 
+    }
     else {
         pThis = reinterpret_cast<CWindowWnd*>(::GetProp(hWnd, _T("WndX")));
         if( uMsg == WM_NCDESTROY && pThis != NULL ) {
@@ -462,7 +462,7 @@ LRESULT CALLBACK CWindowWnd::__ControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
     }
     if( pThis != NULL ) {
         return pThis->HandleMessage(uMsg, wParam, lParam);
-    } 
+    }
     else {
         return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
@@ -472,7 +472,7 @@ LRESULT CWindowWnd::SendMessage(UINT uMsg, WPARAM wParam /*= 0*/, LPARAM lParam 
 {
     ASSERT(::IsWindow(m_hWnd));
     return ::SendMessage(m_hWnd, uMsg, wParam, lParam);
-} 
+}
 
 LRESULT CWindowWnd::PostMessage(UINT uMsg, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
 {

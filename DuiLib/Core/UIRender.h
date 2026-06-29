@@ -1,4 +1,4 @@
-#ifndef __UIRENDER_H__
+﻿#ifndef __UIRENDER_H__
 #define __UIRENDER_H__
 
 #pragma once
@@ -32,14 +32,14 @@ public:
     static TImageInfo* LoadImage(STRINGorID bitmap, LPCTSTR type = NULL, DWORD mask = 0);
     static void FreeImage(const TImageInfo* bitmap);
     static void DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RECT& rcPaint, \
-        const RECT& rcBmpPart, const RECT& rcCorners, bool alphaChannel, BYTE uFade = 255, 
+        const RECT& rcBmpPart, const RECT& rcCorners, bool alphaChannel, BYTE uFade = 255,
         bool hole = false, bool xtiled = false, bool ytiled = false);
-    static bool DrawImageString(HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint, 
+    static bool DrawImageString(HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint,
         LPCTSTR pStrImage, LPCTSTR pStrModify = NULL);
     static void DrawColor(HDC hDC, const RECT& rc, DWORD color);
     static void DrawGradient(HDC hDC, const RECT& rc, DWORD dwFirst, DWORD dwSecond, bool bVertical, int nSteps);
 
-    // ���º����е���ɫ����alphaֵ��Ч
+    // 以下函数中的颜色参数alpha值无效
     static void DrawLine(HDC hDC, const RECT& rc, int nSize, DWORD dwPenColor,int nStyle = PS_SOLID);
     static void DrawRect(HDC hDC, const RECT& rc, int nSize, DWORD dwPenColor);
     static void DrawRoundRect(HDC hDC, const RECT& rc, int width, int height, int nSize, DWORD dwPenColor);
@@ -47,7 +47,7 @@ public:
         DWORD dwTextColor, int iFont, UINT uStyle);
     static void DrawText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, const tstring& sText, \
         DWORD dwTextColor, int iFont, UINT uStyle) { DrawText(hDC, pManager, rc, sText.c_str(), dwTextColor, iFont, uStyle); }
-    static void DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTSTR pstrText, 
+    static void DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTSTR pstrText,
         DWORD dwTextColor, RECT* pLinks, tstring* sLinks, int& nLinkRects, UINT uStyle);
     static void DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, const tstring& sText,
         DWORD dwTextColor, RECT* pLinks, tstring* sLinks, int& nLinkRects, UINT uStyle) { DrawHtmlText(hDC, pManager, rc, sText.c_str(), dwTextColor, pLinks, sLinks, nLinkRects, uStyle); }

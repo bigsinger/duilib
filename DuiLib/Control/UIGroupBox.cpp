@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 #include "UIGroupBox.h"
 
 namespace DuiLib
@@ -7,7 +7,7 @@ namespace DuiLib
 
 	//////////////////////////////////////////////////////////////////////////
 	//
-	CGroupBoxUI::CGroupBoxUI(): m_uTextStyle(DT_SINGLELINE | DT_VCENTER | DT_CENTER), m_dwTextColor(0), 
+	CGroupBoxUI::CGroupBoxUI(): m_uTextStyle(DT_SINGLELINE | DT_VCENTER | DT_CENTER), m_dwTextColor(0),
 		m_dwDisabledTextColor(0), m_iFont(-1)
 	{
 		SetInset(CDuiRect(20, 25, 20, 20));
@@ -73,7 +73,7 @@ namespace DuiLib
 		SIZE szAvailable = { rcText.right - rcText.left, rcText.bottom - rcText.top };
 		SIZE sz = CalcrectSize(szAvailable);
 
-		//������������
+		// 计算标题文本区域
 		rcText.left = rcText.left + 15;
 		rcText.top = rcText.top - 5;
 		rcText.right = rcText.left + sz.cx;
@@ -96,8 +96,8 @@ namespace DuiLib
 		{
 			CDuiRect rcItem = m_rcItem;
 			rcItem.Deflate(5, 5);
-			
-			if( cxyBorderRound.cx > 0 || cxyBorderRound.cy > 0 )//��Բ�Ǳ߿�
+
+			if( cxyBorderRound.cx > 0 || cxyBorderRound.cy > 0 )// 绘制圆角边框
 			{
 				if (IsFocused() && m_dwFocusBorderColor != 0)
 					CRenderEngine::DrawRoundRect(hDC, rcItem, nBorderSize, cxyBorderRound.cx, cxyBorderRound.cy, GetAdjustColor(m_dwFocusBorderColor));
@@ -120,7 +120,7 @@ namespace DuiLib
 	{
 		SIZE cxyFixed = GetFixedXY();
 		RECT rcText = { 0, 0, MAX(szAvailable.cx, cxyFixed.cx), 20 };
-		
+
 		tstring sText = GetText();
 
 		CRenderEngine::DrawText(m_pManager->GetPaintDC(), m_pManager, rcText, sText.c_str(), m_dwTextColor, m_iFont, DT_CALCRECT | m_uTextStyle);
@@ -129,21 +129,21 @@ namespace DuiLib
 	}
 	void CGroupBoxUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
 	{
-		if( _tcsicmp(pstrName, _T("textcolor")) == 0 ) 
+		if( _tcsicmp(pstrName, _T("textcolor")) == 0 )
 		{
 			if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
 			LPTSTR pstr = NULL;
 			DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
 			SetTextColor(clrColor);
 		}
-		else if( _tcsicmp(pstrName, _T("disabledtextcolor")) == 0 ) 
+		else if( _tcsicmp(pstrName, _T("disabledtextcolor")) == 0 )
 		{
 			if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
 			LPTSTR pstr = NULL;
 			DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
 			SetDisabledTextColor(clrColor);
 		}
-		else if( _tcsicmp(pstrName, _T("font")) == 0 ) 
+		else if( _tcsicmp(pstrName, _T("font")) == 0 )
 		{
 			SetFont(_ttoi(pstrValue));
 		}

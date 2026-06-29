@@ -1,10 +1,10 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////
 DECLARE_HANDLE(HZIP);	// An HZIP identifies a zip file that has been opened
 typedef DWORD ZRESULT;
 typedef struct
-{ 
+{
     int index;                 // index of this file within the zip
     char name[MAX_PATH];       // filename within the zip
     DWORD attr;                // attributes, as in GetFileAttributes.
@@ -13,7 +13,7 @@ typedef struct
     long unc_size;             // may be -1 if not yet known (e.g. being streamed in)
 } ZIPENTRY;
 typedef struct
-{ 
+{
     int index;                 // index of this file within the zip
     TCHAR name[MAX_PATH];      // filename within the zip
     DWORD attr;                // attributes, as in GetFileAttributes.
@@ -148,8 +148,8 @@ static void HSLtoRGB(DWORD* ARGB, float H, float S, float L) {
 
 static COLORREF PixelAlpha(COLORREF clrSrc, double src_darken, COLORREF clrDest, double dest_darken)
 {
-    return RGB (GetRValue (clrSrc) * src_darken + GetRValue (clrDest) * dest_darken, 
-        GetGValue (clrSrc) * src_darken + GetGValue (clrDest) * dest_darken, 
+    return RGB (GetRValue (clrSrc) * src_darken + GetRValue (clrDest) * dest_darken,
+        GetGValue (clrSrc) * src_darken + GetGValue (clrDest) * dest_darken,
         GetBValue (clrSrc) * src_darken + GetBValue (clrDest) * dest_darken);
 
 }
@@ -187,7 +187,7 @@ static BOOL WINAPI AlphaBitBlt(HDC hDC, int nDestX, int nDestY, int dwWidth, int
         hSrcDC, lpbiSrc, DIB_RGB_COLORS, (void **)&pSrcBits,
         NULL, NULL);
 
-    if ((NULL == hSrcDib) || (NULL == pSrcBits)) 
+    if ((NULL == hSrcDib) || (NULL == pSrcBits))
     {
 		delete [] lpbiSrc;
         ::DeleteDC(hTempDC);
@@ -276,7 +276,7 @@ DWORD CRenderEngine::AdjustColor(DWORD dwColor, short H, short S, short L)
     float L1 = L / 100.0f;
     RGBtoHSL(dwColor, &fH, &fS, &fL);
     fH += (H - 180);
-    fH = fH > 0 ? fH : fH + 360; 
+    fH = fH > 0 ? fH : fH + 360;
     fS *= S1;
     fL *= L1;
     HSLtoRGB(&dwColor, fH, fS, fL);
@@ -288,7 +288,7 @@ TImageInfo* CRenderEngine::LoadImage(STRINGorID bitmap, LPCTSTR type, DWORD mask
     LPBYTE pData = NULL;
     DWORD dwSize = 0;
 
-	do 
+	do
 	{
 		if( type == NULL ) {
 			tstring sFile = CPaintManagerUI::GetResourcePath();
@@ -317,8 +317,8 @@ TImageInfo* CRenderEngine::LoadImage(STRINGorID bitmap, LPCTSTR type, DWORD mask
 				if( CPaintManagerUI::IsCachedResourceZip() ) hz = (HZIP)CPaintManagerUI::GetResourceZipHandle();
 				else hz = OpenZip((void*)sFile.c_str(), 0, 2);
 				if( hz == NULL ) break;
-				ZIPENTRY ze; 
-				int i; 
+				ZIPENTRY ze;
+				int i;
 				if( FindZipItem(hz, bitmap.m_lpstr, true, &i, &ze) != 0 ) break;
 				dwSize = ze.unc_size;
 				if( dwSize == 0 ) break;
@@ -352,7 +352,7 @@ TImageInfo* CRenderEngine::LoadImage(STRINGorID bitmap, LPCTSTR type, DWORD mask
 
 	while (!pData)
 	{
-		//������ͼƬ, ��ֱ��ȥ��ȡbitmap.m_lpstrָ���·��
+		//读不到图片, 则直接去读取bitmap.m_lpstr指向的路径
 		HANDLE hFile = ::CreateFile(bitmap.m_lpstr, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
 			FILE_ATTRIBUTE_NORMAL, NULL);
 		if( hFile == INVALID_HANDLE_VALUE ) break;
@@ -372,7 +372,7 @@ TImageInfo* CRenderEngine::LoadImage(STRINGorID bitmap, LPCTSTR type, DWORD mask
 	}
 	if (!pData)
 	{
-		//::MessageBox(0, _T("��ȡͼƬ����ʧ�ܣ�"), _T("ץBUG"), MB_OK);
+		//::MessageBox(0, _T("读取图片数据失败！"), _T("抓BUG"), MB_OK);
 		return NULL;
 	}
 
@@ -381,7 +381,7 @@ TImageInfo* CRenderEngine::LoadImage(STRINGorID bitmap, LPCTSTR type, DWORD mask
     pImage = stbi_load_from_memory(pData, dwSize, &x, &y, &n, 4);
     delete[] pData;
 	if( !pImage ) {
-		//::MessageBox(0, _T("����ͼƬʧ��"), _T("ץBUG"), MB_OK);
+		//::MessageBox(0, _T("解析图片失败"), _T("抓BUG"), MB_OK);
 		return NULL;
 	}
 
@@ -399,31 +399,31 @@ TImageInfo* CRenderEngine::LoadImage(STRINGorID bitmap, LPCTSTR type, DWORD mask
     LPBYTE pDest = NULL;
     HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&pDest, NULL, 0);
 	if( !hBitmap ) {
-		//::MessageBox(0, _T("CreateDIBSectionʧ��"), _T("ץBUG"), MB_OK);
+		//::MessageBox(0, _T("CreateDIBSection失败"), _T("抓BUG"), MB_OK);
 		return NULL;
 	}
 
-    for( int i = 0; i < x * y; i++ ) 
+    for( int i = 0; i < x * y; i++ )
     {
         pDest[i*4 + 3] = pImage[i*4 + 3];
         if( pDest[i*4 + 3] < 255 )
         {
             pDest[i*4] = (BYTE)(DWORD(pImage[i*4 + 2])*pImage[i*4 + 3]/255);
             pDest[i*4 + 1] = (BYTE)(DWORD(pImage[i*4 + 1])*pImage[i*4 + 3]/255);
-            pDest[i*4 + 2] = (BYTE)(DWORD(pImage[i*4])*pImage[i*4 + 3]/255); 
+            pDest[i*4 + 2] = (BYTE)(DWORD(pImage[i*4])*pImage[i*4 + 3]/255);
             bAlphaChannel = true;
         }
         else
         {
             pDest[i*4] = pImage[i*4 + 2];
             pDest[i*4 + 1] = pImage[i*4 + 1];
-            pDest[i*4 + 2] = pImage[i*4]; 
+            pDest[i*4 + 2] = pImage[i*4];
         }
 
         if( *(DWORD*)(&pDest[i*4]) == mask ) {
             pDest[i*4] = (BYTE)0;
             pDest[i*4 + 1] = (BYTE)0;
-            pDest[i*4 + 2] = (BYTE)0; 
+            pDest[i*4 + 2] = (BYTE)0;
             pDest[i*4 + 3] = (BYTE)0;
             bAlphaChannel = true;
         }
@@ -442,13 +442,13 @@ TImageInfo* CRenderEngine::LoadImage(STRINGorID bitmap, LPCTSTR type, DWORD mask
 void CRenderEngine::FreeImage(const TImageInfo* bitmap)
 {
 	if (bitmap->hBitmap) {
-		::DeleteObject(bitmap->hBitmap) ; 
+		::DeleteObject(bitmap->hBitmap) ;
 	}
 	delete bitmap ;
 }
 
 void CRenderEngine::DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RECT& rcPaint,
-                                    const RECT& rcBmpPart, const RECT& rcCorners, bool alphaChannel, 
+                                    const RECT& rcBmpPart, const RECT& rcCorners, bool alphaChannel,
                                     BYTE uFade, bool hole, bool xtiled, bool ytiled)
 {
     ASSERT(::GetObjectType(hDC)==OBJ_DC || ::GetObjectType(hDC)==OBJ_MEMDC);
@@ -505,8 +505,8 @@ void CRenderEngine::DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RE
                                 lDrawWidth -= lDestRight - rcDest.right;
                                 lDestRight = rcDest.right;
                             }
-                            lpAlphaBlend(hDC, rcDest.left + lWidth * i, rcDest.top + lHeight * j, 
-                                lDestRight - lDestLeft, lDestBottom - lDestTop, hCloneDC, 
+                            lpAlphaBlend(hDC, rcDest.left + lWidth * i, rcDest.top + lHeight * j,
+                                lDestRight - lDestLeft, lDestBottom - lDestTop, hCloneDC,
                                 rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, lDrawWidth, lDrawHeight, bf);
                         }
                     }
@@ -522,7 +522,7 @@ void CRenderEngine::DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RE
                             lDrawWidth -= lDestRight - rcDest.right;
                             lDestRight = rcDest.right;
                         }
-                        lpAlphaBlend(hDC, lDestLeft, rcDest.top, lDestRight - lDestLeft, rcDest.bottom, 
+                        lpAlphaBlend(hDC, lDestLeft, rcDest.top, lDestRight - lDestLeft, rcDest.bottom,
                             hCloneDC, rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
                             lDrawWidth, rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
                     }
@@ -538,9 +538,9 @@ void CRenderEngine::DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RE
                             lDrawHeight -= lDestBottom - rcDest.bottom;
                             lDestBottom = rcDest.bottom;
                         }
-                        lpAlphaBlend(hDC, rcDest.left, rcDest.top + lHeight * i, rcDest.right, lDestBottom - lDestTop, 
+                        lpAlphaBlend(hDC, rcDest.left, rcDest.top + lHeight * i, rcDest.right, lDestBottom - lDestTop,
                             hCloneDC, rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
-                            rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, lDrawHeight, bf);                    
+                            rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, lDrawHeight, bf);
                     }
                 }
             }
@@ -672,7 +672,7 @@ void CRenderEngine::DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RE
             }
         }
     }
-    else 
+    else
     {
         if (rc.right - rc.left == rcBmpPart.right - rcBmpPart.left \
             && rc.bottom - rc.top == rcBmpPart.bottom - rcBmpPart.top \
@@ -740,7 +740,7 @@ void CRenderEngine::DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RE
                                 lDrawWidth -= lDestRight - rcDest.right;
                                 lDestRight = rcDest.right;
                             }
-                            ::StretchBlt(hDC, lDestLeft, rcDest.top, lDestRight - lDestLeft, rcDest.bottom, 
+                            ::StretchBlt(hDC, lDestLeft, rcDest.top, lDestRight - lDestLeft, rcDest.bottom,
                                 hCloneDC, rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
                                 lDrawWidth, rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
                         }
@@ -756,14 +756,14 @@ void CRenderEngine::DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RE
                                 lDrawHeight -= lDestBottom - rcDest.bottom;
                                 lDestBottom = rcDest.bottom;
                             }
-                            ::StretchBlt(hDC, rcDest.left, rcDest.top + lHeight * i, rcDest.right, lDestBottom - lDestTop, 
+                            ::StretchBlt(hDC, rcDest.left, rcDest.top + lHeight * i, rcDest.right, lDestBottom - lDestTop,
                                 hCloneDC, rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
-                                rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, lDrawHeight, SRCCOPY);                    
+                                rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, lDrawHeight, SRCCOPY);
                         }
                     }
                 }
             }
-            
+
             // left-top
             if( rcCorners.left > 0 && rcCorners.top > 0 ) {
                 rcDest.left = rc.left;
@@ -911,7 +911,7 @@ bool DrawImage(HDC hDC, CPaintManagerUI* pManager, const RECT& rc, const RECT& r
 	else {
 		data = pManager->GetImageEx(sImageName.c_str(), sImageResType.c_str(), dwMask);
 	}
-	if( !data ) return false;    
+	if( !data ) return false;
 
 	if( rcBmpPart.left == 0 && rcBmpPart.right == 0 && rcBmpPart.top == 0 && rcBmpPart.bottom == 0 ) {
 		rcBmpPart.right = data->nX;
@@ -929,13 +929,13 @@ bool DrawImage(HDC hDC, CPaintManagerUI* pManager, const RECT& rc, const RECT& r
 	return true;
 }
 
-bool CRenderEngine::DrawImageString(HDC hDC, CPaintManagerUI* pManager, const RECT& rc, const RECT& rcPaint, 
+bool CRenderEngine::DrawImageString(HDC hDC, CPaintManagerUI* pManager, const RECT& rc, const RECT& rcPaint,
                                           LPCTSTR pStrImage, LPCTSTR pStrModify)
 {
 	if ((pManager == NULL) || (hDC == NULL)) return false;
 
-    // 1��aaa.jpg
-    // 2��file='aaa.jpg' res='' restype='0' dest='0,0,0,0' source='0,0,0,0' corner='0,0,0,0' 
+    // 1、aaa.jpg
+    // 2、file='aaa.jpg' res='' restype='0' dest='0,0,0,0' source='0,0,0,0' corner='0,0,0,0'
     // mask='#FF0000' fade='255' hole='false' xtiled='false' ytiled='false'
 
     tstring sImageName = pStrImage;
@@ -1001,7 +1001,7 @@ bool CRenderEngine::DrawImageString(HDC hDC, CPaintManagerUI* pManager, const RE
 					++image_count;
                 }
                 else if( sItem == _T("dest") ) {
-                    rcItem.left = rc.left + _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);    
+                    rcItem.left = rc.left + _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
                     rcItem.top = rc.top + _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
                     rcItem.right = rc.left + _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
 					if (rcItem.right > rc.right) rcItem.right = rc.right;
@@ -1009,15 +1009,15 @@ bool CRenderEngine::DrawImageString(HDC hDC, CPaintManagerUI* pManager, const RE
 					if (rcItem.bottom > rc.bottom) rcItem.bottom = rc.bottom;
                 }
                 else if( sItem == _T("source") ) {
-                    rcBmpPart.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);    
-                    rcBmpPart.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);    
-                    rcBmpPart.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);    
-                    rcBmpPart.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);  
+                    rcBmpPart.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
+                    rcBmpPart.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+                    rcBmpPart.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
+                    rcBmpPart.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
                 }
                 else if( sItem == _T("corner") ) {
-                    rcCorner.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);    
-                    rcCorner.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);    
-                    rcCorner.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);    
+                    rcCorner.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
+                    rcCorner.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+                    rcCorner.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
                     rcCorner.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
                 }
                 else if( sItem == _T("mask") ) {
@@ -1105,9 +1105,9 @@ void CRenderEngine::DrawGradient(HDC hDC, const RECT& rc, DWORD dwFirst, DWORD d
         ASSERT(hPaintBitmap);
         hOldPaintBitmap = (HBITMAP) ::SelectObject(hPaintDC, hPaintBitmap);
     }
-    if( lpGradientFill != NULL ) 
+    if( lpGradientFill != NULL )
     {
-        TRIVERTEX triv[2] = 
+        TRIVERTEX triv[2] =
         {
             { rcPaint.left, rcPaint.top, static_cast<COLOR16>(GetBValue(dwFirst) << 8), static_cast<COLOR16>(GetGValue(dwFirst) << 8), static_cast<COLOR16>(GetRValue(dwFirst) << 8), 0xFF00 },
             { rcPaint.right, rcPaint.bottom, static_cast<COLOR16>(GetBValue(dwSecond) << 8), static_cast<COLOR16>(GetGValue(dwSecond) << 8), static_cast<COLOR16>(GetRValue(dwSecond) << 8), 0xFF00 }
@@ -1115,7 +1115,7 @@ void CRenderEngine::DrawGradient(HDC hDC, const RECT& rc, DWORD dwFirst, DWORD d
         GRADIENT_RECT grc = { 0, 1 };
         lpGradientFill(hPaintDC, triv, 2, &grc, 1, bVertical ? GRADIENT_FILL_RECT_V : GRADIENT_FILL_RECT_H);
     }
-    else 
+    else
     {
         // Determine how many shades
         int nShift = 1;
@@ -1156,14 +1156,14 @@ void CRenderEngine::DrawGradient(HDC hDC, const RECT& rc, DWORD dwFirst, DWORD d
 }
 
 //************************************
-// ��������: DrawLine
-// ��������: void
-// ������Ϣ: HDC hDC
-// ������Ϣ: const RECT & rc
-// ������Ϣ: int nSize
-// ������Ϣ: DWORD dwPenColor
-// ������Ϣ: int nStyle
-// ����˵��: 
+// 函数名称: DrawLine
+// 返回类型: void
+// 参数信息: HDC hDC
+// 参数信息: const RECT & rc
+// 参数信息: int nSize
+// 参数信息: DWORD dwPenColor
+// 参数信息: int nStyle
+// 函数说明:
 //************************************
 void CRenderEngine::DrawLine( HDC hDC, const RECT& rc, int nSize, DWORD dwPenColor,int nStyle /*= PS_SOLID*/ )
 {
@@ -1217,8 +1217,8 @@ void CRenderEngine::DrawText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTS
 
 void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTSTR pstrText, DWORD dwTextColor, RECT* prcLinks, tstring* sLinks, int& nLinkRects, UINT uStyle)
 {
-    // ���ǵ���xml�༭����ʹ��<>���Ų����㣬����ʹ��{}���Ŵ���
-    // ֧�ֱ�ǩǶ�ף���<l><b>text</b></l>�������ǽ���Ƕ����Ӧ�ñ���ģ���<l><b>text</l></b>��
+    // 考虑到在xml编辑器中使用<>符号不方便，可以使用{}符号代替
+    // 支持标签嵌套（如<l><b>text</b></l>），但是交叉嵌套是应该避免的（如<l><b>text</l></b>）
     // The string formatter supports a kind of "mini-html" that consists of various short tags:
     //
     //   Bold:             <b>text</b>
@@ -1227,13 +1227,13 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
     //   Italic:           <i>text</i>
     //   Image:            <i x y z>            where x = image name and y = imagelist num and z(optional) = imagelist id
     //   Link:             <a x>text</a>        where x(optional) = link content, normal like app:notepad or http:www.xxx.com
-    //   NewLine           <n>                  
+    //   NewLine           <n>
     //   Paragraph:        <p x>text</p>        where x = extra pixels indent in p
     //   Raw Text:         <r>text</r>
     //   Selected:         <s>text</s>
     //   Underline:        <u>text</u>
     //   X Indent:         <x i>                where i = hor indent in pixels
-    //   Y Indent:         <y i>                where i = ver indent in pixels 
+    //   Y Indent:         <y i>                where i = ver indent in pixels
 
     ASSERT(::GetObjectType(hDC)==OBJ_DC || ::GetObjectType(hDC)==OBJ_MEMDC);
     if( pstrText == NULL || pManager == NULL ) return;
@@ -1308,7 +1308,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
     bool bInSelected = false;
     int iLineLinkIndex = 0;
 
-    // �Ű�ϰ����ͼ�ĵײ����룬����ÿ�л��ƶ�Ҫ���������ȼ���߶ȣ��ٻ���
+    // 排版习惯是图文底部对齐，所以每行绘制都要分两步，先计算高度，再绘制
     CStdPtrArray aLineFontArray;
     CStdPtrArray aLineColorArray;
     CStdPtrArray aLinePIndentArray;
@@ -1317,7 +1317,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
     bool bLineInLink = false;
     bool bLineInSelected = false;
     int cyLineHeight = 0;
-    bool bLineDraw = false; // �еĵڶ��׶Σ�����
+    bool bLineDraw = false; // 行的第二阶段：绘制
     while( *pstrText != _T('\0') ) {
         if( pt.x >= rc.right || *pstrText == _T('\n') || bLineEnd ) {
             if( *pstrText == _T('\n') ) pstrText++;
@@ -1430,7 +1430,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
                     while( *pstrText > _T('\0') && *pstrText <= _T(' ') ) pstrText = ::CharNext(pstrText);
                     LPCTSTR pstrTemp = pstrText;
                     int iFont = (int) _tcstol(pstrText, const_cast<LPTSTR*>(&pstrText), 10);
-                    //if( isdigit(*pstrText) ) { // debug�汾�������쳣
+                    //if( isdigit(*pstrText) ) { // debug版本会引起异常
                     if( pstrTemp != pstrText ) {
                         TFontInfo* pFontInfo = pManager->GetFontInfo(iFont);
                         aFontArray.Add(pFontInfo);
@@ -1476,7 +1476,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
                 }
                 break;
             case _T('i'):  // Italic or Image
-                {    
+                {
                     pstrNextStart = pstrText - 1;
                     pstrText++;
 					tstring sImageString = pstrText;
@@ -1568,7 +1568,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
                                 pstrNextStart = NULL;
                                 if( bDraw && bLineDraw ) {
                                     CDuiRect rcImage(pt.x, pt.y + cyLineHeight - iHeight, pt.x + iWidth, pt.y + cyLineHeight);
-                                    if( iHeight < cyLineHeight ) { 
+                                    if( iHeight < cyLineHeight ) {
                                         rcImage.bottom -= (cyLineHeight - iHeight) / 2;
                                         rcImage.top = rcImage.bottom -  iHeight;
                                     }
@@ -1717,7 +1717,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
                     if( pTm->tmItalic && pFontInfo->bItalic == false ) {
                         ABC abc;
                         ::GetCharABCWidths(hDC, _T(' '), _T(' '), &abc);
-                        pt.x += abc.abcC / 2; // ������һ��б����ŵ�����, ��ȷ����Ӧ����http://support.microsoft.com/kb/244798/en-us
+                        pt.x += abc.abcC / 2; // 简单修正一下斜体混排的问题, 正确做法应该是http://support.microsoft.com/kb/244798/en-us
                     }
                     pTm = &pFontInfo->tm;
                     ::SelectObject(hDC, pFontInfo->hFont);
@@ -1774,7 +1774,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
                 // slow when repeated so often.
                 // TODO: Rewrite and use GetTextExtentExPoint() instead!
                 if( bInRaw ) {
-                    if( ( *p == _T('<') || *p == _T('{') ) && p[1] == _T('/') 
+                    if( ( *p == _T('<') || *p == _T('{') ) && p[1] == _T('/')
                         && p[2] == _T('r') && ( p[3] == _T('>') || p[3] == _T('}') ) ) {
                             p += 4;
                             bInRaw = false;
@@ -1798,7 +1798,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
                     }
                     if( (uStyle & DT_WORDBREAK) != 0 && cchLastGoodWord > 0 ) {
                         cchChars = cchLastGoodWord;
-                        cchSize = cchLastGoodSize;                 
+                        cchSize = cchLastGoodSize;
                     }
                     if( (uStyle & DT_END_ELLIPSIS) != 0 && cchChars > 0 ) {
                         cchChars -= 1;
@@ -1808,7 +1808,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
                             pstrPrev = ::CharPrev(pstrText, pstrPrev);
                             cchSize -= (int)(p - pstrPrev);
                         }
-                        else 
+                        else
                             cchSize -= (int)(p - pstrPrev);
                         pt.x = rc.right;
                     }
@@ -1826,7 +1826,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
                 }
                 p = ::CharNext(p);
             }
-            
+
             ::GetTextExtentPoint32(hDC, pstrText, cchSize, &szText);
             if( bDraw && bLineDraw ) {
 				if( (uStyle & DT_SINGLELINE) == 0 && (uStyle & DT_CENTER) != 0 ) {
@@ -1836,7 +1836,7 @@ void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, L
 					ptPos.x += (rc.right - rc.left - szText.cx);
 				}
 				::TextOut(hDC, ptPos.x, ptPos.y + cyLineHeight - pTm->tmHeight - pTm->tmExternalLeading, pstrText, cchSize);
-				if( pt.x >= rc.right && (uStyle & DT_END_ELLIPSIS) != 0 ) 
+				if( pt.x >= rc.right && (uStyle & DT_END_ELLIPSIS) != 0 )
                     ::TextOut(hDC, ptPos.x + szText.cx, ptPos.y, _T("..."), 3);
             }
             pt.x += szText.cx;
@@ -1929,7 +1929,7 @@ HBITMAP CRenderEngine::GenerateBitmap(CPaintManagerUI* pManager, CControlUI* pCo
         HBITMAP hOldBitmap = (HBITMAP) ::SelectObject(hCloneDC, hBitmap);
         ::BitBlt(hCloneDC, 0, 0, cx, cy, hPaintDC, rc.left, rc.top, SRCCOPY);
         ::SelectObject(hCloneDC, hOldBitmap);
-        ::DeleteDC(hCloneDC);  
+        ::DeleteDC(hCloneDC);
         ::GdiFlush();
     }
 

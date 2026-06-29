@@ -1,4 +1,4 @@
-#ifndef __UICONTAINER_H__
+﻿#ifndef __UICONTAINER_H__
 #define __UICONTAINER_H__
 
 #pragma once
@@ -52,7 +52,7 @@ public:
     void SetMouseEnabled(bool bEnable = true);
 
     virtual RECT GetInset() const;
-    virtual void SetInset(RECT rcInset); // �����ڱ߾࣬�൱�����ÿͻ���
+    virtual void SetInset(RECT rcInset); // 设置内边距，相当于设置客户区
     virtual int GetChildPadding() const;
     virtual void SetChildPadding(int iPadding);
     virtual bool IsAutoDestroy() const;
@@ -113,7 +113,7 @@ protected:
     bool m_bAutoDestroy;
     bool m_bDelayedDestroy;
     bool m_bMouseChildEnabled;
-    bool m_bScrollProcess; // ��ֹSetPosѭ������
+    bool m_bScrollProcess; // 防止SetPos循环调用
 
     CScrollBarUI* m_pVerticalScrollBar;
     CScrollBarUI* m_pHorizontalScrollBar;

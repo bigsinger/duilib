@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "UIHotKey.h"
 namespace DuiLib{
 	CHotKeyWnd::CHotKeyWnd(void) : m_pOwner(NULL), m_hBkBrush(NULL), m_bInit(false)
@@ -23,8 +23,8 @@ namespace DuiLib{
 			::EnableWindow(m_hWnd, m_pOwner->IsEnabled() == true);
 			::ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
 			::SetFocus(m_hWnd);
-			m_bInit = true;   
-		} while (0); 
+			m_bInit = true;
+		} while (0);
 	}
 
 
@@ -126,7 +126,7 @@ namespace DuiLib{
 		if( m_pOwner == NULL ) return 0;
 		GetHotKey(m_pOwner->m_wVirtualKeyCode, m_pOwner->m_wModifiers);
 		if (m_pOwner->m_wVirtualKeyCode == 0) {
-			m_pOwner->m_sText = _T("��");
+			m_pOwner->m_sText = _T("无");
 			m_pOwner->m_wModifiers = 0;
 		}
 		else {
@@ -139,7 +139,7 @@ namespace DuiLib{
 
 	void CHotKeyWnd::SetHotKey(WORD wVirtualKeyCode, WORD wModifiers)
 	{
-		ASSERT(::IsWindow(m_hWnd));  
+		ASSERT(::IsWindow(m_hWnd));
 		::SendMessage(m_hWnd, HKM_SETHOTKEY, MAKEWORD(wVirtualKeyCode, wModifiers), 0L);
 	}
 
@@ -158,9 +158,9 @@ namespace DuiLib{
 	}
 
 	void CHotKeyWnd::SetRules(WORD wInvalidComb, WORD wModifiers)
-	{ 
-		ASSERT(::IsWindow(m_hWnd));  
-		::SendMessage(m_hWnd, HKM_SETRULES, wInvalidComb, MAKELPARAM(wModifiers, 0)); 
+	{
+		ASSERT(::IsWindow(m_hWnd));
+		::SendMessage(m_hWnd, HKM_SETRULES, wInvalidComb, MAKELPARAM(wModifiers, 0));
 	}
 
 
@@ -279,7 +279,7 @@ namespace DuiLib{
 		{
 			if( m_pWindow != NULL ) return;
 		}
-		if( event.Type == UIEVENT_SETFOCUS && IsEnabled() ) 
+		if( event.Type == UIEVENT_SETFOCUS && IsEnabled() )
 		{
 			if( m_pWindow ) return;
 			m_pWindow = new CHotKeyWnd();
@@ -288,12 +288,12 @@ namespace DuiLib{
 			Invalidate();
 		}
 
-		if( event.Type == UIEVENT_KILLFOCUS && IsEnabled() ) 
+		if( event.Type == UIEVENT_KILLFOCUS && IsEnabled() )
 		{
 			Invalidate();
 		}
 
-		if( event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK || event.Type == UIEVENT_RBUTTONDOWN) 
+		if( event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK || event.Type == UIEVENT_RBUTTONDOWN)
 		{
 			if( IsEnabled() ) {
 				GetManager()->ReleaseCapture();
@@ -305,11 +305,11 @@ namespace DuiLib{
 			}
 			return;
 		}
-		if( event.Type == UIEVENT_MOUSEMOVE ) 
+		if( event.Type == UIEVENT_MOUSEMOVE )
 		{
 			return;
 		}
-		if( event.Type == UIEVENT_BUTTONUP ) 
+		if( event.Type == UIEVENT_BUTTONUP )
 		{
 			return;
 		}
@@ -410,8 +410,8 @@ namespace DuiLib{
 		CControlUI::SetPos(rc);
 		if( m_pWindow != NULL ) {
 			RECT rcPos = m_pWindow->CalPos();
-			::SetWindowPos(m_pWindow->GetHWND(), NULL, rcPos.left, rcPos.top, rcPos.right - rcPos.left, 
-				rcPos.bottom - rcPos.top, SWP_NOZORDER | SWP_NOACTIVATE);        
+			::SetWindowPos(m_pWindow->GetHWND(), NULL, rcPos.left, rcPos.top, rcPos.right - rcPos.left,
+				rcPos.bottom - rcPos.top, SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
 

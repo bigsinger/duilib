@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "UIListEx.h"
 
 #if DUI_HAS_FULL_CONTROLS
@@ -104,14 +104,14 @@ namespace DuiLib {
 	}
 
 	void CListExUI::Notify(TNotifyUI& msg)
-	{	
+	{
 		tstring strName = msg.pSender->GetName();
 
-		//��ѡ��
+		// 全选框
 		if(_tcsicmp(msg.sType.c_str(), _T("listheaditemchecked")) == 0)
 		{
 			BOOL bCheck = (BOOL)msg.lParam;
-			//�ж��Ƿ��Ǳ�LIST���͵�notify
+			// 判断是否是本 List 触发的通知
 			CListHeaderUI* pHeader = GetHeader();
 			for (int i = 0; i < pHeader->GetCount(); i++)
 			{
@@ -141,7 +141,7 @@ namespace DuiLib {
 			}
 		}
 
-		//�༭����Ͽ�
+		// 编辑框或组合框
 		if (_tcsicmp(strName.c_str(), _T("ListEx_Edit")) == 0 && m_pEditUI && m_nRow >= 0 && m_nColum >= 0)
 		{
 			if(_tcsicmp(msg.sType.c_str(), DUI_MSGTYPE_SETFOCUS) == 0)
@@ -157,10 +157,10 @@ namespace DuiLib {
 					pRowCtrl->SetText(m_nColum, sText.c_str());
 				}
 
-				//���õ�ǰ����
+				// 清空当前编辑行列
 				SetEditRowAndColum(-1, -1);
 
-				//���ر༭��
+				// 隐藏编辑框
 				RECT rc = {0,0,0,0};
 				m_pEditUI->SetPos(rc);
 				m_pEditUI->SetVisible(false);
@@ -187,7 +187,7 @@ namespace DuiLib {
 					pRowCtrl->SetText(m_nColum, m_pComboBoxUI->GetText().c_str());
 				}
 
-				//������Ͽ�
+				// 隐藏组合框
 				RECT rc = {0,0,0,0};
 				m_pComboBoxUI->SetPos(rc);
 			}
@@ -199,17 +199,17 @@ namespace DuiLib {
 	}
 	void CListExUI::HideEditAndComboCtrl()
 	{
-		//���ر༭��
+		// 隐藏编辑框
 		RECT rc = {0,0,0,0};
 		if(m_pEditUI)
-		{	
+		{
 			m_pEditUI->SetPos(rc);
 
 			m_pEditUI->SetVisible(false);
 		}
 
 		if(m_pComboBoxUI)
-		{	
+		{
 			m_pComboBoxUI->SetPos(rc);
 		}
 	}
@@ -242,38 +242,38 @@ namespace DuiLib {
 		{
 			if (CheckColumEditable(nColum) && GetEditUI())
 			{
-				//���浱ǰ����
+				// 保存当前编辑行列
 				SetEditRowAndColum(nIndex, nColum);
-				
+
 				m_pEditUI->SetVisible(true);
-				//�ƶ�λ��
+				// 移动编辑框位置
 				m_pEditUI->SetFixedWidth(lpRCColum->right - lpRCColum->left);
 				m_pEditUI->SetFixedHeight(lpRCColum->bottom - lpRCColum->top);
 				SIZE cxyFixed = { lpRCColum->left, lpRCColum->top };
 				m_pEditUI->SetFixedXY(cxyFixed);
-				//��������
+				// 设置编辑文本
 				m_pEditUI->SetText(lpstrText);
 
 				m_pEditUI->SetFocus();
 			}
 			else if(CheckColumComboBoxable(nColum) && GetComboBoxUI())
 			{
-				//������Ͽ�
+				// 清空组合框
 				m_pComboBoxUI->RemoveAll();
 
-				//���浱ǰ����
+				// 保存当前编辑行列
 				SetEditRowAndColum(nIndex, nColum);
 
-				//��������
+				// 设置组合框当前文本
 				m_pComboBoxUI->SetText(lpstrText);
 
-				//��ȡ
+				// 通过回调加载组合框候选项
 				if (m_pXCallback)
 				{
 					m_pXCallback->GetItemComboTextArray(m_pComboBoxUI, nIndex, nColum);
 				}
 
-				//�ƶ�λ��
+				// 移动组合框位置
 				m_pComboBoxUI->SetPos(*lpRCColum);
 				m_pComboBoxUI->SetVisible(TRUE);
 			}
@@ -301,15 +301,15 @@ namespace DuiLib {
 			return;
 		}
 
-		//���ѡ�У���ô����Ƿ�ȫ��������ѡ��״̬
+		// 当前行被勾选时，同步检查表头全选状态
 		if (bChecked)
 		{
 			BOOL bCheckAll = TRUE;
-			for(int i = 0; i < GetCount(); i++) 
+			for(int i = 0; i < GetCount(); i++)
 			{
 				CControlUI* p = GetItemAt(i);
 				CListTextExtElementUI* pLItem = static_cast<CListTextExtElementUI*>(p->GetInterface(_T("ListTextExElement")));
-				if( pLItem != NULL && !pLItem->GetCheck()) 
+				if( pLItem != NULL && !pLItem->GetCheck())
 				{
 					bCheckAll = FALSE;
 					break;
@@ -342,7 +342,7 @@ namespace DuiLib {
 	{
 		CControlUI* p = GetItemAt(nIndex);
 		CListTextExtElementUI* pLItem = static_cast<CListTextExtElementUI*>(p->GetInterface(_T("ListTextExElement")));
-		if( pLItem != NULL) 
+		if( pLItem != NULL)
 		{
 			DWORD iTextBkColor = iBKColor;
 			pLItem->SetColumItemColor(nColum, iTextBkColor);
@@ -353,7 +353,7 @@ namespace DuiLib {
 	{
 		CControlUI* p = GetItemAt(nIndex);
 		CListTextExtElementUI* pLItem = static_cast<CListTextExtElementUI*>(p->GetInterface(_T("ListTextExElement")));
-		if( pLItem == NULL) 
+		if( pLItem == NULL)
 		{
 			return FALSE;
 		}
@@ -532,7 +532,7 @@ namespace DuiLib {
 	{
 		if( _tcsicmp(pstrName, _T("dragable")) == 0 ) SetDragable(_tcsicmp(pstrValue, _T("true")) == 0);
 		else if( _tcsicmp(pstrName, _T("sepwidth")) == 0 ) SetSepWidth(_ttoi(pstrValue));
-		else if( _tcsicmp(pstrName, _T("align")) == 0 ) 
+		else if( _tcsicmp(pstrName, _T("align")) == 0 )
 		{
 			if( _tcsstr(pstrValue, _T("left")) != NULL ) {
 				m_uTextStyle &= ~(DT_CENTER | DT_RIGHT);
@@ -547,20 +547,20 @@ namespace DuiLib {
 				m_uTextStyle |= DT_RIGHT;
 			}
 		}
-		else if( _tcsicmp(pstrName, _T("endellipsis")) == 0 ) 
+		else if( _tcsicmp(pstrName, _T("endellipsis")) == 0 )
 		{
 			if( _tcsicmp(pstrValue, _T("true")) == 0 ) m_uTextStyle |= DT_END_ELLIPSIS;
 			else m_uTextStyle &= ~DT_END_ELLIPSIS;
-		}    
+		}
 		else if( _tcsicmp(pstrName, _T("font")) == 0 ) SetFont(_ttoi(pstrValue));
-		else if( _tcsicmp(pstrName, _T("textcolor")) == 0 ) 
+		else if( _tcsicmp(pstrName, _T("textcolor")) == 0 )
 		{
 			if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
 			LPTSTR pstr = NULL;
 			DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
 			SetTextColor(clrColor);
 		}
-		else if( _tcsicmp(pstrName, _T("textpadding")) == 0 ) 
+		else if( _tcsicmp(pstrName, _T("textpadding")) == 0 )
 		{
 			RECT rcTextPadding = { 0 };
 			LPTSTR pstr = NULL;
@@ -608,7 +608,7 @@ namespace DuiLib {
 
 			if( event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK )
 			{
-				if( ::PtInRect(&rcCheckBox, event.ptMouse)) 
+				if( ::PtInRect(&rcCheckBox, event.ptMouse))
 				{
 					m_uCheckBoxState |= UISTATE_PUSHED | UISTATE_CAPTURED;
 					Invalidate();
@@ -616,11 +616,11 @@ namespace DuiLib {
 			}
 			else if( event.Type == UIEVENT_MOUSEMOVE )
 			{
-				if( (m_uCheckBoxState & UISTATE_CAPTURED) != 0 ) 
+				if( (m_uCheckBoxState & UISTATE_CAPTURED) != 0 )
 				{
-					if( ::PtInRect(&rcCheckBox, event.ptMouse) ) 
+					if( ::PtInRect(&rcCheckBox, event.ptMouse) )
 						m_uCheckBoxState |= UISTATE_PUSHED;
-					else 
+					else
 						m_uCheckBoxState &= ~UISTATE_PUSHED;
 					Invalidate();
 				}
@@ -639,7 +639,7 @@ namespace DuiLib {
 			{
 				if( (m_uCheckBoxState & UISTATE_CAPTURED) != 0 )
 				{
-					if( ::PtInRect(&rcCheckBox, event.ptMouse) ) 
+					if( ::PtInRect(&rcCheckBox, event.ptMouse) )
 					{
 						SetCheck(!GetCheck());
 						CContainerUI* pOwner = (CContainerUI*)m_pParent;
@@ -659,7 +659,7 @@ namespace DuiLib {
 			}
 			else if( event.Type == UIEVENT_MOUSEENTER )
 			{
-				if( ::PtInRect(&rcCheckBox, event.ptMouse) ) 
+				if( ::PtInRect(&rcCheckBox, event.ptMouse) )
 				{
 					m_uCheckBoxState |= UISTATE_HOT;
 					Invalidate();
@@ -672,11 +672,11 @@ namespace DuiLib {
 			}
 		}
 
-		if( event.Type == UIEVENT_SETFOCUS ) 
+		if( event.Type == UIEVENT_SETFOCUS )
 		{
 			Invalidate();
 		}
-		if( event.Type == UIEVENT_KILLFOCUS ) 
+		if( event.Type == UIEVENT_KILLFOCUS )
 		{
 			Invalidate();
 		}
@@ -705,7 +705,7 @@ namespace DuiLib {
 		{
 			if( (m_uButtonState & UISTATE_CAPTURED) != 0 ) {
 				m_uButtonState &= ~UISTATE_CAPTURED;
-				if( GetParent() ) 
+				if( GetParent() )
 					GetParent()->NeedParentUpdate();
 			}
 			else if( (m_uButtonState & UISTATE_PUSHED) != 0 ) {
@@ -728,7 +728,7 @@ namespace DuiLib {
 				if( rc.right - rc.left > GetMinWidth() ) {
 					m_cxyFixed.cx = rc.right - rc.left;
 					ptLastMouse = event.ptMouse;
-					if( GetParent() ) 
+					if( GetParent() )
 						GetParent()->NeedParentUpdate();
 				}
 			}
@@ -1016,23 +1016,23 @@ Label_ForeImage:
 
 	void CListContainerHeaderItemUI::SetCheckBoxWidth(int cx)
 	{
-		if( cx < 0 ) return; 
+		if( cx < 0 ) return;
 		m_cxyCheckBox.cx = cx;
 	}
 
-	int CListContainerHeaderItemUI::GetCheckBoxHeight()  const 
+	int CListContainerHeaderItemUI::GetCheckBoxHeight()  const
 	{
 		return m_cxyCheckBox.cy;
 	}
 
 	void CListContainerHeaderItemUI::SetCheckBoxHeight(int cy)
 	{
-		if( cy < 0 ) return; 
+		if( cy < 0 ) return;
 		m_cxyCheckBox.cy = cy;
 	}
 	void CListContainerHeaderItemUI::GetCheckBoxRect(RECT &rc)
 	{
-		memset(&rc, 0x00, sizeof(rc)); 
+		memset(&rc, 0x00, sizeof(rc));
 		int nItemHeight = m_rcItem.bottom - m_rcItem.top;
 		rc.left = m_rcItem.left + 6;
 		rc.top = m_rcItem.top + (nItemHeight - GetCheckBoxHeight()) / 2;
@@ -1053,7 +1053,7 @@ Label_ForeImage:
 	//
 	IMPLEMENT_DUICONTROL(CListTextExtElementUI)
 
-	CListTextExtElementUI::CListTextExtElementUI() : 
+	CListTextExtElementUI::CListTextExtElementUI() :
 	m_nLinks(0), m_nHoverLink(-1), m_pOwner(NULL),m_uCheckBoxState(0),m_bChecked(FALSE)
 	{
 		::ZeroMemory(&m_rcLinks, sizeof(m_rcLinks));
@@ -1138,7 +1138,7 @@ Label_ForeImage:
 					::SetCursor(::LoadCursor(NULL, IDC_HAND));
 					return;
 				}
-			}      
+			}
 		}
 		if( event.Type == UIEVENT_BUTTONUP && IsEnabled() ) {
 			for( int i = 0; i < m_nLinks; i++ ) {
@@ -1169,7 +1169,7 @@ Label_ForeImage:
 			}
 		}
 
-		//����Ƿ���Ҫ��ʾ�༭�������Ͽ�	
+		// 判断是否需要显示编辑框或组合框
 		CListExUI * pListCtrl = (CListExUI *)m_pOwner;
 		int nColum = HitTestColum(event.ptMouse);
 		if(event.Type == UIEVENT_BUTTONUP && m_pOwner->IsFocused())
@@ -1183,7 +1183,7 @@ Label_ForeImage:
 			pListCtrl->OnListItemClicked(GetIndex(), nColum, &rc, GetText(nColum));
 		}
 
-		//����Ƿ���Ҫ��ʾCheckBox
+		// 判断是否需要显示 CheckBox
 		TListInfoUI* pInfo = m_pOwner->GetListInfo();
 		for( int i = 0; i < pInfo->nColumns; i++ )
 		{
@@ -1194,7 +1194,7 @@ Label_ForeImage:
 
 				if( event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK )
 				{
-					if( ::PtInRect(&rcCheckBox, event.ptMouse)) 
+					if( ::PtInRect(&rcCheckBox, event.ptMouse))
 					{
 						m_uCheckBoxState |= UISTATE_PUSHED | UISTATE_CAPTURED;
 						Invalidate();
@@ -1202,11 +1202,11 @@ Label_ForeImage:
 				}
 				else if( event.Type == UIEVENT_MOUSEMOVE )
 				{
-					if( (m_uCheckBoxState & UISTATE_CAPTURED) != 0 ) 
+					if( (m_uCheckBoxState & UISTATE_CAPTURED) != 0 )
 					{
-						if( ::PtInRect(&rcCheckBox, event.ptMouse) ) 
+						if( ::PtInRect(&rcCheckBox, event.ptMouse) )
 							m_uCheckBoxState |= UISTATE_PUSHED;
-						else 
+						else
 							m_uCheckBoxState &= ~UISTATE_PUSHED;
 						Invalidate();
 					}
@@ -1215,7 +1215,7 @@ Label_ForeImage:
 				{
 					if( (m_uCheckBoxState & UISTATE_CAPTURED) != 0 )
 					{
-						if( ::PtInRect(&rcCheckBox, event.ptMouse) ) 
+						if( ::PtInRect(&rcCheckBox, event.ptMouse) )
 						{
 							SetCheck(!GetCheck());
 							if (m_pManager)
@@ -1229,7 +1229,7 @@ Label_ForeImage:
 				}
 				else if( event.Type == UIEVENT_MOUSEENTER )
 				{
-					if( ::PtInRect(&rcCheckBox, event.ptMouse) ) 
+					if( ::PtInRect(&rcCheckBox, event.ptMouse) )
 					{
 						m_uCheckBoxState |= UISTATE_HOT;
 						Invalidate();
@@ -1286,7 +1286,7 @@ Label_ForeImage:
 
 			DWORD iTextBkColor = 0;
 			if (GetColumItemColor(i, iTextBkColor))
-			{	
+			{
 				CRenderEngine::DrawColor(hDC, rcItem, iTextBkColor);
 			}
 
@@ -1295,7 +1295,7 @@ Label_ForeImage:
 			rcItem.top += pInfo->rcTextPadding.top;
 			rcItem.bottom -= pInfo->rcTextPadding.bottom;
 
-			//����Ƿ���Ҫ��ʾCheckBox
+			// 判断是否需要显示 CheckBox
 			if (pListCtrl->CheckColumCheckBoxable(i))
 			{
 				RECT rcCheckBox;
@@ -1303,7 +1303,7 @@ Label_ForeImage:
 				rcItem.left += (rcCheckBox.right - rcCheckBox.left);
 			}
 
-			tstring strText;//��ʹ��LPCTSTR����������̫�� by cddjr 2011/10/20
+			tstring strText;//不使用 LPCTSTR，避免临时字符串生命周期问题 by cddjr 2011/10/20
 			if( pCallback ) strText = pCallback->GetItemText(this, m_iIndex, i);
 			else strText = DuiStringAssign(GetText(i));
 			if( pInfo->bShowHtml )
@@ -1314,7 +1314,7 @@ Label_ForeImage:
 				pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
 
 			m_nLinks += nLinks;
-			nLinks = lengthof(m_rcLinks) - m_nLinks; 
+			nLinks = lengthof(m_rcLinks) - m_nLinks;
 		}
 		for( int i = m_nLinks; i < lengthof(m_rcLinks); i++ ) {
 			::ZeroMemory(m_rcLinks + i, sizeof(RECT));
@@ -1492,18 +1492,18 @@ Label_ForeImage:
 
 	void CListTextExtElementUI::SetCheckBoxWidth(int cx)
 	{
-		if( cx < 0 ) return; 
+		if( cx < 0 ) return;
 		m_cxyCheckBox.cx = cx;
 	}
 
-	int CListTextExtElementUI::GetCheckBoxHeight()  const 
+	int CListTextExtElementUI::GetCheckBoxHeight()  const
 	{
 		return m_cxyCheckBox.cy;
 	}
 
 	void CListTextExtElementUI::SetCheckBoxHeight(int cy)
 	{
-		if( cy < 0 ) return; 
+		if( cy < 0 ) return;
 		m_cxyCheckBox.cy = cy;
 	}
 
@@ -1532,7 +1532,7 @@ Label_ForeImage:
 			rcItem.top += pInfo->rcTextPadding.top;
 			rcItem.bottom -= pInfo->rcTextPadding.bottom;
 
-			if( ::PtInRect(&rcItem, ptMouse)) 
+			if( ::PtInRect(&rcItem, ptMouse))
 			{
 				return i;
 			}

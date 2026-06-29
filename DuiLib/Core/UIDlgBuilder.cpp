@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 
 namespace DuiLib {
 
@@ -7,11 +7,11 @@ CDialogBuilder::CDialogBuilder() : m_pCallback(NULL), m_pstrtype(NULL)
 
 }
 
-CControlUI* CDialogBuilder::Create(STRINGorID xml, LPCTSTR type, IDialogBuilderCallback* pCallback, 
+CControlUI* CDialogBuilder::Create(STRINGorID xml, LPCTSTR type, IDialogBuilderCallback* pCallback,
                                    CPaintManagerUI* pManager, CControlUI* pParent)
 {
-	//��ԴIDΪ0-65535�������ֽڣ��ַ���ָ��Ϊ4���ֽ�
-	//�ַ�����<��ͷ��Ϊ��XML�ַ�����������Ϊ��XML�ļ�
+	//资源ID为0-65535，两个字节；字符串指针为4个字节
+	//字符串以<开头认为是XML字符串，否则认为是XML文件
 
     if( HIWORD(xml.m_lpstr) != NULL ) {
         if( *(xml.m_lpstr) == _T('<') ) {
@@ -138,61 +138,61 @@ CControlUI* CDialogBuilder::Create(IDialogBuilderCallback* pCallback, CPaintMana
                     pstrValue = root.GetAttributeValue(i);
                     if( _tcscmp(pstrName, _T("size")) == 0 ) {
                         LPTSTR pstr = NULL;
-                        int cx = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);    
-                        int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr); 
+                        int cx = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);
+                        int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
                         pManager->SetInitSize(cx, cy);
-                    } 
+                    }
                     else if( _tcscmp(pstrName, _T("sizebox")) == 0 ) {
                         RECT rcSizeBox = { 0 };
                         LPTSTR pstr = NULL;
-                        rcSizeBox.left = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);    
-                        rcSizeBox.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);    
-                        rcSizeBox.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);    
-                        rcSizeBox.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);    
+                        rcSizeBox.left = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);
+                        rcSizeBox.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+                        rcSizeBox.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
+                        rcSizeBox.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
                         pManager->SetSizeBox(rcSizeBox);
                     }
                     else if( _tcscmp(pstrName, _T("caption")) == 0 ) {
                         RECT rcCaption = { 0 };
                         LPTSTR pstr = NULL;
-                        rcCaption.left = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);    
-                        rcCaption.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);    
-                        rcCaption.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);    
-                        rcCaption.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);    
+                        rcCaption.left = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);
+                        rcCaption.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+                        rcCaption.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
+                        rcCaption.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
                         pManager->SetCaptionRect(rcCaption);
                     }
                     else if( _tcscmp(pstrName, _T("roundcorner")) == 0 ) {
                         LPTSTR pstr = NULL;
-                        int cx = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);    
-                        int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr); 
+                        int cx = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);
+                        int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
                         pManager->SetRoundCorner(cx, cy);
-                    } 
+                    }
                     else if( _tcscmp(pstrName, _T("mininfo")) == 0 ) {
                         LPTSTR pstr = NULL;
-                        int cx = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);    
-                        int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr); 
+                        int cx = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);
+                        int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
                         pManager->SetMinInfo(cx, cy);
                     }
                     else if( _tcscmp(pstrName, _T("maxinfo")) == 0 ) {
                         LPTSTR pstr = NULL;
-                        int cx = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);    
-                        int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr); 
+                        int cx = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);
+                        int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
                         pManager->SetMaxInfo(cx, cy);
                     }
                     else if( _tcscmp(pstrName, _T("showdirty")) == 0 ) {
                         pManager->SetShowUpdateRect(_tcscmp(pstrValue, _T("true")) == 0);
-                    } 
+                    }
                     else if( _tcscmp(pstrName, _T("alpha")) == 0 ) {
                         pManager->SetTransparent(_ttoi(pstrValue));
-                    } 
+                    }
                     else if( _tcscmp(pstrName, _T("bktrans")) == 0 ) {
                         pManager->SetBackgroundTransparent(_tcscmp(pstrValue, _T("true")) == 0);
-                    } 
+                    }
                     else if( _tcscmp(pstrName, _T("disabledfontcolor")) == 0 ) {
                         if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
                         LPTSTR pstr = NULL;
                         DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
                         pManager->SetDefaultDisabledColor(clrColor);
-                    } 
+                    }
                     else if( _tcscmp(pstrName, _T("defaultfontcolor")) == 0 ) {
                         if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
                         LPTSTR pstr = NULL;
@@ -204,19 +204,19 @@ CControlUI* CDialogBuilder::Create(IDialogBuilderCallback* pCallback, CPaintMana
                         LPTSTR pstr = NULL;
                         DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
                         pManager->SetDefaultLinkFontColor(clrColor);
-                    } 
+                    }
                     else if( _tcscmp(pstrName, _T("linkhoverfontcolor")) == 0 ) {
                         if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
                         LPTSTR pstr = NULL;
                         DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
                         pManager->SetDefaultLinkHoverFontColor(clrColor);
-                    } 
+                    }
                     else if( _tcscmp(pstrName, _T("selectedcolor")) == 0 ) {
                         if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
                         LPTSTR pstr = NULL;
                         DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
                         pManager->SetDefaultSelectedBkColor(clrColor);
-                    } 
+                    }
                 }
             }
         }
@@ -265,8 +265,8 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
             if ( !node.GetAttributeValue(_T("source"), szValue, cchLen) ) continue;
             for ( int i = 0; i < count; i++ ) {
                 CDialogBuilder builder;
-                if( m_pstrtype != NULL ) { // ʹ����Դdll������Դ�ж�ȡ
-                    WORD id = (WORD)_tcstol(szValue, &pstr, 10); 
+                if( m_pstrtype != NULL ) { // 使用资源dll，从资源中读取
+                    WORD id = (WORD)_tcstol(szValue, &pstr, 10);
                     pControl = builder.Create((UINT)id, m_pstrtype, m_pCallback, pManager, pParent);
                 }
                 else {
@@ -275,7 +275,7 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
             }
             continue;
         }
-		//���ؼ�XML����
+		//树控件XML解析
 #if DUI_HAS_STANDARD_CONTROLS
 		else if( _tcscmp(pstrClass, _T("TreeNode")) == 0 ) {
             CTreeNodeUI* pParentNode	= static_cast<CTreeNodeUI*>(pParent->GetInterface(_T("TreeNode")));
@@ -287,7 +287,7 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
 				}
 			}
 
-			// ���пؼ�Ĭ�������ȳ�ʼ��Ĭ������
+			// 若有控件默认配置先初始化默认属性
 			if( pManager ) {
 				pNode->SetManager(pManager, NULL, false);
 				LPCTSTR pDefaultAttributes = pManager->GetDefaultAttributeList(pstrClass);
@@ -296,7 +296,7 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
 				}
 			}
 
-			// �����������Բ�����Ĭ������
+			// 解析所有属性并覆盖默认属性
 			if( node.HasAttributes() ) {
 				TCHAR szValue[500] = { 0 };
 				SIZE_T cchLen = lengthof(szValue) - 1;
@@ -306,7 +306,7 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
 				}
 			}
 
-			//�����ӽڵ㼰���ӿؼ�
+			//检索子节点及附加控件
 			if(node.HasChildren()){
 				_Parse(&node,pNode,pManager);
 			}
@@ -368,7 +368,7 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
             case 9:
                 if( _tcscmp(pstrClass, DUI_CTR_CONTAINER) == 0 )              pControl = new CContainerUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_TABLAYOUT) == 0 )         pControl = new CTabLayoutUI;
-                else if( _tcscmp(pstrClass, DUI_CTR_SCROLLBAR) == 0 )         pControl = new CScrollBarUI; 
+                else if( _tcscmp(pstrClass, DUI_CTR_SCROLLBAR) == 0 )         pControl = new CScrollBarUI;
 #if DUI_HAS_STANDARD_CONTROLS
                 else if( _tcscmp(pstrClass, DUI_CTR_IPADDRESS) == 0 )         pControl = new CIPAddressUI;
 #endif
@@ -428,7 +428,7 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
 			if( pControl == NULL )
 			{
 #ifdef _DEBUG
-				DUITRACE(_T("δ֪�ؼ�:%s"),pstrClass);
+				DUITRACE(_T("未知控件:%s"),pstrClass);
 #else
 				continue;
 #endif
@@ -437,7 +437,7 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
         if( node.HasChildren() ) {
             _Parse(&node, pControl, pManager);
         }
-		// ��ΪĳЩ���Ժ͸�������أ�����selected��������Add��������
+		// 因为某些属性和父窗口相关，比如selected，必须先Add到父窗口
 		if( pParent != NULL ) {
 #if DUI_HAS_STANDARD_CONTROLS
 			CTreeNodeUI* pContainerNode = static_cast<CTreeNodeUI*>(pParent->GetInterface(_T("TreeNode")));

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 
 namespace DuiLib
 {
@@ -60,7 +60,7 @@ namespace DuiLib
 	{
 		for( int it = 0; it < m_items.GetSize(); it++ ) {
 			if( static_cast<CControlUI*>(m_items[it]) == pControl ) {
-				NeedUpdate();            
+				NeedUpdate();
 				m_items.Remove(it);
 				return m_items.InsertAt(iIndex, pControl);
 			}
@@ -81,7 +81,7 @@ namespace DuiLib
 		if( m_pManager != NULL ) m_pManager->InitControls(pControl, this);
 		if( IsVisible() ) NeedUpdate();
 		else pControl->SetInternVisible(false);
-		return m_items.Add(pControl);   
+		return m_items.Add(pControl);
 	}
 
 	bool CContainerUI::AddAt(CControlUI* pControl, int iIndex)
@@ -102,7 +102,7 @@ namespace DuiLib
 			if( static_cast<CControlUI*>(m_items[it]) == pControl ) {
 				NeedUpdate();
 				if( m_bAutoDestroy ) {
-					if( m_bDelayedDestroy && m_pManager ) m_pManager->AddDelayedCleanup(pControl);             
+					if( m_bDelayedDestroy && m_pManager ) m_pManager->AddDelayedCleanup(pControl);
 					else delete pControl;
 				}
 				return m_items.Remove(it);
@@ -124,7 +124,7 @@ namespace DuiLib
 	void CContainerUI::RemoveAll()
 	{
 		for( int it = 0; m_bAutoDestroy && it < m_items.GetSize(); it++ ) {
-			if( m_bDelayedDestroy && m_pManager ) m_pManager->AddDelayedCleanup(static_cast<CControlUI*>(m_items[it]));             
+			if( m_bDelayedDestroy && m_pManager ) m_pManager->AddDelayedCleanup(static_cast<CControlUI*>(m_items[it]));
 			else delete static_cast<CControlUI*>(m_items[it]);
 		}
 		m_items.Empty();
@@ -192,15 +192,15 @@ namespace DuiLib
 		}
 	}
 
-	// �߼��ϣ�����Container�ؼ��������˷���
-	// ���ô˷����Ľ���ǣ��ڲ��ӿؼ����أ��ؼ�������Ȼ��ʾ��������Ч������
+	// 逻辑上，对于Container控件不公开此方法
+	// 调用此方法的结果是，内部子控件隐藏，控件本身依然显示，背景等效果存在
 	void CContainerUI::SetInternVisible(bool bVisible)
 	{
 		CControlUI::SetInternVisible(bVisible);
 		if( m_items.IsEmpty() ) return;
 		for( int it = 0; it < m_items.GetSize(); it++ ) {
-			// �����ӿؼ���ʾ״̬
-			// InternVisible״̬Ӧ���ӿؼ��Լ�����
+			// 控制子控件显示状态
+			// InternVisible状态应由子控件自己控制
 			static_cast<CControlUI*>(m_items[it])->SetInternVisible(IsVisible());
 		}
 	}
@@ -220,19 +220,19 @@ namespace DuiLib
 			return;
 		}
 
-		if( event.Type == UIEVENT_SETFOCUS ) 
+		if( event.Type == UIEVENT_SETFOCUS )
 		{
 			m_bFocused = true;
 			return;
 		}
-		if( event.Type == UIEVENT_KILLFOCUS ) 
+		if( event.Type == UIEVENT_KILLFOCUS )
 		{
 			m_bFocused = false;
 			return;
 		}
 		if( m_pVerticalScrollBar != NULL && m_pVerticalScrollBar->IsVisible() && m_pVerticalScrollBar->IsEnabled() )
 		{
-			if( event.Type == UIEVENT_KEYDOWN ) 
+			if( event.Type == UIEVENT_KEYDOWN )
 			{
 				switch( event.chKey ) {
 			case VK_DOWN:
@@ -268,7 +268,7 @@ namespace DuiLib
 			}
 		}
 		else if( m_pHorizontalScrollBar != NULL && m_pHorizontalScrollBar->IsVisible() && m_pHorizontalScrollBar->IsEnabled() ) {
-			if( event.Type == UIEVENT_KEYDOWN ) 
+			if( event.Type == UIEVENT_KEYDOWN )
 			{
 				switch( event.chKey ) {
 			case VK_DOWN:
@@ -511,7 +511,7 @@ namespace DuiLib
 		iIndex = CLAMP(iIndex, 0, GetCount() - 1);
 		if( bForward ) {
 			for( int i = iIndex; i < GetCount(); i++ ) {
-				if( GetItemAt(i)->GetInterface(_T("ListItem")) != NULL 
+				if( GetItemAt(i)->GetInterface(_T("ListItem")) != NULL
 					&& GetItemAt(i)->IsVisible()
 					&& GetItemAt(i)->IsEnabled() ) return i;
 			}
@@ -519,7 +519,7 @@ namespace DuiLib
 		}
 		else {
 			for( int i = iIndex; i >= 0; --i ) {
-				if( GetItemAt(i)->GetInterface(_T("ListItem")) != NULL 
+				if( GetItemAt(i)->GetInterface(_T("ListItem")) != NULL
 					&& GetItemAt(i)->IsVisible()
 					&& GetItemAt(i)->IsEnabled() ) return i;
 			}
@@ -593,7 +593,7 @@ namespace DuiLib
 					}
 				}
 
-				pControl->SetPos(rcCtrl); // ���з�float�ӿؼ��Ŵ������ͻ���
+				pControl->SetPos(rcCtrl); // 所有非float子控件放大到整个客户区
 			}
 		}
 	}
@@ -603,10 +603,10 @@ namespace DuiLib
 		if( _tcscmp(pstrName, _T("inset")) == 0 ) {
 			RECT rcInset = { 0 };
 			LPTSTR pstr = NULL;
-			rcInset.left = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);    
-			rcInset.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);    
-			rcInset.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);    
-			rcInset.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);    
+			rcInset.left = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);
+			rcInset.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+			rcInset.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
+			rcInset.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
 			SetInset(rcInset);
 		}
 		else if( _tcscmp(pstrName, _T("mousechild")) == 0 ) SetMouseChildEnabled(_tcscmp(pstrValue, _T("true")) == 0);
@@ -677,9 +677,9 @@ namespace DuiLib
 				if( pControl != NULL ) {
 					if( (uFlags & UIFIND_HITTEST) != 0 && !pControl->IsFloat() && !::PtInRect(&rc, *(static_cast<LPPOINT>(pData))) )
 						continue;
-					else 
+					else
 						return pControl;
-				}            
+				}
 			}
 		}
 		else {
@@ -688,9 +688,9 @@ namespace DuiLib
 				if( pControl != NULL ) {
 					if( (uFlags & UIFIND_HITTEST) != 0 && !pControl->IsFloat() && !::PtInRect(&rc, *(static_cast<LPPOINT>(pData))) )
 						continue;
-					else 
+					else
 						return pControl;
-				} 
+				}
 			}
 		}
 
@@ -763,7 +763,7 @@ namespace DuiLib
 
 	void CContainerUI::SetFloatPos(int iIndex)
 	{
-		// ��ΪCControlUI::SetPos��float�Ĳ���Ӱ�죬���ﲻ�ܶ�float������ӹ�������Ӱ��
+		// 因为CControlUI::SetPos对float的操作影响，这里不能对float组件添加滚动条的影响
 		if( iIndex < 0 || iIndex >= m_items.GetSize() ) return;
 
 		CControlUI* pControl = static_cast<CControlUI*>(m_items[iIndex]);

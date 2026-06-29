@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "UIDateTime.h"
 
 namespace DuiLib
@@ -55,7 +55,7 @@ namespace DuiLib
 		::ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
 		::SetFocus(m_hWnd);
 
-		m_bInit = true;    
+		m_bInit = true;
 	}
 
 	RECT CDateTimeWnd::CalPos()
@@ -168,7 +168,7 @@ namespace DuiLib
 		m_bReadOnly = false;
 		m_pWindow = NULL;
 		m_nDTUpdateFlag=DT_UPDATE;
-		UpdateText();		// add by:daviyang35 ��ʼ������ʱ��ʾʱ��
+		UpdateText();		// add by:daviyang35 初始化界面时显示时间
 		m_nDTUpdateFlag = DT_NONE;
 	}
 
@@ -239,7 +239,7 @@ namespace DuiLib
 		{
 			if( m_pWindow != NULL ) return;
 		}
-		if( event.Type == UIEVENT_SETFOCUS && IsEnabled() ) 
+		if( event.Type == UIEVENT_SETFOCUS && IsEnabled() )
 		{
 			if( m_pWindow ) return;
 			m_pWindow = new CDateTimeWnd();
@@ -247,11 +247,11 @@ namespace DuiLib
 			m_pWindow->Init(this);
 			m_pWindow->ShowWindow();
 		}
-		if( event.Type == UIEVENT_KILLFOCUS && IsEnabled() ) 
+		if( event.Type == UIEVENT_KILLFOCUS && IsEnabled() )
 		{
 			Invalidate();
 		}
-		if( event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK || event.Type == UIEVENT_RBUTTONDOWN) 
+		if( event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK || event.Type == UIEVENT_RBUTTONDOWN)
 		{
 			if( IsEnabled() ) {
 				GetManager()->ReleaseCapture();
@@ -268,11 +268,11 @@ namespace DuiLib
 			}
 			return;
 		}
-		if( event.Type == UIEVENT_MOUSEMOVE ) 
+		if( event.Type == UIEVENT_MOUSEMOVE )
 		{
 			return;
 		}
-		if( event.Type == UIEVENT_BUTTONUP ) 
+		if( event.Type == UIEVENT_BUTTONUP )
 		{
 			return;
 		}

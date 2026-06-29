@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 #include "UIPageControl.h"
 
 #pragma warning(disable:4996)
@@ -322,13 +322,13 @@ namespace DuiLib
             }
         }
 
-        //��������
+        // 更新控件索引
         UpdateItemIndex();
 
-        //����ҳ��
+        // 更新页码文本
         UpdatePageNo(0, true);
 
-        //ѡ��
+        // 选择第一页
         if (m_nSelPageNo == -1 || m_nSelPageNo > m_nShowPage)
         {
             SelectPage(0);
@@ -365,7 +365,7 @@ namespace DuiLib
 		m_BtnGoto->SetPadding(CDuiRect(m_szPage.cx + 10,0,0,0));
         m_BtnGoto->SetFixedWidth(m_szPage.cx + 10);
         m_BtnGoto->SetFixedHeight(m_szPage.cy);
-        controlWidth += m_szPage.cx + m_szPage.cx + 10 + 10;	
+        controlWidth += m_szPage.cx + m_szPage.cx + 10 + 10;
         m_EdtPageNo->SetPadding(CDuiRect(5,(m_szPage.cy - m_szGotoEdit.cy) / 2,0,0));
         m_EdtPageNo->SetFixedWidth(m_szGotoEdit.cx);
         m_EdtPageNo->SetFixedHeight(m_szGotoEdit.cy);
@@ -440,7 +440,7 @@ namespace DuiLib
         if (nGotoPageNo > 0 && nGotoPageNo <= m_nMaxPage)
         {
             int nExistsPageNoIdx = GetIndexByPageNo(nGotoPageNo);
-            //ҳ����ڵ��ǲ������һ��ҳ��
+            // 目标页已经显示，且不是末尾固定页
             if (nExistsPageNoIdx != -1 && nExistsPageNoIdx != m_OptPageNoArr.GetSize() - 1)
             {
                 SelectPage(nExistsPageNoIdx);
@@ -473,7 +473,7 @@ namespace DuiLib
         }
         else if (bAutoGotoOneWhenError)
         {
-            DUITRACE(_T("����Խ�磬ѡ�е�һ��ҳ"));
+            DUITRACE(_T("页码越界，选中第一页"));
             SelectPage(0);
         }
     }
@@ -568,10 +568,10 @@ namespace DuiLib
                 if (iPageIndex == m_OptPageNoArr.GetSize() - 1)
                 {
                     int nPrePageNo = GetPageNoByControl((CControlUI*)m_OptPageNoArr[m_OptPageNoArr.GetSize() - 2]);
-                    //ǰN-1�����µ����һҳ
+                    // 将前 N-1 个页码更新到最后一页之前
                     int nDelta = m_nMaxPage - nPrePageNo - 1;
                     UpdatePageNo(nDelta);
-                    //����more��ť�Ƿ���ʾ
+                    // 更新 more 按钮显示状态
                     UpdateMoreBtnVisiable();
                 }
 
@@ -593,10 +593,10 @@ namespace DuiLib
                 int nFirstPageNo = GetPageNoByControl((COptionUI*)m_OptPageNoArr[0]);
                 int iPageIndex = static_cast<int>(((COptionUI*)m_OptPageNoArr[0])->GetTag());
 
-                //��һ��ҳ����1
+                // 当前第一页页码已经是 1
                 if (nFirstPageNo == 1)
                 {
-                    //����ѡ��,��ǰѡ�в��ǵ�һҳ
+                    // 当前选中不是第一页时，向前选中
                     if (iCurSelIndex != 0) SelectPage(--iCurSelIndex);
                 }
                 else
@@ -604,17 +604,17 @@ namespace DuiLib
                     if (iCurSelIndex < GetShowPageNum() - 1)
                     {
                         {
-                            //ǰN-1��ҳ��-1
+                            // 前 N-1 个页码整体减 1
                             UpdatePageNo(-1);
-                            //���ƶ�����ѡ��
+                            // 保持当前按钮选中
                             SelectPage(iCurSelIndex);
                         }
 
                     }
-                    //(ѡ�����һ��)
+                    // 当前选中最后一个显示页
                     else
                     {
-                        //����ѡ��
+                        // 向前选中
                         SelectPage(--iCurSelIndex);
                     }
                 }
@@ -627,20 +627,20 @@ namespace DuiLib
                 int nCurSelPage = GetCurSel();
                 int nCurSelIdx = static_cast<int>(m_ConCurSel->GetTag());
 
-                //��ǰѡ���ǵ����ڶ���֮ǰ��ҳ
+                // 当前选中位于倒数第二页之前
                 if (nCurSelIdx < GetShowPageNum() - 1)
                 {
-                    //��������һ�����ఴť���߲��ǵ����ڶ�����ť
+                    // 没有 more 按钮，或当前不是 more 前一个按钮
                     if (!IsExistNextMore() || nCurSelIdx != GetShowPageNum() - 2)
                     {
-                        //����ѡ��
+                        // 向后选中
                         SelectPage(++nCurSelIdx);
                     }
-                    else//���ڸ��ఴť
+                    else// 当前位于 more 前一个按钮
                     {
-                        //ҳ��+1
+                        // 页码整体加 1
                         UpdatePageNo(1);
-                        //֪ͨѡ��
+                        // 保持当前按钮选中
                         SelectPage(nCurSelIdx);
                     }
                 }

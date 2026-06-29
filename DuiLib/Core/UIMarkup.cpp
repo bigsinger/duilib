@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 
 #ifndef TRACE
 #define TRACE
@@ -8,7 +8,7 @@
 DECLARE_HANDLE(HZIP);	// An HZIP identifies a zip file that has been opened
 typedef DWORD ZRESULT;
 typedef struct
-{ 
+{
     int index;                 // index of this file within the zip
     char name[MAX_PATH];       // filename within the zip
     DWORD attr;                // attributes, as in GetFileAttributes.
@@ -17,7 +17,7 @@ typedef struct
     long unc_size;             // may be -1 if not yet known (e.g. being streamed in)
 } ZIPENTRY;
 typedef struct
-{ 
+{
     int index;                 // index of this file within the zip
     TCHAR name[MAX_PATH];      // filename within the zip
     DWORD attr;                // attributes, as in GetFileAttributes.
@@ -210,7 +210,7 @@ void CMarkupNode::_MapAttributes()
         pstr += _tcslen(pstr) + 1;
         m_pOwner->_SkipWhitespace(pstr);
         if( *pstr++ != _T('\"') ) return; // if( *pstr != _T('\"') ) { pstr = ::CharNext(pstr); return; }
-        
+
         m_aAttributes[m_nAttributes++].iValue = static_cast<ULONG>(pstr - m_pOwner->m_pstrXML);
         if( m_nAttributes >= MAX_XML_ATTRIBUTES ) return;
         pstr += _tcslen(pstr) + 1;
@@ -263,7 +263,7 @@ bool CMarkup::LoadFromMem(BYTE* pByte, DWORD dwSize, int encoding)
 #ifdef _UNICODE
     if (encoding == XMLFILE_ENCODING_UTF8)
     {
-        if( dwSize >= 3 && pByte[0] == 0xEF && pByte[1] == 0xBB && pByte[2] == 0xBF ) 
+        if( dwSize >= 3 && pByte[0] == 0xEF && pByte[1] == 0xBB && pByte[2] == 0xBF )
         {
             pByte += 3; dwSize -= 3;
         }
@@ -313,7 +313,7 @@ bool CMarkup::LoadFromMem(BYTE* pByte, DWORD dwSize, int encoding)
 #else // !_UNICODE
     if (encoding == XMLFILE_ENCODING_UTF8)
     {
-        if( dwSize >= 3 && pByte[0] == 0xEF && pByte[1] == 0xBB && pByte[2] == 0xBF ) 
+        if( dwSize >= 3 && pByte[0] == 0xEF && pByte[1] == 0xBB && pByte[2] == 0xBF )
         {
             pByte += 3; dwSize -= 3;
         }
@@ -407,8 +407,8 @@ bool CMarkup::LoadFromFile(LPCTSTR pstrFilename, int encoding)
         if( CPaintManagerUI::IsCachedResourceZip() ) hz = (HZIP)CPaintManagerUI::GetResourceZipHandle();
         else hz = OpenZip((void*)sFile.c_str(), 0, 2);
         if( hz == NULL ) return _Failed(_T("Error opening zip file"));
-        ZIPENTRY ze; 
-        int i; 
+        ZIPENTRY ze;
+        int i;
         if( FindZipItem(hz, pstrFilename, true, &i, &ze) != 0 ) return _Failed(_T("Could not find ziped file"));
         DWORD dwSize = ze.unc_size;
         if( dwSize == 0 ) return _Failed(_T("File is empty"));
@@ -466,7 +466,7 @@ bool CMarkup::_Parse(LPTSTR& pstrText, ULONG iParent)
 {
     _SkipWhitespace(pstrText);
     ULONG iPrevious = 0;
-    for( ; ; ) 
+    for( ; ; )
     {
         if( *pstrText == _T('\0') && iParent <= 1 ) return true;
         _SkipWhitespace(pstrText);
@@ -517,11 +517,11 @@ bool CMarkup::_Parse(LPTSTR& pstrText, ULONG iParent)
             // Determine type of next element
             if( *pstrText == _T('\0') && iParent <= 1 ) return true;
             if( *pstrText != _T('<') ) return _Failed(_T("Expected end-tag start"), pstrText);
-            if( pstrText[0] == _T('<') && pstrText[1] != _T('/') ) 
+            if( pstrText[0] == _T('<') && pstrText[1] != _T('/') )
             {
                 if( !_Parse(pstrText, iPos) ) return false;
             }
-            if( pstrText[0] == _T('<') && pstrText[1] == _T('/') ) 
+            if( pstrText[0] == _T('<') && pstrText[1] == _T('/') )
             {
                 *pstrDest = _T('\0');
                 *pstrText = _T('\0');
@@ -561,18 +561,18 @@ void CMarkup::_SkipWhitespace(LPTSTR& pstr) const
 
 void CMarkup::_SkipIdentifier(LPCTSTR& pstr) const
 {
-    // ����ֻ����Ӣ�ģ�������������û������
+    // 属性只能用英文，所以这样处理没有问题
     while( *pstr != _T('\0') && (*pstr == _T('_') || *pstr == _T(':') || _istalnum(*pstr)) ) pstr = ::CharNext(pstr);
 }
 
 void CMarkup::_SkipIdentifier(LPTSTR& pstr) const
 {
-    // ����ֻ����Ӣ�ģ�������������û������
+    // 属性只能用英文，所以这样处理没有问题
     while( *pstr != _T('\0') && (*pstr == _T('_') || *pstr == _T(':') || _istalnum(*pstr)) ) pstr = ::CharNext(pstr);
 }
 
 bool CMarkup::_ParseAttributes(LPTSTR& pstrText)
-{   
+{
     if( *pstrText == _T('>') ) return true;
     *pstrText++ = _T('\0');
     _SkipWhitespace(pstrText);

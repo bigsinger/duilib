@@ -1,4 +1,4 @@
-#ifndef __UILABEL_H__
+﻿#ifndef __UILABEL_H__
 #define __UILABEL_H__
 
 #pragma once
@@ -24,16 +24,16 @@ namespace DuiLib
 		void SetTextStyle(UINT uStyle);
 		UINT GetTextStyle() const;
 
-		// ������һ����������Ľӿڣ����ֻ�����ü򵥵�rgb���԰�װ����ӿڵ�
+		// 设置了一个易于理解的接口，如果只是设置简单的rgb可以安装这个接口调
 		void SetTextColor(IN BYTE r, IN BYTE g, IN BYTE b);
 
-		// ����Ǵ������ط���ȡ��RGB��ʽ��ɫ������ֱ��ʹ�ã��ڲ���ת��
+		// 如果是从其他地方获取的RGB格式颜色，可以直接使用，内部会转换
 		void SetTextColorRGB(COLORREF rgb);
 
-		// ���õ���ARGB��Photoshop��ʽ��������RGB��VC��ʽ����
+		// 设置的是ARGB（Photoshop格式），不是RGB（VC格式）！
 		void SetTextColor(ARGB dwTextColor);
 
-		// ���ص���ARGB��ע������RGB���ֽ���֯�ṹ
+		// 返回的是ARGB，注意区别RGB的字节组织结构
 		ARGB GetTextColor() const;
 
 		void SetDisabledTextColor(DWORD dwTextColor);
@@ -86,7 +86,7 @@ namespace DuiLib
 		bool		GetEnabledStroke();
 		void		SetEnabledShadow(bool _EnabledShadowe);
 		bool		GetEnabledShadow();
-		
+
 	protected:
 		ARGB	m_dwTextColor;
 		DWORD	m_dwDisabledTextColor;

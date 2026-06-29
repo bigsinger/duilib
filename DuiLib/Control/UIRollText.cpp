@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "UIRollText.h"
 
 #if DUI_HAS_STANDARD_CONTROLS
@@ -44,10 +44,10 @@ namespace DuiLib
 		}
 		m_nText_W_H = 0;
 		if (m_pManager == NULL) return;
-	
+
 		m_pManager->KillTimer(this, ROLLTEXT_TIMERID);
 		m_pManager->SetTimer(this, ROLLTEXT_TIMERID, lTimeSpan);
-	
+
 		m_pManager->KillTimer(this, ROLLTEXT_ROLL_END);
 		m_pManager->SetTimer(this, ROLLTEXT_ROLL_END, lMaxTimeLimited*1000);
 
@@ -62,20 +62,20 @@ namespace DuiLib
 			m_pManager->KillTimer(this, ROLLTEXT_ROLL_END);
 			m_pManager->KillTimer(this, ROLLTEXT_TIMERID);
 		}
-		
+
 		m_bUseRoll = FALSE;
 	}
 
 	void CRollTextUI::SetPos(RECT rc)
 	{
 		CLabelUI::SetPos(rc);
-		m_nText_W_H = 0;			//���ֱ仯���¼���
+		m_nText_W_H = 0;			// 控件尺寸变化时重新计算文本滚动范围
 	}
 
 	void CRollTextUI::SetText( LPCTSTR pstrText )
 	{
 		CLabelUI::SetText(pstrText);
-		m_nText_W_H = 0;			//�ı��仯���¼���
+		m_nText_W_H = 0;			// 文本变化时重新计算文本滚动范围
 	}
 
 	void CRollTextUI::DoEvent(TEventUI& event)
@@ -87,7 +87,7 @@ namespace DuiLib
 				m_pManager->SendNotify(this, DUI_MSGTYPE_TEXTROLLEND);
 			}
 		}
-		else if( event.Type == UIEVENT_TIMER && event.wParam == ROLLTEXT_TIMERID ) 
+		else if( event.Type == UIEVENT_TIMER && event.wParam == ROLLTEXT_TIMERID )
 		{
 			Invalidate();
 			return;
@@ -138,14 +138,14 @@ namespace DuiLib
 		if (m_bUseRoll && m_nText_W_H > 0) {
 			int nScrollRange = 0;
 
-			if (m_nRollDirection == ROLLTEXT_LEFT || m_nRollDirection == ROLLTEXT_RIGHT) {	//�����ƶ�
+			if (m_nRollDirection == ROLLTEXT_LEFT || m_nRollDirection == ROLLTEXT_RIGHT) {	// 水平滚动
 				nScrollRange = m_nText_W_H + rcClient.GetWidth();
 
 				rcClient.Offset((m_nRollDirection == ROLLTEXT_LEFT?rcClient.GetWidth():-rcClient.GetWidth()), 0);
 				rcClient.Offset((m_nRollDirection == ROLLTEXT_LEFT?-m_nScrollPos:m_nScrollPos), 0);
 				rcClient.right += (m_nText_W_H - rcClient.GetWidth());
 			}
-			else {																		//�����ƶ�
+			else {															// 垂直滚动
 				nScrollRange = m_nText_W_H + rcClient.GetHeight();
 				rcClient.Offset(0, (m_nRollDirection == ROLLTEXT_UP?rcClient.GetHeight():-rcClient.GetHeight()));
 				rcClient.Offset(0, (m_nRollDirection == ROLLTEXT_UP?-m_nScrollPos:m_nScrollPos));

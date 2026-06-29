@@ -1,4 +1,4 @@
-#ifndef __UILISTEX_H__
+﻿#ifndef __UILISTEX_H__
 #define __UILISTEX_H__
 
 #pragma once
@@ -30,7 +30,7 @@ namespace DuiLib {
 		UINT GetControlFlags() const;
 		LPVOID GetInterface(LPCTSTR pstrName);
 
-	public: 
+	public:
 		virtual void DoEvent(TEventUI& event);
 
 	public:
@@ -136,13 +136,13 @@ namespace DuiLib {
 		tstring m_sSepImage;
 		tstring m_sSepImageModify;
 
-		//֧�ֱ༭
+		// 支持编辑
 		BOOL m_bEditable;
 
-		//֧����Ͽ�
+		// 支持组合框
 		BOOL m_bComboable;
 
-		//֧�ָ�ѡ��
+		// 支持复选框
 		BOOL m_bCheckBoxable;
 
 	public:
@@ -194,12 +194,12 @@ namespace DuiLib {
 		LPCTSTR GetCheckBoxForeImage();
 		void SetCheckBoxForeImage(LPCTSTR pStrImage);
 
-		void GetCheckBoxRect(RECT &rc);	
+		void GetCheckBoxRect(RECT &rc);
 
-		int GetCheckBoxWidth() const;       // ʵ�ʴ�Сλ��ʹ��GetPos��ȡ������õ�����Ԥ��Ĳο�ֵ
-		void SetCheckBoxWidth(int cx);      // Ԥ��Ĳο�ֵ
-		int GetCheckBoxHeight() const;      // ʵ�ʴ�Сλ��ʹ��GetPos��ȡ������õ�����Ԥ��Ĳο�ֵ
-		void SetCheckBoxHeight(int cy);     // Ԥ��Ĳο�ֵ
+		int GetCheckBoxWidth() const;       // 实际尺寸通过 GetPos 获取，这里是预设参考值
+		void SetCheckBoxWidth(int cx);      // 预设参考值
+		int GetCheckBoxHeight() const;      // 实际尺寸通过 GetPos 获取，这里是预设参考值
+		void SetCheckBoxHeight(int cy);     // 预设参考值
 
 
 	public:
@@ -207,7 +207,7 @@ namespace DuiLib {
 		void SetOwner(CContainerUI* pOwner);
 		CContainerUI* GetOwner();
 	};
-	 
+
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
 
@@ -281,13 +281,13 @@ namespace DuiLib {
 		LPCTSTR GetCheckBoxForeImage();
 		void SetCheckBoxForeImage(LPCTSTR pStrImage);
 
-		void GetCheckBoxRect(int nIndex, RECT &rc);	
+		void GetCheckBoxRect(int nIndex, RECT &rc);
 		void GetColumRect(int nColum, RECT &rc);
 
-		int GetCheckBoxWidth() const;       // ʵ�ʴ�Сλ��ʹ��GetPos��ȡ������õ�����Ԥ��Ĳο�ֵ
-		void SetCheckBoxWidth(int cx);      // Ԥ��Ĳο�ֵ
-		int GetCheckBoxHeight() const;      // ʵ�ʴ�Сλ��ʹ��GetPos��ȡ������õ�����Ԥ��Ĳο�ֵ
-		void SetCheckBoxHeight(int cy);     // Ԥ��Ĳο�ֵ
+		int GetCheckBoxWidth() const;       // 实际尺寸通过 GetPos 获取，这里是预设参考值
+		void SetCheckBoxWidth(int cx);      // 预设参考值
+		int GetCheckBoxHeight() const;      // 实际尺寸通过 GetPos 获取，这里是预设参考值
+		void SetCheckBoxHeight(int cy);     // 预设参考值
 
 		void SetCheck(BOOL bCheck);
 		BOOL GetCheck() const;

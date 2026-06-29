@@ -1,4 +1,4 @@
-#ifndef __UIPageControl_H
+﻿#ifndef __UIPageControl_H
 #define __UIPageControl_H
 
 #pragma once
@@ -12,32 +12,32 @@ namespace DuiLib
         ~CPageControlUI();
         void SetMaxPages(int nPages, int nShowNum = 6);
         void SetMaxChar(int nNum = 2);
-        //��������[font="1"]
+        // 设置字体 [font="1"]
         void SetFont(int nFont);
 
-        //����ҳ��ѡ�е���ɫ[pageselectedtextcolor]
+        // 设置选中页码文字颜色 [pageselectedtextcolor]
         void SetPageSelectedTextColor(DWORD cr = 0xFF4EB857);
-        //����ѡ�е�ҳ��ť����ɫ[pageselectedbkcolor]
+        // 设置选中页码按钮背景色 [pageselectedbkcolor]
         void SetPageSelectedBkColor(DWORD cr = 0x00000000);
 
-        //����ҳ��������ɫ[pagetextcolor]
+        // 设置普通页码文字颜色 [pagetextcolor]
         void SetPageNormalTextColor(DWORD cr = 0xff000000);
-        //���ð�ť������ɫ[pagebkcolor]
+        // 设置按钮普通背景色 [pagebkcolor]
         void SetPageBkColor(DWORD cr = 0x00000000);
 
-        //����hot��ť����ɫ[pagehotbkcolor]
+        // 设置 Hot 状态按钮背景色 [pagehotbkcolor]
         void SetPageHotBkColor(DWORD cr = 0x00000000);
-        //����hot������ɫ[pagehottextcolor]
+        // 设置 Hot 状态文字颜色 [pagehottextcolor]
         void SetPageHotTextColor(DWORD cr = 0x00000000);
 
 
-        //����ҳ�밴ť�Ĵ�С[pagesize="30,30"]
+        // 设置页码按钮尺寸 [pagesize="30,30"]
         void SetPageNoSize(int w = 30, int h = 30);
-        //����goto��ť�Ĵ�С[gotoeditsize="1,1"]
+        // 设置跳转编辑框尺寸 [gotoeditsize="1,1"]
         void SetGotoEditSize(int w = 30, int h = 26);
-        //����GotoEdit�߿���ɫ[gotoeditbordercolor="0x00000000"]
+        // 设置跳转编辑框边框颜色 [gotoeditbordercolor="0x00000000"]
         void SetGotoEditBorderColor(DWORD cr = 0x00000000);
-        //����GotoEdit�߿�Ĵ�С[gotoeditbordersize="1"]
+        // 设置跳转编辑框边框大小 [gotoeditbordersize="1"]
         void SetGotoEditBorderSize(int size = 1);
 
     public:
@@ -86,7 +86,7 @@ namespace DuiLib
         CButtonUI* m_BtnGoto;
         CEditUI* m_EdtPageNo;
 
-        COptionUI* m_ConCurSel;    //��ǰ�ǵڼ�ҳ
+        COptionUI* m_ConCurSel;    // 当前选中的页码控件
     };
 }
 #endif
