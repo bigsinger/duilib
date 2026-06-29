@@ -1,10 +1,39 @@
 #include "stdafx.h"
 #include "UISwitchButton.h"
 
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
+
 namespace DuiLib
 {
 	namespace
 	{
+		class SharedGdiplusScope
+		{
+		public:
+			SharedGdiplusScope()
+			{
+				Gdiplus::GdiplusStartup(&token_, &input_, NULL);
+			}
+
+			~SharedGdiplusScope()
+			{
+				if( token_ != 0 ) {
+					Gdiplus::GdiplusShutdown(token_);
+					token_ = 0;
+				}
+			}
+
+		private:
+			ULONG_PTR token_ = 0;
+			Gdiplus::GdiplusStartupInput input_;
+		};
+
+		void EnsureSharedGdiplus()
+		{
+			static SharedGdiplusScope scope;
+		}
+
 		DWORD ParseSwitchColor(LPCTSTR pstrValue)
 		{
 			if( pstrValue == NULL ) return 0;
@@ -13,22 +42,36 @@ namespace DuiLib
 			return _tcstoul(pstrValue, &pstr, 16);
 		}
 
-		COLORREF ToColorRef(DWORD dwColor)
+		BYTE ColorChannel(DWORD dwColor, int shift)
 		{
-			return RGB(GetBValue(dwColor), GetGValue(dwColor), GetRValue(dwColor));
+			return static_cast<BYTE>((dwColor >> shift) & 0xFF);
 		}
 
-		void FillRoundRect(HDC hDC, const RECT& rc, int nRound, DWORD dwColor)
+		Gdiplus::Color BlendArgb(DWORD baseColor, DWORD overlayColor, float overlayWeight)
 		{
-			HBRUSH hBrush = ::CreateSolidBrush(ToColorRef(dwColor));
-			HPEN hPen = ::CreatePen(PS_SOLID, 1, ToColorRef(dwColor));
-			HGDIOBJ hOldBrush = ::SelectObject(hDC, hBrush);
-			HGDIOBJ hOldPen = ::SelectObject(hDC, hPen);
-			::RoundRect(hDC, rc.left, rc.top, rc.right, rc.bottom, nRound, nRound);
-			::SelectObject(hDC, hOldBrush);
-			::SelectObject(hDC, hOldPen);
-			::DeleteObject(hPen);
-			::DeleteObject(hBrush);
+			const BYTE baseA = ColorChannel(baseColor, 24);
+			const BYTE baseR = ColorChannel(baseColor, 16);
+			const BYTE baseG = ColorChannel(baseColor, 8);
+			const BYTE baseB = ColorChannel(baseColor, 0);
+			const BYTE overR = ColorChannel(overlayColor, 16);
+			const BYTE overG = ColorChannel(overlayColor, 8);
+			const BYTE overB = ColorChannel(overlayColor, 0);
+			const float baseWeight = 1.0f - overlayWeight;
+			return Gdiplus::Color(
+				baseA,
+				static_cast<BYTE>(baseR * baseWeight + overR * overlayWeight),
+				static_cast<BYTE>(baseG * baseWeight + overG * overlayWeight),
+				static_cast<BYTE>(baseB * baseWeight + overB * overlayWeight));
+		}
+
+		void AddRoundRect(Gdiplus::GraphicsPath& path, const Gdiplus::RectF& rc, float radius)
+		{
+			const float diameter = radius * 2.0f;
+			path.AddArc(rc.X, rc.Y, diameter, diameter, 180.0f, 90.0f);
+			path.AddArc(rc.X + rc.Width - diameter, rc.Y, diameter, diameter, 270.0f, 90.0f);
+			path.AddArc(rc.X + rc.Width - diameter, rc.Y + rc.Height - diameter, diameter, diameter, 0.0f, 90.0f);
+			path.AddArc(rc.X, rc.Y + rc.Height - diameter, diameter, diameter, 90.0f, 90.0f);
+			path.CloseFigure();
 		}
 	}
 
@@ -189,30 +232,71 @@ namespace DuiLib
 
 	void CSwitchButtonUI::PaintStatusImage(HDC hDC)
 	{
+		EnsureSharedGdiplus();
+
 		RECT rcTrack = m_rcItem;
 		const int nHeight = rcTrack.bottom - rcTrack.top;
 		const int nWidth = rcTrack.right - rcTrack.left;
 		if( nHeight <= 0 || nWidth <= 0 ) return;
 
-		const int nInset = max(2, nHeight / 12);
-		const int nThumb = max(1, nHeight - nInset * 2);
+		const float nInset = static_cast<float>(max(3, nHeight / 8));
+		const float nThumb = max(1.0f, static_cast<float>(nHeight) - nInset * 2.0f);
 		const DWORD dwTrackColor = !IsEnabled() ? m_dwDisabledColor : (m_bSelected ? m_dwOnColor : m_dwOffColor);
 		const DWORD dwThumbColor = ((m_uButtonState & UISTATE_HOT) != 0 && IsEnabled()) ? m_dwHotThumbColor : m_dwThumbColor;
 
-		FillRoundRect(hDC, rcTrack, nHeight, GetAdjustColor(dwTrackColor));
+		Gdiplus::Graphics graphics(hDC);
+		graphics.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+		graphics.SetPixelOffsetMode(Gdiplus::PixelOffsetModeHighQuality);
 
-		RECT rcThumb = { 0 };
-		rcThumb.top = rcTrack.top + nInset;
-		rcThumb.bottom = rcThumb.top + nThumb;
+		Gdiplus::RectF track(
+			static_cast<Gdiplus::REAL>(rcTrack.left) + 0.5f,
+			static_cast<Gdiplus::REAL>(rcTrack.top) + 0.5f,
+			static_cast<Gdiplus::REAL>(nWidth) - 1.0f,
+			static_cast<Gdiplus::REAL>(nHeight) - 1.0f);
+		Gdiplus::GraphicsPath trackPath;
+		AddRoundRect(trackPath, track, track.Height / 2.0f);
+
+		const DWORD adjustedTrack = GetAdjustColor(dwTrackColor);
+		Gdiplus::LinearGradientBrush trackBrush(
+			track,
+			BlendArgb(adjustedTrack, 0xFFFFFFFF, IsEnabled() ? 0.10f : 0.04f),
+			BlendArgb(adjustedTrack, 0xFF000000, IsEnabled() ? 0.08f : 0.02f),
+			Gdiplus::LinearGradientModeVertical);
+		graphics.FillPath(&trackBrush, &trackPath);
+
+		Gdiplus::Pen trackBorder(
+			BlendArgb(adjustedTrack, m_bSelected ? 0xFFFFFFFF : 0xFF000000, m_bSelected ? 0.22f : 0.18f),
+			1.0f);
+		graphics.DrawPath(&trackBorder, &trackPath);
+
+		float thumbLeft = static_cast<float>(rcTrack.left) + nInset;
 		if( m_bSelected ) {
-			rcThumb.right = rcTrack.right - nInset;
-			rcThumb.left = rcThumb.right - nThumb;
+			thumbLeft = static_cast<float>(rcTrack.right) - nInset - nThumb;
 		}
-		else {
-			rcThumb.left = rcTrack.left + nInset;
-			rcThumb.right = rcThumb.left + nThumb;
-		}
-		FillRoundRect(hDC, rcThumb, nThumb, GetAdjustColor(dwThumbColor));
+
+		Gdiplus::RectF shadow(
+			thumbLeft,
+			static_cast<float>(rcTrack.top) + nInset + 1.0f,
+			nThumb,
+			nThumb);
+		Gdiplus::SolidBrush shadowBrush(Gdiplus::Color(IsEnabled() ? 55 : 28, 0, 0, 0));
+		graphics.FillEllipse(&shadowBrush, shadow);
+
+		Gdiplus::RectF thumb(
+			thumbLeft,
+			static_cast<float>(rcTrack.top) + nInset,
+			nThumb,
+			nThumb);
+		const DWORD adjustedThumb = GetAdjustColor(dwThumbColor);
+		Gdiplus::LinearGradientBrush thumbBrush(
+			thumb,
+			BlendArgb(adjustedThumb, 0xFFFFFFFF, 0.18f),
+			BlendArgb(adjustedThumb, 0xFF000000, 0.08f),
+			Gdiplus::LinearGradientModeVertical);
+		graphics.FillEllipse(&thumbBrush, thumb);
+
+		Gdiplus::Pen thumbBorder(Gdiplus::Color(IsEnabled() ? 90 : 40, 0, 0, 0), 1.0f);
+		graphics.DrawEllipse(&thumbBorder, thumb);
 	}
 
 	void CSwitchButtonUI::PaintText(HDC hDC)

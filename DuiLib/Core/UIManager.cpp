@@ -535,9 +535,11 @@ bool CPaintManagerUI::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, LR
     TNotifyUI* pMsg = NULL;
     while( pMsg = static_cast<TNotifyUI*>(m_aAsyncNotify.GetAt(0)) ) {
         m_aAsyncNotify.Remove(0);
-        if( pMsg->pSender != NULL ) {
-            if( pMsg->pSender->OnNotify ) pMsg->pSender->OnNotify(pMsg);
+        if( pMsg->pSender == NULL ) {
+            delete pMsg;
+            continue;
         }
+        if( pMsg->pSender->OnNotify ) pMsg->pSender->OnNotify(pMsg);
         for( int j = 0; j < m_aNotifiers.GetSize(); j++ ) {
             static_cast<INotifyUI*>(m_aNotifiers[j])->Notify(*pMsg);
         }
@@ -1081,9 +1083,11 @@ bool CPaintManagerUI::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, LR
     pMsg = NULL;
     while( pMsg = static_cast<TNotifyUI*>(m_aAsyncNotify.GetAt(0)) ) {
         m_aAsyncNotify.Remove(0);
-        if( pMsg->pSender != NULL ) {
-            if( pMsg->pSender->OnNotify ) pMsg->pSender->OnNotify(pMsg);
+        if( pMsg->pSender == NULL ) {
+            delete pMsg;
+            continue;
         }
+        if( pMsg->pSender->OnNotify ) pMsg->pSender->OnNotify(pMsg);
         for( int j = 0; j < m_aNotifiers.GetSize(); j++ ) {
             static_cast<INotifyUI*>(m_aNotifiers[j])->Notify(*pMsg);
         }
@@ -1152,6 +1156,19 @@ void CPaintManagerUI::ReapObjects(CControlUI* pControl)
         TNotifyUI* pMsg = static_cast<TNotifyUI*>(m_aAsyncNotify[i]);
         if( pMsg->pSender == pControl ) pMsg->pSender = NULL;
     }    
+}
+
+void CPaintManagerUI::ReapObjectsRecursive(CControlUI* pControl)
+{
+    if( pControl == NULL ) return;
+    pControl->FindControl(__ReapObjects, this, UIFIND_ALL | UIFIND_ME_FIRST);
+}
+
+CControlUI* CALLBACK CPaintManagerUI::__ReapObjects(CControlUI* pThis, LPVOID pData)
+{
+    CPaintManagerUI* pManager = static_cast<CPaintManagerUI*>(pData);
+    if( pManager != NULL && pThis != NULL ) pManager->ReapObjects(pThis);
+    return NULL;
 }
 
 bool CPaintManagerUI::AddOptionGroup(LPCTSTR pStrGroupName, CControlUI* pControl)

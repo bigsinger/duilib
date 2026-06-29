@@ -188,10 +188,11 @@ public:
     static const tstring& GetResourceZip();
     static bool IsCachedResourceZip();
     static HANDLE GetResourceZipHandle();
-    static void SetInstance(HINSTANCE hInst);
-    static void SetCurrentPath(LPCTSTR pStrPath);
-    static void SetResourceDll(HINSTANCE hInst);
-    static void SetResourcePath(LPCTSTR pStrPath);
+	static void SetInstance(HINSTANCE hInst);
+	static void SetCurrentPath(LPCTSTR pStrPath);
+	static void SetResourceDll(HINSTANCE hInst);
+	static void SetResourcePath(LPCTSTR pStrPath);
+	static void SetResourcePath(const tstring& path) { SetResourcePath(path.c_str()); }
 	static void SetResourceZip(LPVOID pVoid, unsigned int len);
     static void SetResourceZip(LPCTSTR pstrZip, bool bCachedResourceZip = false);
     static void GetHSL(short* H, short* S, short* L);
@@ -252,9 +253,10 @@ public:
     const CStdStringPtrMap& GetDefaultAttribultes() const;
     void RemoveAllDefaultAttributeList();
 
-    bool AttachDialog(CControlUI* pControl);
-    bool InitControls(CControlUI* pControl, CControlUI* pParent = NULL);
-    void ReapObjects(CControlUI* pControl);
+	bool AttachDialog(CControlUI* pControl);
+	bool InitControls(CControlUI* pControl, CControlUI* pParent = NULL);
+	void ReapObjects(CControlUI* pControl);
+	void ReapObjectsRecursive(CControlUI* pControl);
 
     bool AddOptionGroup(LPCTSTR pStrGroupName, CControlUI* pControl);
     CStdPtrArray* GetOptionGroup(LPCTSTR pStrGroupName);
@@ -319,7 +321,8 @@ public:
 	void UsedVirtualWnd(bool bUsed);
 
 private:
-    static CControlUI* CALLBACK __FindControlFromNameHash(CControlUI* pThis, LPVOID pData);
+	static CControlUI* CALLBACK __FindControlFromNameHash(CControlUI* pThis, LPVOID pData);
+	static CControlUI* CALLBACK __ReapObjects(CControlUI* pThis, LPVOID pData);
     static CControlUI* CALLBACK __FindControlFromCount(CControlUI* pThis, LPVOID pData);
     static CControlUI* CALLBACK __FindControlFromPoint(CControlUI* pThis, LPVOID pData);
     static CControlUI* CALLBACK __FindControlFromTab(CControlUI* pThis, LPVOID pData);
