@@ -6,6 +6,8 @@ using namespace std;
 
 #pragma once
 
+#if DUI_HAS_STANDARD_CONTROLS
+
 namespace DuiLib
 {
 	class CTreeViewUI;
@@ -33,7 +35,7 @@ namespace DuiLib
 		void	SetVisibleTag(bool _IsVisible);
 		bool	GetVisibleTag();
 		void	SetItemText(LPCTSTR pstrValue);
-		CDuiString	GetItemText();
+		tstring	GetItemText();
 		void	CheckBoxSelected(bool _Selected);
 		bool	IsCheckBoxSelected() const;
 		bool	IsHasChild() const;
@@ -106,6 +108,7 @@ namespace DuiLib
 	public:
 		virtual LPCTSTR GetClass() const;
 		virtual LPVOID	GetInterface(LPCTSTR pstrName);
+		virtual bool Add(CControlUI* pControl);
 		virtual bool Add(CTreeNodeUI* pControl );
 		virtual long AddAt(CTreeNodeUI* pControl, int iIndex );
 		virtual bool AddAt(CTreeNodeUI* pControl,CTreeNodeUI* _IndexNode);
@@ -137,5 +140,6 @@ namespace DuiLib
 	};
 }
 
+#endif
 
 #endif // UITreeView_h__

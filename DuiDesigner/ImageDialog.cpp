@@ -38,7 +38,10 @@ void CMyColorButton::OnDraw(CDC* pDC, const CRect& rect, UINT uiState)
 	// Draw current color and color's value:
 	//---------------------------
 	CString strColor;
-	color==(COLORREF)-1?strColor=_T("нч"):strColor.Format(_T("0x%06x"),color);
+	if(color == (COLORREF)-1)
+		strColor = _T("\u65E0");
+	else
+		strColor.Format(_T("0x%06x"), color);
 
 	rectColor.right = rectColor.left + rectColor.Height();
 

@@ -98,7 +98,6 @@
 #define ID_FORMEDIT_ALIGN_TOP           323
 #define IDD_SKINFILE_NEW                323
 #define ID_FORMEDIT_ALIGN_BOTTOM        324
-#define IDI_TOOLBOX_ACTIVE              324
 #define ID_FORMEDIT_ALIGN_CENTER_VERTICALLY 325
 #define IDI_TOOLBOX_BUTTON              325
 #define ID_FORMEDIT_ALIGN_CENTER_HORIZONTALLY 326
@@ -195,7 +194,6 @@
 #define ID_UI_CONTROL_COMBO             32799
 #define ID_UI_CONTROL_PROGRESS          32800
 #define ID_UI_CONTROL_SLIDER            32801
-#define ID_UI_CONTROL_ACTIVEX           32802
 #define ID_UI_LAYOUT_VERTICAL           32804
 #define ID_UI_LAYOUT_HORIZONTAL         32806
 #define ID_UI_LAYOUT_CONTAINER          32808

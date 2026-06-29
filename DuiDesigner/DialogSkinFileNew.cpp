@@ -90,8 +90,10 @@ void CDialogSkinFileNew::OnLbnSelchangeListStyle()
 
 	m_lstStyles.GetText(nIndex, strText);
 	CString strStyleDir;
-	strStyleDir = (strText == _T("(нч)")) ? _T("") : CGlobalVariable::GetStylesDir() \
-		+ strText;
+	if(strText == _T("(\u65E0)"))
+		strStyleDir.Empty();
+	else
+		strStyleDir = CGlobalVariable::GetStylesDir() + strText;
 	if(!strStyleDir.IsEmpty())
 	{
 		m_strStyleFile = strStyleDir + _T("\\style.xml");

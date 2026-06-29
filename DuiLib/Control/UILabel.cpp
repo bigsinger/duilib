@@ -7,6 +7,35 @@ using namespace std;
 
 namespace DuiLib
 {
+	namespace
+	{
+		class SharedGdiplusScope
+		{
+		public:
+			SharedGdiplusScope()
+			{
+				GdiplusStartup(&token_, &input_, NULL);
+			}
+
+			~SharedGdiplusScope()
+			{
+				if (token_ != 0) {
+					GdiplusShutdown(token_);
+					token_ = 0;
+				}
+			}
+
+		private:
+			ULONG_PTR token_ = 0;
+			GdiplusStartupInput input_;
+		};
+
+		void EnsureSharedGdiplus()
+		{
+			// 动态属性面板会频繁创建和销毁 Label，GDI+ 生命周期必须进程级共享。
+			static SharedGdiplusScope scope;
+		}
+	}
 
 	Color _MakeRGB(int a, Color cl)
 	{
@@ -42,11 +71,11 @@ namespace DuiLib
 		m_EnabledShadow(false),
 		m_GradientLength(0)
 	{
+		EnsureSharedGdiplus();
 		m_ShadowOffset.X		= 0.0f;
 		m_ShadowOffset.Y		= 0.0f;
 		m_ShadowOffset.Width	= 0.0f;
 		m_ShadowOffset.Height	= 0.0f;
-		GdiplusStartup( &m_gdiplusToken,&m_gdiplusStartupInput, NULL);
 
 		::ZeroMemory(&m_rcTextPadding, sizeof(m_rcTextPadding));
 	}
@@ -61,14 +90,7 @@ namespace DuiLib
 	//************************************
 	CLabelUI::~CLabelUI()
 	{
-		try
-		{
-			GdiplusShutdown( m_gdiplusToken );
-		}
-		catch (...)
-		{
-			throw "CLabelUI::~CLabelUI";
-		}
+		m_gdiplusToken = 0;
 	}
 
 	LPCTSTR CLabelUI::GetClass() const
@@ -329,22 +351,22 @@ namespace DuiLib
 
 		if(!GetEnabledEffect())
 		{
-			if( m_sText.IsEmpty() ) return;
+			if( m_sText.empty() ) return;
 			int nLinks = 0;
 			if( IsEnabled() ) {
 				if( m_bShowHtml )
-					CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwTextColor, \
+					CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText.c_str(), m_dwTextColor, \
 					NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
 				else
-					CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwTextColor, \
+					CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText.c_str(), m_dwTextColor, \
 					m_iFont, DT_SINGLELINE | m_uTextStyle);
 			}
 			else {
 				if( m_bShowHtml )
-					CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, \
+					CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText.c_str(), m_dwDisabledTextColor, \
 					NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
 				else
-					CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, \
+					CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText.c_str(), m_dwDisabledTextColor, \
 					m_iFont, DT_SINGLELINE | m_uTextStyle);
 			}
 		}
@@ -378,43 +400,43 @@ namespace DuiLib
 				
 #ifdef _UNICODE
 				nRc.Offset(-1,0);
-				nGraphics.DrawString(m_TextValue,m_TextValue.GetLength(),&nFont,nRc,&format,&nLineGrBrushStroke);
+				nGraphics.DrawString(m_TextValue.c_str(),static_cast<INT>(m_TextValue.length()),&nFont,nRc,&format,&nLineGrBrushStroke);
 				nRc.Offset(2,0);
-				nGraphics.DrawString(m_TextValue,m_TextValue.GetLength(),&nFont,nRc,&format,&nLineGrBrushStroke);
+				nGraphics.DrawString(m_TextValue.c_str(),static_cast<INT>(m_TextValue.length()),&nFont,nRc,&format,&nLineGrBrushStroke);
 				nRc.Offset(-1,-1);
-				nGraphics.DrawString(m_TextValue,m_TextValue.GetLength(),&nFont,nRc,&format,&nLineGrBrushStroke);
+				nGraphics.DrawString(m_TextValue.c_str(),static_cast<INT>(m_TextValue.length()),&nFont,nRc,&format,&nLineGrBrushStroke);
 				nRc.Offset(0,2);
-				nGraphics.DrawString(m_TextValue,m_TextValue.GetLength(),&nFont,nRc,&format,&nLineGrBrushStroke);
+				nGraphics.DrawString(m_TextValue.c_str(),static_cast<INT>(m_TextValue.length()),&nFont,nRc,&format,&nLineGrBrushStroke);
 				nRc.Offset(0,-1);
 #else
 				USES_CONVERSION;
-				wstring mTextValue = A2W(m_TextValue.GetData());
+				wstring mTextValue = A2W(m_TextValue.c_str());
 
 				nRc.Offset(-1,0);
-				nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nRc,&format,&nLineGrBrushStroke);
+				nGraphics.DrawString(mTextValue.c_str(),static_cast<INT>(mTextValue.length()),&nFont,nRc,&format,&nLineGrBrushStroke);
 				nRc.Offset(2,0);
-				nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nRc,&format,&nLineGrBrushStroke);
+				nGraphics.DrawString(mTextValue.c_str(),static_cast<INT>(mTextValue.length()),&nFont,nRc,&format,&nLineGrBrushStroke);
 				nRc.Offset(-1,-1);
-				nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nRc,&format,&nLineGrBrushStroke);
+				nGraphics.DrawString(mTextValue.c_str(),static_cast<INT>(mTextValue.length()),&nFont,nRc,&format,&nLineGrBrushStroke);
 				nRc.Offset(0,2);
-				nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nRc,&format,&nLineGrBrushStroke);
+				nGraphics.DrawString(mTextValue.c_str(),static_cast<INT>(mTextValue.length()),&nFont,nRc,&format,&nLineGrBrushStroke);
 				nRc.Offset(0,-1);
 #endif
 				
 			}
 #ifdef _UNICODE
 			if(GetEnabledShadow() && (GetTextShadowColorA() > 0 || GetTextShadowColorB() > 0))
-				nGraphics.DrawString(m_TextValue,m_TextValue.GetLength(),&nFont,nShadowRc,&format,&nLineGrBrushA);
+				nGraphics.DrawString(m_TextValue.c_str(),static_cast<INT>(m_TextValue.length()),&nFont,nShadowRc,&format,&nLineGrBrushA);
 
-			nGraphics.DrawString(m_TextValue,m_TextValue.GetLength(),&nFont,nRc,&format,&nLineGrBrushB);
+			nGraphics.DrawString(m_TextValue.c_str(),static_cast<INT>(m_TextValue.length()),&nFont,nRc,&format,&nLineGrBrushB);
 #else
 			USES_CONVERSION;
-			wstring mTextValue = A2W(m_TextValue.GetData());
+			wstring mTextValue = A2W(m_TextValue.c_str());
 
 			if(GetEnabledShadow() && (GetTextShadowColorA() > 0 || GetTextShadowColorB() > 0))
-				nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nShadowRc,&format,&nLineGrBrushA);
+				nGraphics.DrawString(mTextValue.c_str(),static_cast<INT>(mTextValue.length()),&nFont,nShadowRc,&format,&nLineGrBrushA);
 
-			nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nRc,&format,&nLineGrBrushB);
+			nGraphics.DrawString(mTextValue.c_str(),static_cast<INT>(mTextValue.length()),&nFont,nRc,&format,&nLineGrBrushB);
 #endif
 			
 		}
@@ -590,11 +612,11 @@ namespace DuiLib
 	// Method:    GetText
 	// FullName:  CLabelUI::GetText
 	// Access:    public 
-	// Returns:   UiLib::CDuiString
+	// Returns:   UiLib::tstring
 	// Qualifier: const
 	// Note:	  
 	//************************************
-	CDuiString CLabelUI::GetText() const
+	tstring CLabelUI::GetText() const
 	{
 		try
 		{

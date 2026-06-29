@@ -36,11 +36,11 @@ namespace DuiLib
 		UINT m_uButtonState;
 		int m_nStep;
 
-		CDuiString m_sThumbImage;
-		CDuiString m_sThumbHotImage;
-		CDuiString m_sThumbPushedImage;
+		tstring m_sThumbImage;
+		tstring m_sThumbHotImage;
+		tstring m_sThumbPushedImage;
 
-		CDuiString m_sImageModify;
+		tstring m_sImageModify;
 	};
 }
 

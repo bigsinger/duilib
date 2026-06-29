@@ -46,7 +46,7 @@ UILIB_RESOURCETYPE WindowImplBase::GetResourceType() const
 	return UILIB_FILE;
 }
 
-CDuiString WindowImplBase::GetZIPFileName() const
+tstring WindowImplBase::GetZIPFileName() const
 {
 	return _T("");
 }
@@ -111,7 +111,7 @@ LRESULT WindowImplBase::OnNcCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	}
 
 	if ( ::IsZoomed(m_hWnd))
-	{	// ×î´ó»¯Ê±£¬¼ÆËãµ±Ç°ÏÔÊ¾Æ÷×îÊÊºÏ¿í¸ß¶È
+	{	// ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ãµ±Ç°ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ÊºÏ¿ï¿½ï¿½ß¶ï¿½
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof(oMonitor);
 		::GetMonitorInfo(::MonitorFromWindow(*this, MONITOR_DEFAULTTONEAREST), &oMonitor);
@@ -184,7 +184,7 @@ LRESULT WindowImplBase::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam,
 	CDuiRect rcMonitor = oMonitor.rcMonitor;
 	rcWork.Offset(-oMonitor.rcMonitor.left, -oMonitor.rcMonitor.top);
 
-	// ¼ÆËã×î´ó»¯Ê±£¬ÕýÈ·µÄÔ­µã×ø±ê
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	lpMMI->ptMaxPosition.x	= rcWork.left;
 	lpMMI->ptMaxPosition.y	= rcWork.top;
 
@@ -269,17 +269,17 @@ LRESULT WindowImplBase::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 	m_PaintManager.AddPreMessageFilter(this);
 
 	CDialogBuilder builder;
-	if (m_PaintManager.GetResourcePath().IsEmpty())
-	{	// ÔÊÐí¸üÁé»îµÄ×ÊÔ´Â·¾¶¶¨Òå
-		CDuiString strResourcePath=m_PaintManager.GetInstancePath();
-		strResourcePath+=GetSkinFolder().GetData();
-		m_PaintManager.SetResourcePath(strResourcePath.GetData());
+	if (m_PaintManager.GetResourcePath().empty())
+	{	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		tstring strResourcePath=m_PaintManager.GetInstancePath();
+		strResourcePath+=GetSkinFolder().c_str();
+		m_PaintManager.SetResourcePath(strResourcePath.c_str());
 	}
 
 	switch(GetResourceType())
 	{
 	case UILIB_ZIP:
-		m_PaintManager.SetResourceZip(GetZIPFileName().GetData(), true);
+		m_PaintManager.SetResourceZip(GetZIPFileName().c_str(), true);
 		break;
 	case UILIB_ZIPRESOURCE:
 		{
@@ -314,15 +314,15 @@ LRESULT WindowImplBase::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 	CControlUI* pRoot=NULL;
 	if (GetResourceType()==UILIB_RESOURCE)
 	{
-		STRINGorID xml(_ttoi(GetSkinFile().GetData()));
+		STRINGorID xml(_ttoi(GetSkinFile().c_str()));
 		pRoot = builder.Create(xml, _T("xml"), this, &m_PaintManager);
 	}
 	else
-		pRoot = builder.Create(GetSkinFile().GetData(), NULL, this, &m_PaintManager);
+		pRoot = builder.Create(GetSkinFile().c_str(), NULL, this, &m_PaintManager);
 	ASSERT(pRoot);
 	if (pRoot==NULL)
 	{
-		MessageBox(NULL,_T("¼ÓÔØ×ÊÔ´ÎÄ¼þÊ§°Ü"),_T("Duilib"),MB_OK|MB_ICONERROR);
+		MessageBox(NULL,_T("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Ä¼ï¿½Ê§ï¿½ï¿½"),_T("Duilib"),MB_OK|MB_ICONERROR);
 		ExitProcess(1);
 		return 0;
 	}
@@ -425,7 +425,7 @@ LONG WindowImplBase::GetStyle()
 
 void WindowImplBase::OnClick(TNotifyUI& msg)
 {
-	CDuiString sCtrlName = msg.pSender->GetName();
+	tstring sCtrlName = msg.pSender->GetName();
 	if( sCtrlName == _T("closebtn") )
 	{
 		Close();

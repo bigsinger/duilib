@@ -12,13 +12,13 @@ namespace DuiLib
 
 		void Init();
 		void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
-		void SetChildLayoutXML(CDuiString pXML);
-		DuiLib::CDuiString GetChildLayoutXML();
+		void SetChildLayoutXML(tstring pXML);
+		DuiLib::tstring GetChildLayoutXML();
 		virtual LPVOID GetInterface(LPCTSTR pstrName);
 		virtual LPCTSTR GetClass() const;
 
 	private:
-		DuiLib::CDuiString m_pstrXMLFile;
+		DuiLib::tstring m_pstrXMLFile;
 	};
 } // namespace DuiLib
 #endif // __UICHILDLAYOUT_H__

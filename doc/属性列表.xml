@@ -283,39 +283,6 @@
 		<Attribute name="childpadding" default="0" type="DWORD" comment="子控件之间的额外距离,如(4)"/>
 		<Attribute name="selectedid" default="0" type="INT" comment="默认选中的页面id,如(0)"/>
 	</TabLayout>
-	<ActiveX parent="Control" notifies="setfocus killfocus timer menu showactivex windowinit(root)">
-		<Attribute name="name" default="" type="STRING" comment="控件名字，同一窗口内必须唯一，如(testbtn)"/>
-		<Attribute name="pos" default="0,0,0,0" type="RECT" comment="位置，如果为float控件则指定位置和大小，否则只指定大小,如(0,0,100,100)"/>
-		<Attribute name="padding" default="0,0,0,0" type="RECT" comment="外边距,如(2,2,2,2)"/>
-		<Attribute name="bkcolor" default="0x00000000" type="DWORD" comment="背景颜色,如(0xFFFF0000)"/>
-		<Attribute name="bkcolor2" default="0x00000000" type="DWORD" comment="背景渐变色2,和bkcolor配合使用,如(0xFFFFFF00)"/>
-		<Attribute name="bkcolor3" default="0x00000000" type="DWORD" comment="背景渐变色3,和bkcolor、bkcolor2配合使用,如(0xFFFF00FF)"/>
-		<Attribute name="bordercolor" default="0x00000000" type="DWORD" comment="边框颜色,如(0xFF000000)"/>
-		<Attribute name="focusbordercolor" default="0x00000000" type="DWORD" comment="获得焦点时边框的颜色,如(0xFFFF0000)"/>
-		<Attribute name="colorhsl" default="false" type="BOOL" comment="本控件的颜色是否随窗口的hsl变化而变化,如(false)"/>
-		<Attribute name="bordersize" default="1" type="INT" comment="边框大小，如(1)"/>
-		<Attribute name="borderround" default="0,0" type="SIZE" comment="边框圆角半径,如(2,2)"/>
-		<Attribute name="bkimage" default="" type="STRING" comment="背景图片,如(bk.bmp或file='aaa.jpg' res='' restype='0' dest='0,0,0,0' source='0,0,0,0' corner='0,0,0,0' mask='#FF0000' fade='255' hole='false' xtiled='false' ytiled='false')"/>
-		<Attribute name="width" default="0" type="INT" comment="控件预设的宽度，如(100)"/>
-		<Attribute name="height" default="0" type="INT" comment="控件预设的高度，如(30)"/>
-		<Attribute name="minwidth" default="0" type="INT" comment="控件的最小宽度，如(100)"/>
-		<Attribute name="minheight" default="0" type="INT" comment="控件的最小高度，如(30)"/>
-		<Attribute name="maxwidth" default="9999" type="INT" comment="控件的最大宽度，如(100)"/>
-		<Attribute name="maxheight" default="9999" type="INT" comment="控件的最大高度，如(30)"/>
-		<Attribute name="text" default="" type="STRING" comment="显示文本,如(测试文本)"/>
-		<Attribute name="tooltip" default="" type="STRING" comment="鼠标悬浮提示,如(请在这里输入你的密码)"/>
-		<Attribute name="userdata" default="" type="STRING" comment="自定义标识"/>
-		<Attribute name="enabled" default="true" type="BOOL" comment="是否可以响应用户操作,如(true)"/>
-		<Attribute name="mouse" default="true" type="BOOL" comment="本控件是否可以响应鼠标操作,如(true)"/>
-		<Attribute name="mousechild" default="true" type="BOOL" comment="本控件的子控件是否可以响应用户操作,如(true)"/>
-		<Attribute name="visible" default="true" type="BOOL" comment="是否可见,如(true)"/>
-		<Attribute name="float" default="false" type="BOOL" comment="是否使用绝对定位,如(true)"/>
-		<Attribute name="shortcut" default="" type="CHAR" comment="对应的快捷键,如(P)"/>
-		<Attribute name="menu" default="false" type="BOOL" comment="是否需要右键菜单,如(true)"/>
-		<Attribute name="clsid" default="" type="STRING" comment="activex的clsid,如({8856F961-340A-11D0-A96B-00C04FD705A2})"/>
-		<Attribute name="modulename" default="" type="STRING" comment="activex从指定位置加载,如(flash/flash.ocx)"/>
-		<Attribute name="delaycreate" default="true" type="BOOL" comment="是否需要延迟创建activex,如(false)"/>
-	</ActiveX>
 	<Combo parent="Container" notifies="setfocus killfocus timer menu dropdown itemselect windowinit(root)">
 		<Attribute name="name" default="" type="STRING" comment="控件名字，同一窗口内必须唯一，如(testbtn)"/>
 		<Attribute name="pos" default="0,0,0,0" type="RECT" comment="位置，如果为float控件则指定位置和大小，否则只指定大小,如(0,0,100,100)"/>
@@ -592,6 +559,17 @@
 	<CheckBox parent="Option" notifies="setfocus killfocus timer menu click selectchanged windowinit(root)" />
 	<!--UiLib 扩展的UI元素对象-->
 	<CheckBox parent="Option" notifies="setfocus killfocus timer menu click selectchanged windowinit(root)" />
+	<SwitchButton parent="Button" notifies="setfocus killfocus timer menu click selectchanged windowinit(root)">
+		<Attribute name="selected" default="false" type="BOOL" comment="是否处于打开状态"/>
+		<Attribute name="checked" default="false" type="BOOL" comment="selected 的兼容别名"/>
+		<Attribute name="ontext" default="" type="STRING" comment="打开状态显示文本"/>
+		<Attribute name="offtext" default="" type="STRING" comment="关闭状态显示文本"/>
+		<Attribute name="oncolor" default="0xFF2E8B57" type="DWORD" comment="打开状态轨道颜色"/>
+		<Attribute name="offcolor" default="0xFF9CA3AF" type="DWORD" comment="关闭状态轨道颜色"/>
+		<Attribute name="disabledcolor" default="0xFFD1D5DB" type="DWORD" comment="禁用状态轨道颜色"/>
+		<Attribute name="thumbcolor" default="0xFFFFFFFF" type="DWORD" comment="滑块颜色"/>
+		<Attribute name="hotthumbcolor" default="0xFFF3F4F6" type="DWORD" comment="鼠标悬浮时滑块颜色"/>
+	</SwitchButton>
 	<Text parent="Label" notifies="setfocus killfocus timer menu link windowinit(root)">
 		<Attribute name="name" default="" type="STRING" comment="控件名字，同一窗口内必须唯一，如(testbtn)"/>
 		<Attribute name="pos" default="0,0,0,0" type="RECT" comment="位置，如果为float控件则指定位置和大小，否则只指定大小,如(0,0,100,100)"/>

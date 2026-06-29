@@ -26,6 +26,20 @@ CString& CGlobalVariable::GetCurPath()
 		int nPos = m_strCurPath.ReverseFind('\\');
 		if(nPos != -1)
 			m_strCurPath = m_strCurPath.Left(nPos + 1);
+
+        CString strPath = m_strCurPath;
+        strPath.TrimRight(_T("\\/"));
+        nPos = strPath.ReverseFind('\\');
+        if(nPos != -1)
+        {
+            CString strDirName = strPath.Mid(nPos + 1);
+            if(strDirName.CompareNoCase(_T("Full")) == 0
+                || strDirName.CompareNoCase(_T("x64")) == 0
+                || strDirName.CompareNoCase(_T("x64Full")) == 0)
+            {
+                m_strCurPath = strPath.Left(nPos + 1);
+            }
+        }
 	}
 
 	return m_strCurPath;

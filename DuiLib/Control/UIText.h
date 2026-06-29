@@ -15,7 +15,7 @@ namespace DuiLib
 		UINT GetControlFlags() const;
 		LPVOID GetInterface(LPCTSTR pstrName);
 
-		CDuiString* GetLinkContent(int iIndex);
+		tstring* GetLinkContent(int iIndex);
 
 		void DoEvent(TEventUI& event);
 		SIZE EstimateSize(SIZE szAvailable);
@@ -26,7 +26,7 @@ namespace DuiLib
 		enum { MAX_LINK = 8 };
 		int m_nLinks;
 		RECT m_rcLinks[MAX_LINK];
-		CDuiString m_sLinks[MAX_LINK];
+		tstring m_sLinks[MAX_LINK];
 		int m_nHoverLink;
 	};
 

@@ -54,14 +54,22 @@
 #ifdef _DEBUG
 //#       pragma comment(lib, "..\\Lib\\tinyxmld.lib")
 #   ifdef _UNICODE
-#       pragma comment(lib, "..\\Lib\\DuiLib_ud.lib")
+#       ifdef _WIN64
+#           pragma comment(lib, "..\\bin\\x64\\DuiLib_ud.lib")
+#       else
+#           pragma comment(lib, "..\\bin\\DuiLib_ud.lib")
+#       endif
 #   else
 #       pragma comment(lib, "..\\Lib\\DuiLib_d.lib")
 #   endif
 #else
 //#       pragma comment(lib, "..\\Lib\\tinyxml.lib")
 #   ifdef _UNICODE
-#       pragma comment(lib, "..\\Lib\\DuiLib_u.lib")
+#       ifdef _WIN64
+#           pragma comment(lib, "..\\bin\\x64\\DuiLib_u.lib")
+#       else
+#           pragma comment(lib, "..\\bin\\DuiLib_u.lib")
+#       endif
 #   else
 #       pragma comment(lib, "..\\Lib\\DuiLib.lib")
 #   endif
@@ -119,7 +127,6 @@ enum UIClass
 	classList,
 	classSlider,
 	classProgress,
-	classActiveX,
 	classContainer,
 	classVerticalLayout,
 	classHorizontalLayout,
@@ -131,10 +138,10 @@ enum UIClass
 	classListLabelElement,
 	classListExpandElement,
 	classListContainerElement,
+	classSwitchButton,
 	classItem,
 	classScrollBar,
 	classChildLayout,
-	classWebBrowser
 };
 
 typedef struct tagExtendedAttributes
@@ -176,6 +183,7 @@ using DuiLib::CRenderEngine;
 using DuiLib::CDialogBuilder;
 using DuiLib::CControlUI;
 using DuiLib::CButtonUI;
+using DuiLib::CSwitchButtonUI;
 using DuiLib::CEditUI;
 using DuiLib::CRichEditUI;
 using DuiLib::CLabelUI;
@@ -186,8 +194,6 @@ using DuiLib::CComboUI;
 using DuiLib::CListUI;
 using DuiLib::CSliderUI;
 using DuiLib::CProgressUI;
-using DuiLib::CActiveXUI;
-using DuiLib::CWebBrowserUI;
 using DuiLib::CContainerUI;
 using DuiLib::CChildLayoutUI;
 using DuiLib::CVerticalLayoutUI;

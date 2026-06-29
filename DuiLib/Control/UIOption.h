@@ -47,14 +47,14 @@ namespace DuiLib
 
 	protected:
 		bool			m_bSelected;
-		CDuiString		m_sGroupName;
+		tstring		m_sGroupName;
 
 		DWORD			m_dwSelectedBkColor;
 		DWORD			m_dwSelectedTextColor;
 
-		CDuiString		m_sSelectedImage;
-		CDuiString		m_sSelectedHotImage;
-		CDuiString		m_sForeImage;
+		tstring		m_sSelectedImage;
+		tstring		m_sSelectedHotImage;
+		tstring		m_sForeImage;
 	};
 
 } // namespace DuiLib

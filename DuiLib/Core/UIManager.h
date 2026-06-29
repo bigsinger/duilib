@@ -85,7 +85,7 @@ typedef enum _EVENTTYPE_UI
 typedef struct tagTFontInfo
 {
     HFONT hFont;
-    CDuiString sFontName;
+    tstring sFontName;
     int iSize;
     bool bBold;
     bool bUnderline;
@@ -99,7 +99,7 @@ typedef struct tagTImageInfo
     int nX;
     int nY;
     bool alphaChannel;
-    CDuiString sResType;
+    tstring sResType;
     DWORD dwMask;
 } TImageInfo;
 
@@ -181,11 +181,11 @@ public:
     void SetShowUpdateRect(bool show);
 
     static HINSTANCE GetInstance();
-    static CDuiString GetInstancePath();
-    static CDuiString GetCurrentPath();
+    static tstring GetInstancePath();
+    static tstring GetCurrentPath();
     static HINSTANCE GetResourceDll();
-    static const CDuiString& GetResourcePath();
-    static const CDuiString& GetResourceZip();
+    static const tstring& GetResourcePath();
+    static const tstring& GetResourceZip();
     static bool IsCachedResourceZip();
     static HANDLE GetResourceZipHandle();
     static void SetInstance(HINSTANCE hInst);
@@ -217,13 +217,17 @@ public:
     void SetDefaultFont(LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
     DWORD GetCustomFontCount() const;
     HFONT AddFont(LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
+    HFONT AddFont(const tstring& sFontName, int nSize, bool bBold, bool bUnderline, bool bItalic) { return AddFont(sFontName.c_str(), nSize, bBold, bUnderline, bItalic); }
     HFONT AddFontAt(int index, LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
     HFONT GetFont(int index);
     HFONT GetFont(LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
+    HFONT GetFont(const tstring& sFontName, int nSize, bool bBold, bool bUnderline, bool bItalic) { return GetFont(sFontName.c_str(), nSize, bBold, bUnderline, bItalic); }
     bool FindFont(HFONT hFont);
     bool FindFont(LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
+    bool FindFont(const tstring& sFontName, int nSize, bool bBold, bool bUnderline, bool bItalic) { return FindFont(sFontName.c_str(), nSize, bBold, bUnderline, bItalic); }
     int GetFontIndex(HFONT hFont);
     int GetFontIndex(LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
+    int GetFontIndex(const tstring& sFontName, int nSize, bool bBold, bool bUnderline, bool bItalic) { return GetFontIndex(sFontName.c_str(), nSize, bBold, bUnderline, bItalic); }
     bool RemoveFont(HFONT hFont);
     bool RemoveFontAt(int index);
     void RemoveAllFonts();
@@ -232,7 +236,11 @@ public:
 
     const TImageInfo* GetImage(LPCTSTR bitmap);
     const TImageInfo* GetImageEx(LPCTSTR bitmap, LPCTSTR type = NULL, DWORD mask = 0);
+    const TImageInfo* GetImageEx(const tstring& bitmap, LPCTSTR type = NULL, DWORD mask = 0) { return GetImageEx(bitmap.c_str(), type, mask); }
+    const TImageInfo* GetImageEx(const tstring& bitmap, const tstring& type, DWORD mask = 0) { return GetImageEx(bitmap.c_str(), type.c_str(), mask); }
     const TImageInfo* AddImage(LPCTSTR bitmap, LPCTSTR type = NULL, DWORD mask = 0);
+    const TImageInfo* AddImage(const tstring& bitmap, LPCTSTR type = NULL, DWORD mask = 0) { return AddImage(bitmap.c_str(), type, mask); }
+    const TImageInfo* AddImage(const tstring& bitmap, const tstring& type, DWORD mask = 0) { return AddImage(bitmap.c_str(), type.c_str(), mask); }
     const TImageInfo* AddImage(LPCTSTR bitmap, HBITMAP hBitmap, int iWidth, int iHeight, bool bAlpha);
     bool RemoveImage(LPCTSTR bitmap);
     void RemoveAllImages();
@@ -293,8 +301,11 @@ public:
     CControlUI* GetRoot() const;
     CControlUI* FindControl(POINT pt) const;
     CControlUI* FindControl(LPCTSTR pstrName) const;
+    CControlUI* FindControl(const tstring& sName) const { return FindControl(sName.c_str()); }
+    CControlUI* FindControlUtf8(std::string_view name) const;
     CControlUI* FindSubControlByPoint(CControlUI* pParent, POINT pt) const;
     CControlUI* FindSubControlByName(CControlUI* pParent, LPCTSTR pstrName) const;
+    CControlUI* FindSubControlByNameUtf8(CControlUI* pParent, std::string_view name) const;
     CControlUI* FindSubControlByClass(CControlUI* pParent, LPCTSTR pstrClass, int iIndex = 0);
     CStdPtrArray* FindSubControlsByClass(CControlUI* pParent, LPCTSTR pstrClass);
     CStdPtrArray* GetSubControlsByClass();
@@ -379,8 +390,8 @@ private:
     //
     static HINSTANCE m_hInstance;
     static HINSTANCE m_hResourceInstance;
-    static CDuiString m_pStrResourcePath;
-    static CDuiString m_pStrResourceZip;
+    static tstring m_pStrResourcePath;
+    static tstring m_pStrResourceZip;
     static bool m_bCachedResourceZip;
     static HANDLE m_hResourceZip;
     static short m_H;
@@ -390,7 +401,7 @@ private:
     static CStdPtrArray m_aPlugins;
 
 public:
-	static CDuiString m_pStrDefaultFontName;
+	static tstring m_pStrDefaultFontName;
 	CStdPtrArray m_aTranslateAccelerator;
 private:
 	BOOL	m_bCanResize;

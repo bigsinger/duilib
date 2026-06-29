@@ -125,7 +125,7 @@ public:
 	void DrawAuxBorder(CDC* pDC,CControlUI* pControl);
 	void DrawGrid(CDC* pDC,CRect& rect);
 
-	static CControlUI* NewUI(int nClass,CRect& rect,CControlUI* pParent, CLayoutManager* pLayout);
+	static CControlUI* NewUI(int nClass,const CRect& rect,CControlUI* pParent, CLayoutManager* pLayout);
 	static BOOL DeleteUI(CControlUI* pControl);
 	static void ReleaseExtendedAttrib(CControlUI* pControl, CPaintManagerUI* pManager);
 	CPaintManagerUI* GetManager();
@@ -184,12 +184,10 @@ protected:
 	static void SaveContainerProperty(CControlUI* pControl, TiXmlElement* pNode);
 	static void SaveHorizontalLayoutProperty(CControlUI* pControl, TiXmlElement* pNode);
 	static void SaveTileLayoutProperty(CControlUI* pControl, TiXmlElement* pNode);
-	static void SaveActiveXProperty(CControlUI* pControl, TiXmlElement* pNode);
 	static void SaveListContainerElementProperty(CControlUI* pControl, TiXmlElement* pNode);
 	static void SaveItemProperty(CControlUI* pControl, TiXmlElement* pNode);
 	static void SaveTabLayoutProperty(CControlUI* pControl, TiXmlElement* pNode);
 	static void SaveChildWindowProperty(CControlUI* pControl, TiXmlElement* pNode);
-	static void SaveWebBrowserProperty(CControlUI* pControl, TiXmlElement* pNode);
 
 	static CString ConvertImageFileName(LPCTSTR pstrImageAttrib);
 

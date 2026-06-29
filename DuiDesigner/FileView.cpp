@@ -434,7 +434,7 @@ void CFileView::OpenSkinFile(HTREEITEM hItem)
 	AfxGetApp()->OpenDocumentFile(strFilePath);
 }
 
-CDocument* CFileView::FindSkinFile(CString& strPath)
+CDocument* CFileView::FindSkinFile(const CString& strPath)
 {
 	CDocTemplate* pDocTemplate = theApp.GetUIDocTemplate();
 	POSITION posDoc = pDocTemplate->GetFirstDocPosition();

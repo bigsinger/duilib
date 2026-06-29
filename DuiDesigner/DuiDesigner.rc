@@ -84,7 +84,6 @@ IDI_PROPERTIES_WND_HC   ICON                    "res\\properties_wnd_hc.ico"
 IDI_RES_VIEW            ICON                    "res\\res_view.ico"
 IDI_RES_VIEW_HC         ICON                    "res\\res_view_hc.ico"
 IDI_TOOLBOX_WND_HC      ICON                    "res\\toolbox_wnd_hc.ico"
-IDI_TOOLBOX_ACTIVE      ICON                    "res\\ToolBox\\Active.ico"
 IDI_TOOLBOX_BUTTON      ICON                    "res\\ToolBox\\Button.ico"
 IDI_TOOLBOX_OPTION      ICON                    "res\\ToolBox\\Option.ico"
 IDI_TOOLBOX_COMBO       ICON                    "res\\ToolBox\\Combo.ico"
@@ -232,7 +231,6 @@ BEGIN
     BUTTON      ID_UI_CONTROL_LISTBOX
     BUTTON      ID_UI_CONTROL_PROGRESS
     BUTTON      ID_UI_CONTROL_SLIDER
-    BUTTON      ID_UI_CONTROL_ACTIVEX
     SEPARATOR
     BUTTON      ID_UI_LAYOUT_CONTAINER
     BUTTON      ID_UI_LAYOUT_VERTICAL
@@ -499,7 +497,6 @@ BEGIN
         MENUITEM "Combo",                       ID_UI_CONTROL_COMBO
         MENUITEM "Progress",                    ID_UI_CONTROL_PROGRESS
         MENUITEM "Slider",                      ID_UI_CONTROL_SLIDER
-        MENUITEM "ActiveX",                     ID_UI_CONTROL_ACTIVEX
         MENUITEM SEPARATOR
         MENUITEM "Container",                   ID_UI_LAYOUT_CONTAINER
         MENUITEM "VerticalLayout",              ID_UI_LAYOUT_VERTICAL

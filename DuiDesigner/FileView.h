@@ -74,7 +74,7 @@ protected:
 	void SaveUITree(HTREEITEM hItem, TiXmlElement* pParentNode);
 	void LoadUITree(CString& strPath);
 	void LoadUITree(TiXmlElement* pElement, HTREEITEM hParent);
-	CDocument* FindSkinFile(CString& strPath);
+	CDocument* FindSkinFile(const CString& strPath);
 	HTREEITEM FindDirectory(CString& strDirName, HTREEITEM hParent);
 	BOOL CloseSkinFile(CString& strPath);
 	BOOL RenameFile(CString strNewName, HTREEITEM hItem);

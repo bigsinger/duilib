@@ -6,10 +6,10 @@ namespace DuiLib
 
 	enum UILIB_RESOURCETYPE
 	{
-		UILIB_FILE=1,				// À´×Ô´ÅÅÌÎÄ¼þ
-		UILIB_ZIP,						// À´×Ô´ÅÅÌzipÑ¹Ëõ°ü
-		UILIB_RESOURCE,			// À´×Ô×ÊÔ´
-		UILIB_ZIPRESOURCE,	// À´×Ô×ÊÔ´µÄzipÑ¹Ëõ°ü
+		UILIB_FILE=1,				// ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
+		UILIB_ZIP,						// ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½zipÑ¹ï¿½ï¿½ï¿½ï¿½
+		UILIB_RESOURCE,			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´
+		UILIB_ZIPRESOURCE,	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½zipÑ¹ï¿½ï¿½ï¿½ï¿½
 	};
 
 	class UILIB_API WindowImplBase
@@ -30,8 +30,8 @@ namespace DuiLib
 		virtual void OnClick(TNotifyUI& msg);
 
 	protected:
-		virtual CDuiString GetSkinFolder() = 0;
-		virtual CDuiString GetSkinFile() = 0;
+		virtual tstring GetSkinFolder() = 0;
+		virtual tstring GetSkinFile() = 0;
 		virtual LPCTSTR GetWindowClassName(void) const = 0 ;
 		virtual LRESULT ResponseDefaultKeyEvent(WPARAM wParam);
 
@@ -41,7 +41,7 @@ namespace DuiLib
 	public:
 		virtual UINT GetClassStyle() const;
 		virtual UILIB_RESOURCETYPE GetResourceType() const;
-		virtual CDuiString GetZIPFileName() const;
+		virtual tstring GetZIPFileName() const;
 		virtual LPCTSTR GetResourceID() const;
 		virtual CControlUI* CreateControl(LPCTSTR pstrClass);
 		virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, bool& /*bHandled*/);

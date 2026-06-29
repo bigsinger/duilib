@@ -785,24 +785,6 @@ void CUIProperties::InitPropList()
 	m_wndPropList.AddProperty(pPropUI);
 #pragma endregion Slider
 
-	//ActiveX
-#pragma region ActiveX
-	pPropUI=new CMFCPropertyGridProperty(_T("ActiveX"),classActiveX);
-
-	//clsid
-	pProp=new CMFCPropertyGridProperty(_T("Clsid"),(_variant_t)_T(""),_T("指定ActiveX控件的Clsid值"),tagClsid);
-	pPropUI->AddSubItem(pProp);
-
-	//delaycreate
-	pProp=new CMFCPropertyGridProperty(_T("DelayCreate"),(_variant_t)true,_T("指示是否延迟加载ActiveX控件"),tagDelayCreate);
-	pPropUI->AddSubItem(pProp);//added by 邓景仁 2011-09-08
-
-	// modulename
-	pProp=new CMFCPropertyGridProperty(_T("ModuleName"),(_variant_t)_T(""),_T("指示从指定位置加载ActiveX控件\n如(flash/flash.ocx)"),tagModuleName);
-	pPropUI->AddSubItem(pProp);
-
-	m_wndPropList.AddProperty(pPropUI);
-#pragma endregion ActiveX
 
 	//Container
 #pragma region Container
@@ -1161,20 +1143,6 @@ void CUIProperties::InitPropList()
 	m_wndPropList.AddProperty(pPropUI);
 #pragma endregion ListHeaderItem
 
-#pragma region WebBrowser
-
-	pPropUI=new CMFCPropertyGridProperty(_T("WebBrowser"),classWebBrowser);
-
-	// homepage
-	pProp=new CMFCPropertyGridProperty(_T("homepage"),(_variant_t)_T(""),_T("默认网址\n"),tagWebBrowserHomePage);
-	pPropUI->AddSubItem(pProp);
-
-	// autonavi
-	pProp=new CMFCPropertyGridProperty(_T("autonavi"),(_variant_t)true,_T("是否显示默认页面\ntrue"),tagDragable);
-	pPropUI->AddSubItem(pProp);
-
-	m_wndPropList.AddProperty(pPropUI);
-#pragma endregion WebBrowser
 
 	HideAllProperties();
 }
@@ -1260,9 +1228,6 @@ void CUIProperties::ShowProperty(CControlUI* pControl)
 	case classCombo: 
 		ShowComboProperty(pControl);
 		break;
-	case classActiveX:
-		ShowActiveXProperty(pControl);
-		break;
 	case classContainer:
 	case classVerticalLayout:
 	case classListContainerElement:/*!*/
@@ -1285,9 +1250,6 @@ void CUIProperties::ShowProperty(CControlUI* pControl)
 		break;
 	case classListHeaderItem:
 		ShowListHeaderItemPropery(pControl);
-		break;
-	case classWebBrowser:
-		ShowWebBrowserPropery(pControl);
 		break;
 	default:
 		ShowControlProperty(pControl);
@@ -1406,11 +1368,11 @@ void CUIProperties::ShowControlProperty(CControlUI* pControl)
 	pPropControl->GetSubItem(tagClass-tagControl)->SetOriginalValue((_variant_t)strClass);
 
 	//name
-	pPropControl->GetSubItem(tagName-tagControl)->SetValue((_variant_t)pControl->GetName());
-	pPropControl->GetSubItem(tagName-tagControl)->SetOriginalValue((_variant_t)pControl->GetName());
+	pPropControl->GetSubItem(tagName-tagControl)->SetValue((_variant_t)pControl->GetName().c_str());
+	pPropControl->GetSubItem(tagName-tagControl)->SetOriginalValue((_variant_t)pControl->GetName().c_str());
 	//text
-	pPropControl->GetSubItem(tagText-tagControl)->SetValue((_variant_t)pControl->GetText());
-	pPropControl->GetSubItem(tagText-tagControl)->SetOriginalValue((_variant_t)pControl->GetText());
+	pPropControl->GetSubItem(tagText-tagControl)->SetValue((_variant_t)pControl->GetText().c_str());
+	pPropControl->GetSubItem(tagText-tagControl)->SetOriginalValue((_variant_t)pControl->GetText().c_str());
 	//pos
 	SIZE szXY=pControl->GetFixedXY();
 	int nWidth=pControl->GetFixedWidth();
@@ -1499,11 +1461,11 @@ void CUIProperties::ShowControlProperty(CControlUI* pControl)
 	pPropControl->GetSubItem(tagColorHSL-tagControl)->SetValue((_variant_t)pControl->IsColorHSL());
 	pPropControl->GetSubItem(tagColorHSL-tagControl)->SetOriginalValue((_variant_t)pControl->IsColorHSL());
 	//tooltip
-	pPropControl->GetSubItem(tagTooltip-tagControl)->SetValue((_variant_t)pControl->GetToolTip());
-	pPropControl->GetSubItem(tagTooltip-tagControl)->SetOriginalValue((_variant_t)pControl->GetToolTip());
+	pPropControl->GetSubItem(tagTooltip-tagControl)->SetValue((_variant_t)pControl->GetToolTip().c_str());
+	pPropControl->GetSubItem(tagTooltip-tagControl)->SetOriginalValue((_variant_t)pControl->GetToolTip().c_str());
 	//userdata
-	pPropControl->GetSubItem(tagUserData-tagControl)->SetValue((_variant_t)pControl->GetUserData());
-	pPropControl->GetSubItem(tagUserData-tagControl)->SetOriginalValue((_variant_t)pControl->GetUserData());
+	pPropControl->GetSubItem(tagUserData-tagControl)->SetValue((_variant_t)pControl->GetUserData().c_str());
+	pPropControl->GetSubItem(tagUserData-tagControl)->SetOriginalValue((_variant_t)pControl->GetUserData().c_str());
 	//keyboard
 	pPropControl->GetSubItem(tagKeyBoard-tagControl)->SetValue((_variant_t)pControl->IsKeyboardEnabled());
 	pPropControl->GetSubItem(tagKeyBoard-tagControl)->SetOriginalValue((_variant_t)pControl->IsKeyboardEnabled());
@@ -1794,35 +1756,6 @@ void CUIProperties::ShowComboProperty(CControlUI* pControl)
 	pPropCombo->Show(TRUE,FALSE);
 }
 
-void CUIProperties::ShowActiveXProperty(CControlUI* pControl)
-{
-	ShowControlProperty(pControl);
-
-	ASSERT(pControl);
-	CActiveXUI* pActiveX=static_cast<CActiveXUI*>(pControl->GetInterface(_T("ActiveX")));
-	ASSERT(pActiveX);
-
-	CMFCPropertyGridProperty* pPropActiveX=m_wndPropList.FindItemByData(classActiveX,FALSE);
-	ASSERT(pPropActiveX);
-
-	CLSID clsid=pActiveX->GetClisd();
-	TCHAR strCLSID[48];
-	StringFromGUID2(clsid,strCLSID,48);
-	//clsid
-	pPropActiveX->GetSubItem(tagClsid-tagActiveX)->SetValue((_variant_t)strCLSID);
-	pPropActiveX->GetSubItem(tagClsid-tagActiveX)->SetOriginalValue((_variant_t)strCLSID);
-
-	//delaycreate
-	pPropActiveX->GetSubItem(tagDelayCreate-tagActiveX)->SetValue((_variant_t)pActiveX->IsDelayCreate());
-	pPropActiveX->GetSubItem(tagDelayCreate-tagActiveX)->SetOriginalValue((_variant_t)pActiveX->IsDelayCreate());
-
-	//modulename
-	pPropActiveX->GetSubItem(tagModuleName-tagActiveX)->SetValue((_variant_t)pActiveX->GetModuleName());
-	pPropActiveX->GetSubItem(tagModuleName-tagActiveX)->SetOriginalValue((_variant_t)pActiveX->GetModuleName());
-
-	pPropActiveX->Show(TRUE,FALSE);
-}
-
 void CUIProperties::ShowContainerProperty(CControlUI* pControl)
 {
 	ShowControlProperty(pControl);
@@ -2016,17 +1949,17 @@ void CUIProperties::ShowItemProperty( CControlUI* pControl )
 
 	//itembkimage
 	TListInfoUI* pListInfo=pList->GetListInfo();
-	pPropItem->GetSubItem(tagItemBkImage-tagItem)->SetValue((_variant_t)pListInfo->sBkImage);
-	pPropItem->GetSubItem(tagItemBkImage-tagItem)->SetOriginalValue((_variant_t)pListInfo->sBkImage);
+	pPropItem->GetSubItem(tagItemBkImage-tagItem)->SetValue((_variant_t)pListInfo->sBkImage.c_str());
+	pPropItem->GetSubItem(tagItemBkImage-tagItem)->SetOriginalValue((_variant_t)pListInfo->sBkImage.c_str());
 	//itemhotimage
-	pPropItem->GetSubItem(tagItemHotImage-tagItem)->SetValue((_variant_t)pListInfo->sHotImage);
-	pPropItem->GetSubItem(tagItemHotImage-tagItem)->SetOriginalValue((_variant_t)pListInfo->sHotImage);
+	pPropItem->GetSubItem(tagItemHotImage-tagItem)->SetValue((_variant_t)pListInfo->sHotImage.c_str());
+	pPropItem->GetSubItem(tagItemHotImage-tagItem)->SetOriginalValue((_variant_t)pListInfo->sHotImage.c_str());
 	//itemselectedimage
-	pPropItem->GetSubItem(tagItemSelectedImage-tagItem)->SetValue((_variant_t)pListInfo->sSelectedImage);
-	pPropItem->GetSubItem(tagItemSelectedImage-tagItem)->SetOriginalValue((_variant_t)pListInfo->sSelectedImage);
+	pPropItem->GetSubItem(tagItemSelectedImage-tagItem)->SetValue((_variant_t)pListInfo->sSelectedImage.c_str());
+	pPropItem->GetSubItem(tagItemSelectedImage-tagItem)->SetOriginalValue((_variant_t)pListInfo->sSelectedImage.c_str());
 	//itemdisabledimage
-	pPropItem->GetSubItem(tagItemDisabledImage-tagItem)->SetValue((_variant_t)pListInfo->sDisabledImage);
-	pPropItem->GetSubItem(tagItemDisabledImage-tagItem)->SetOriginalValue((_variant_t)pListInfo->sDisabledImage);
+	pPropItem->GetSubItem(tagItemDisabledImage-tagItem)->SetValue((_variant_t)pListInfo->sDisabledImage.c_str());
+	pPropItem->GetSubItem(tagItemDisabledImage-tagItem)->SetOriginalValue((_variant_t)pListInfo->sDisabledImage.c_str());
 	//itemtextpadding
 	CMFCPropertyGridProperty*  pValueList=pPropItem->GetSubItem(tagItemTextPadding-tagItem);
 	pValueList->GetSubItem(0)->SetValue((_variant_t)(LONG)pListInfo->rcTextPadding.left);
@@ -2230,28 +2163,6 @@ void CUIProperties::ShowListHeaderItemPropery( CControlUI* pControl )
 	//	sepimage
 	pPropItem->GetSubItem(tagSepImage-classListHeaderItem)->SetValue((_variant_t)pListHeaderItem->GetSepImage());
 	pPropItem->GetSubItem(tagSepImage-classListHeaderItem)->SetOriginalValue((_variant_t)pListHeaderItem->GetSepImage());
-
-	pPropItem->Show(TRUE,FALSE);
-}
-
-void CUIProperties::ShowWebBrowserPropery( CControlUI* pControl )
-{
-	ShowControlProperty(pControl);
-
-	ASSERT(pControl);
-	CWebBrowserUI* pWebBrowser=static_cast<CWebBrowserUI*>(pControl->GetInterface(_T("WebBrowser")));
-	ASSERT(pWebBrowser);
-
-	CMFCPropertyGridProperty* pPropItem=m_wndPropList.FindItemByData(classWebBrowser,FALSE);
-	ASSERT(pPropItem);
-
-	//	homepage
-	pPropItem->GetSubItem(tagWebBrowserHomePage-tagWebBrowser)->SetValue((_variant_t)pWebBrowser->GetHomePage());
-	pPropItem->GetSubItem(tagWebBrowserHomePage-tagWebBrowser)->SetOriginalValue((_variant_t)pWebBrowser->GetHomePage());
-
-	//	autonavi
-	pPropItem->GetSubItem(tagWebBrowserAutoNavi-tagWebBrowser)->SetValue((_variant_t)pWebBrowser->IsAutoNavigation());
-	pPropItem->GetSubItem(tagWebBrowserAutoNavi-tagWebBrowser)->SetOriginalValue((_variant_t)pWebBrowser->IsAutoNavigation());
 
 	pPropItem->Show(TRUE,FALSE);
 }

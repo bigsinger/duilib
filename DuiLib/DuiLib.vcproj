@@ -21,7 +21,7 @@
 			IntermediateDirectory=".\Build\Release"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
-			UseOfMFC="1"
+			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
@@ -98,7 +98,7 @@
 			IntermediateDirectory=".\Build\Debug"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
-			UseOfMFC="1"
+			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
@@ -558,10 +558,6 @@
 				Name="Control"
 				>
 				<File
-					RelativePath=".\Control\UIActiveX.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\Control\UIButton.cpp"
 					>
 				</File>
@@ -583,10 +579,6 @@
 				</File>
 				<File
 					RelativePath=".\Control\UIEdit.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Control\UIFlash.cpp"
 					>
 				</File>
 				<File
@@ -625,10 +617,6 @@
 					RelativePath=".\Control\UITreeView.cpp"
 					>
 				</File>
-				<File
-					RelativePath=".\Control\UIWebBrowser.cpp"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -651,19 +639,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Utils\FlashEventHandler.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Utils\UIDelegate.h"
 					>
 				</File>
 				<File
 					RelativePath=".\Utils\Utils.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Utils\WebBrowserEventHandler.h"
 					>
 				</File>
 				<File
@@ -735,10 +715,6 @@
 				Name="Control"
 				>
 				<File
-					RelativePath=".\Control\UIActiveX.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Control\UIButton.h"
 					>
 				</File>
@@ -760,10 +736,6 @@
 				</File>
 				<File
 					RelativePath=".\Control\UIEdit.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Control\UIFlash.h"
 					>
 				</File>
 				<File
@@ -800,10 +772,6 @@
 				</File>
 				<File
 					RelativePath=".\Control\UITreeView.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Control\UIWebBrowser.h"
 					>
 				</File>
 			</Filter>

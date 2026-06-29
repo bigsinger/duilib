@@ -64,10 +64,10 @@ namespace DuiLib
 		bool m_bPasswordMode;
 		TCHAR m_cPasswordChar;
 		UINT m_uButtonState;
-		CDuiString m_sNormalImage;
-		CDuiString m_sHotImage;
-		CDuiString m_sFocusedImage;
-		CDuiString m_sDisabledImage;
+		tstring m_sNormalImage;
+		tstring m_sHotImage;
+		tstring m_sFocusedImage;
+		tstring m_sDisabledImage;
 		DWORD m_dwEditbkColor;
 		int m_iWindowStyls;
 	};

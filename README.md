@@ -6,7 +6,52 @@
 
 收集的很多关于duilib开发的demo移动到了这里：[bigsinger/duilibdemo](https://github.com/bigsinger/duilibdemo)
 
-另外移除了不常用的UI控件，例如：Flash UIActiveX UIWebBrowser UIRichEdit UIDateTime UIProgress UISlider。 如有需要，请打开宏定义`FULL_DUILIB`，并在工程里面添加上这些控件的.h和.cpp文件。
+当前维护方向是 VS2026 + C++20，并提供三档控件 profile。当前工程默认启用轻量版、标准版和全量版全部控件，开关集中在 [UIProfile.h](DuiLib/Core/UIProfile.h)：
+
+- 轻量版：`DUI_CONTROLS_LIGHT`，包含基础布局、表单、菜单、列表、Progress、Slider、DateTime、GroupBox、PageControl、HotKey、SwitchButton。
+- 标准版：`DUI_CONTROLS_STANDARD`，在轻量版基础上增加 GifAnim、IPAddress、TreeView/TreeNode、RollText。
+- 全量版：`DUI_CONTROLS_FULL`，在标准版基础上增加 RichEdit、ListEx/ListTextExtElement、FadeButton。
+
+```cpp
+#define DUI_CONTROLS_FLAG (DUI_CONTROLS_LIGHT | DUI_CONTROLS_STANDARD | DUI_CONTROLS_FULL)
+```
+
+当前 DuiLib 主库工程不再启用 MFC，主库源码也已清理 MFC 字符串和集合类型残留。本地字符串统一使用 `tstring`，在多字节构建下基于 `std::string`，在 Unicode 构建下基于 `std::wstring`；外部文本交换继续使用 UTF-8 接口和 `std::string_view`。
+DuiLib 主库只保留四个配置：`Debug/Release` 是 Unicode DLL 配置，输出到 `bin`/`bin\x64`；`lib_debug/lib_release` 是多字节静态库配置，输出到 `Lib`/`Lib\x64`。四个配置均使用 `/MT` 或 `/MTd`。
+工程的 PCH 和编译 PDB 已隔离到各自中间目录，项目引用交替构建时不再共用旧 `DuiLib\Build` 预编译头。
+
+不再进入支持 profile 的旧控件包括 Animation、AnimationTabLayout、ColorPalette、Loading、Ring。ActiveX、WebBrowser、Flash 及其事件处理辅助类已从新版主库源码和工程入口移除。
+
+构建示例：
+
+```powershell
+# DuiLib DLL Release Win32
+& "D:\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe" DuiLib.sln /p:Configuration=Release /p:Platform=Win32
+
+# DuiLib 静态库 x64
+& "D:\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe" DuiLib.sln /p:Configuration=lib_release /p:Platform=x64
+
+# DuiDesigner 默认验证配置
+& "D:\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe" DuiDesigner.sln /m:1 /p:Configuration=Release /p:Platform=Win32
+
+# 也可以直接双击或命令行运行自动编译脚本
+build\build_all.bat
+build\build_all.bat all
+
+# 自动化调用时可关闭脚本末尾暂停
+cmd /c "set DUILIB_BUILD_NO_PAUSE=1&& build\build_all.bat designer Release Win32"
+```
+
+编辑器改造当前恢复到 `DuiDesigner` 项目继续推进，暂停非 MFC `DuiEditor` 路线。`DuiDesigner` 可以继续使用 MFC 框架，并只保留 `Debug/Release` 两个配置；默认验证使用 `Release|Win32`。设计器始终面向全量控件清单，Win32 输出到 `bin`，x64 输出到 `bin\x64`。已移除 ActiveX、WebBrowser、Flash 等主库已删除控件入口。
+
+新版文档：
+
+- [新版使用教程](doc/新版使用教程.md)
+- [控件与属性参考](doc/控件与属性参考.md)
+- [DuiDesigner/DuiEditor 状态说明](doc/DuiEditor使用说明.md)
+- [控件裁剪与分档方案](doc/modernization-control-evaluation.md)
+- [现代化改造状态](doc/modernization-status.md)
+- [历史修复同步清单](doc/历史修复同步清单.md)
 
 # 技巧
 
@@ -92,22 +137,17 @@ ARGB GetTextColor() const;
 
 ## 多语言支持
 
-我看了官方duilib的代码提交记录，是有支持了多语言的，但是官方没有说明怎么使用该多语言支持的功能。心想自己实现也不复杂，于是自己动手实现一下。
+当前主库已提供轻量多语言工具 `CMultiLanguageUI`，不要求窗口类继承特定基类。
 
-设计的预期效果：
+使用约定：
 
-- 用户可以通过菜单列表（或其他下拉列表控件）自由切换语言，切换后立即生效，无闪烁，无须重新运行程序。
-- 多语言配置文件要足够简单。
+- XML 中需要翻译的控件设置唯一 `name`。
+- 语言文件使用 UTF-8 `key=value` 格式。
+- `name` 对应控件文本，`name_tip` 对应控件提示文本。
+- 值为空或缺失时，不覆盖控件当前文本。
+- 值中可使用 `\n`、`\r`、`\t` 转义。
 
-设计过程略。
-
-使用方法：
-
-- 窗口类继承CAppBaseMainWnd（该类封装了多语言支持的细节）。
-- 查找控件时使用CAppBaseMainWnd::FindControl，该函数会把返回的控件指针添加到须支持多语言的控件列表mMultiLanguageControls中去。
-- 如果想要支持多语言，请在皮肤配置xml文件中为控件显示指定一个name，那些无须多语言支持的控件可以不填name。
-- 当用户切换多语言时，CAppBaseMainWnd会自动处理mMultiLanguageControls中的控件，获取控件的name作为字符串ID来查询字符串作为控件的文本，{name}_tip作为字符串ID查询的字符串作为控件的tip文本。
-- 语言文件按如下方式简单配置即可：
+语言文件示例：
 
 ```
 # lang_zh_cn.ini内容：
@@ -119,13 +159,13 @@ tab_setting=Options
 tab_setting_tip=Manage Settings
 ```
 
-如果控件有name属性，但是没有出现在语言配置中，或语言配置中值是空，则不会切换控件文本和提示文本。
+代码示例：
 
-语言的值可以用\n来表示换行，\t表示Tab字符，内部统一处理了。使用这种语言配置文件形式为map形式，也即一个key一个value，相对于xml形式简单清晰也不用考虑其他转义字符。
-
-- 派生类窗口如果还需要做一些特殊处理，可以重载覆盖以下函数来编写自定义代码：
-
-```c
-//刷新语言
-virtual void OnFreshLang();
+```cpp
+DuiLib::CMultiLanguageUI lang;
+if (lang.LoadFromFile(_T("lang_zh_cn.ini"))) {
+    lang.Apply(&m_PaintManager);
+}
 ```
+
+

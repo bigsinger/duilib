@@ -2,6 +2,29 @@
 #include <atlstr.h>
 
 namespace DuiLib {
+namespace {
+int AnchorModeFromRelativePos(LPCTSTR pstrValue)
+{
+	if (pstrValue == NULL || *pstrValue == _T('\0')) return 0;
+
+	int values[4] = {};
+	LPTSTR pstr = NULL;
+	values[0] = static_cast<int>(_tcstol(pstrValue, &pstr, 10));
+	if (pstr == pstrValue || pstr == NULL || *pstr == _T('\0')) return values[0];
+
+	for (int index = 1; index < 4; ++index) {
+		if (*pstr != _T(',')) return values[0];
+		LPCTSTR next = pstr + 1;
+		values[index] = static_cast<int>(_tcstol(next, &pstr, 10));
+		if (pstr == next) values[index] = 0;
+	}
+
+	int anchorMode = 0;
+	anchorMode |= values[2] != 0 ? (Left | Right) : (values[0] >= 100 ? Right : Left);
+	anchorMode |= values[3] != 0 ? (Top | Bottom) : (values[1] >= 100 ? Bottom : Top);
+	return anchorMode;
+}
+}
 
 CControlUI::CControlUI() : 
 m_pManager(NULL), 
@@ -53,7 +76,7 @@ CControlUI::~CControlUI()
     if( m_pManager != NULL ) m_pManager->ReapObjects(this);
 }
 
-CDuiString CControlUI::GetName() const
+tstring CControlUI::GetName() const
 {
     return m_sName;
 }
@@ -61,6 +84,17 @@ CDuiString CControlUI::GetName() const
 void CControlUI::SetName(LPCTSTR pstrName)
 {
     m_sName = pstrName;
+}
+
+DuiUtf8String CControlUI::GetNameUtf8() const
+{
+    return DuiStringToUtf8(m_sName.c_str());
+}
+
+void CControlUI::SetNameUtf8(std::string_view name)
+{
+    const tstring nativeName = DuiStringFromUtf8(name);
+    m_sName = nativeName.c_str();
 }
 
 LPVOID CControlUI::GetInterface(LPCTSTR pstrName)
@@ -103,7 +137,7 @@ CControlUI* CControlUI::GetParent() const
     return m_pParent;
 }
 
-CDuiString CControlUI::GetText() const
+tstring CControlUI::GetText() const
 {
     return m_sText;
 }
@@ -116,12 +150,58 @@ void CControlUI::SetText(LPCTSTR pstrText)
     Invalidate();
 }
 
+DuiUtf8String CControlUI::GetTextUtf8() const
+{
+    return DuiStringToUtf8(m_sText.c_str());
+}
+
+void CControlUI::SetTextUtf8(std::string_view text)
+{
+    const tstring nativeText = DuiStringFromUtf8(text);
+    SetText(nativeText.c_str());
+}
+
+void CControlUI::BindTextUtf8(DuiTextGetter getter, DuiTextSetter setter)
+{
+    m_textGetter = getter;
+    m_textSetter = setter;
+    RefreshTextBinding();
+}
+
+void CControlUI::BindTextUtf8(DuiUtf8String& text)
+{
+    BindTextUtf8(
+        [&text]() { return text; },
+        [&text](std::string_view value) { text.assign(value.data(), value.size()); });
+}
+
+void CControlUI::ClearTextBinding()
+{
+    m_textGetter = nullptr;
+    m_textSetter = nullptr;
+}
+
+bool CControlUI::HasTextBinding() const
+{
+    return static_cast<bool>(m_textGetter) || static_cast<bool>(m_textSetter);
+}
+
+void CControlUI::RefreshTextBinding()
+{
+    if (m_textGetter) SetTextUtf8(m_textGetter());
+}
+
+void CControlUI::CommitTextBinding() const
+{
+    if (m_textSetter) m_textSetter(GetTextUtf8());
+}
+
 void CControlUI::SetTextV(const LPCTSTR lpszFormat, ...) {
-	CString strText;
+	tstring strText;
 	va_list argList;
 
 	va_start(argList, lpszFormat);
-	strText.FormatV(lpszFormat, argList);
+	DuiStringFormatV(strText, lpszFormat, argList);
 	va_end(argList);
 	m_sText = strText;
 	Invalidate();
@@ -168,7 +248,7 @@ void CControlUI::SetBkColor3(DWORD dwBackColor)
 
 LPCTSTR CControlUI::GetBkImage()
 {
-    return m_sBkImage;
+    return m_sBkImage.c_str();
 }
 
 void CControlUI::SetBkImage(LPCTSTR pStrImage)
@@ -232,10 +312,10 @@ void CControlUI::SetBorderSize(int nSize)
 }
 
 //************************************
-// º¯ÊýÃû³Æ: SetBorderSize
-// ·µ»ØÀàÐÍ: void
-// ²ÎÊýÐÅÏ¢: RECT rc
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetBorderSize
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: RECT rc
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 void CControlUI::SetBorderSize( RECT rc )
 {
@@ -461,16 +541,27 @@ void CControlUI::SetMaxHeight(int cy)
     else NeedUpdate();
 }
 
-CDuiString CControlUI::GetToolTip() const
+tstring CControlUI::GetToolTip() const
 {
     return m_sToolTip;
 }
 
 void CControlUI::SetToolTip(LPCTSTR pstrText)
 {
-	CDuiString strTemp(pstrText);
-	strTemp.Replace(_T("<n>"),_T("\r\n"));
+	tstring strTemp(pstrText);
+	DuiStringReplace(strTemp, _T("<n>"), _T("\r\n"));
 	m_sToolTip=strTemp;
+}
+
+DuiUtf8String CControlUI::GetToolTipUtf8() const
+{
+	return DuiStringToUtf8(m_sToolTip.c_str());
+}
+
+void CControlUI::SetToolTipUtf8(std::string_view text)
+{
+	const tstring nativeText = DuiStringFromUtf8(text);
+	SetToolTip(nativeText.c_str());
 }
 
 void CControlUI::SetToolTipWidth( int nWidth )
@@ -503,7 +594,7 @@ void CControlUI::SetContextMenuUsed(bool bMenuUsed)
     m_bMenuUsed = bMenuUsed;
 }
 
-const CDuiString& CControlUI::GetUserData()
+const tstring& CControlUI::GetUserData()
 {
     return m_sUserData;
 }
@@ -511,6 +602,17 @@ const CDuiString& CControlUI::GetUserData()
 void CControlUI::SetUserData(LPCTSTR pstrText)
 {
     m_sUserData = pstrText;
+}
+
+DuiUtf8String CControlUI::GetUserDataUtf8() const
+{
+	return DuiStringToUtf8(m_sUserData.c_str());
+}
+
+void CControlUI::SetUserDataUtf8(std::string_view text)
+{
+	const tstring nativeText = DuiStringFromUtf8(text);
+	SetUserData(nativeText.c_str());
 }
 
 UINT_PTR CControlUI::GetTag() const
@@ -691,7 +793,7 @@ void CControlUI::DoEvent(TEventUI& event)
 {
     if( event.Type == UIEVENT_SETCURSOR )
     {
-        ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
+        ::SetCursor(::LoadCursor(NULL, IDC_ARROW));
         return;
     }
     if( event.Type == UIEVENT_SETFOCUS ) 
@@ -728,10 +830,10 @@ void CControlUI::SetVirtualWnd(LPCTSTR pstrValue)
 	m_pManager->UsedVirtualWnd(true);
 }
 
-CDuiString CControlUI::GetVirtualWnd() const
+tstring CControlUI::GetVirtualWnd() const
 {
-	CDuiString str;
-	if( !m_sVirtualWnd.IsEmpty() ){
+	tstring str;
+	if( !m_sVirtualWnd.empty() ){
 		str = m_sVirtualWnd;
 	}
 	else{
@@ -764,6 +866,9 @@ void CControlUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
 		LPTSTR pstr = NULL;
 		int nAnchorMode = _tcstol(pstrValue, &pstr, 10);
 		SetAnchorMode(nAnchorMode);
+    }
+    else if( _tcscmp(pstrName, _T("relativepos")) == 0 ) {
+		SetAnchorMode(AnchorModeFromRelativePos(pstrValue));
     }
     else if( _tcscmp(pstrName, _T("padding")) == 0 ) {
         RECT rcPadding = { 0 };
@@ -809,8 +914,8 @@ void CControlUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     }
     else if( _tcscmp(pstrName, _T("colorhsl")) == 0 ) SetColorHSL(_tcscmp(pstrValue, _T("true")) == 0);
 	else if( _tcscmp(pstrName, _T("bordersize")) == 0 ) {
-		CDuiString nValue = pstrValue;
-		if(nValue.Find(',') < 0)
+		tstring nValue = pstrValue;
+		if(DuiStringFind(nValue, _T(',')) < 0)
 		{
 			SetBorderSize(_ttoi(pstrValue));
 			RECT rcPadding = {0};
@@ -860,13 +965,20 @@ void CControlUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
 	else if( _tcscmp(pstrName, _T("virtualwnd")) == 0 ) SetVirtualWnd(pstrValue);
 }
 
+void CControlUI::SetAttributeUtf8(std::string_view name, std::string_view value)
+{
+	const tstring nativeName = DuiStringFromUtf8(name);
+	const tstring nativeValue = DuiStringFromUtf8(value);
+	SetAttribute(nativeName.c_str(), nativeValue.c_str());
+}
+
 CControlUI* CControlUI::ApplyAttributeList(LPCTSTR pstrList)
 {
-    CDuiString sItem;
-    CDuiString sValue;
+    tstring sItem;
+    tstring sValue;
     while( *pstrList != _T('\0') ) {
-        sItem.Empty();
-        sValue.Empty();
+        sItem.clear();
+        sValue.clear();
         while( *pstrList != _T('\0') && *pstrList != _T('=') ) {
             LPTSTR pstrTemp = ::CharNext(pstrList);
             while( pstrList < pstrTemp) {
@@ -891,6 +1003,12 @@ CControlUI* CControlUI::ApplyAttributeList(LPCTSTR pstrList)
     return this;
 }
 
+CControlUI* CControlUI::ApplyAttributeListUtf8(std::string_view attributes)
+{
+	const tstring nativeAttributes = DuiStringFromUtf8(attributes);
+	return ApplyAttributeList(nativeAttributes.c_str());
+}
+
 SIZE CControlUI::EstimateSize(SIZE szAvailable)
 {
     return m_cxyFixed;
@@ -900,7 +1018,7 @@ void CControlUI::DoPaint(HDC hDC, const RECT& rcPaint)
 {
     if( !::IntersectRect(&m_rcPaint, &rcPaint, &m_rcItem) ) return;
 
-    // »æÖÆÑ­Ðò£º±³¾°ÑÕÉ«->±³¾°Í¼->×´Ì¬Í¼->ÎÄ±¾->±ß¿ò
+    // ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ò£º±ï¿½ï¿½ï¿½ï¿½ï¿½É«->ï¿½ï¿½ï¿½ï¿½Í¼->×´Ì¬Í¼->ï¿½Ä±ï¿½->ï¿½ß¿ï¿½
     if( m_cxyBorderRound.cx > 0 || m_cxyBorderRound.cy > 0 ) {
         CRenderClip roundClip;
         CRenderClip::GenerateRoundClip(hDC, m_rcPaint,  m_rcItem, m_cxyBorderRound.cx, m_cxyBorderRound.cy, roundClip);
@@ -941,8 +1059,8 @@ void CControlUI::PaintBkColor(HDC hDC)
 
 void CControlUI::PaintBkImage(HDC hDC)
 {
-    if( m_sBkImage.IsEmpty() ) return;
-    if( !DrawImage(hDC, (LPCTSTR)m_sBkImage) ) m_sBkImage.Empty();
+    if( m_sBkImage.empty() ) return;
+    if( !DrawImage(hDC, m_sBkImage.c_str()) ) m_sBkImage.clear();
 }
 
 void CControlUI::PaintStatusImage(HDC hDC)
@@ -959,7 +1077,7 @@ void CControlUI::PaintBorder(HDC hDC)
 {
 	if(m_dwBorderColor != 0 || m_dwFocusBorderColor != 0)
 	{
-		if(m_nBorderSize > 0 && ( m_cxyBorderRound.cx > 0 || m_cxyBorderRound.cy > 0 ))//»­Ô²½Ç±ß¿ò
+		if(m_nBorderSize > 0 && ( m_cxyBorderRound.cx > 0 || m_cxyBorderRound.cy > 0 ))//ï¿½ï¿½Ô²ï¿½Ç±ß¿ï¿½
 		{
 			if (IsFocused() && m_dwFocusBorderColor != 0)
 				CRenderEngine::DrawRoundRect(hDC, m_rcItem, m_nBorderSize, m_cxyBorderRound.cx, m_cxyBorderRound.cy, GetAdjustColor(m_dwFocusBorderColor));
@@ -1007,9 +1125,9 @@ void CControlUI::DoPostPaint(HDC hDC, const RECT& rcPaint)
 }
 
 //************************************
-// º¯ÊýÃû³Æ: GetLeftBorderSize
-// ·µ»ØÀàÐÍ: int
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetLeftBorderSize
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: int
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 int CControlUI::GetLeftBorderSize() const
 {
@@ -1017,10 +1135,10 @@ int CControlUI::GetLeftBorderSize() const
 }
 
 //************************************
-// º¯ÊýÃû³Æ: SetLeftBorderSize
-// ·µ»ØÀàÐÍ: void
-// ²ÎÊýÐÅÏ¢: int nSize
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetLeftBorderSize
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: int nSize
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 void CControlUI::SetLeftBorderSize( int nSize )
 {
@@ -1029,9 +1147,9 @@ void CControlUI::SetLeftBorderSize( int nSize )
 }
 
 //************************************
-// º¯ÊýÃû³Æ: GetTopBorderSize
-// ·µ»ØÀàÐÍ: int
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetTopBorderSize
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: int
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 int CControlUI::GetTopBorderSize() const
 {
@@ -1039,10 +1157,10 @@ int CControlUI::GetTopBorderSize() const
 }
 
 //************************************
-// º¯ÊýÃû³Æ: SetTopBorderSize
-// ·µ»ØÀàÐÍ: void
-// ²ÎÊýÐÅÏ¢: int nSize
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetTopBorderSize
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: int nSize
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 void CControlUI::SetTopBorderSize( int nSize )
 {
@@ -1051,9 +1169,9 @@ void CControlUI::SetTopBorderSize( int nSize )
 }
 
 //************************************
-// º¯ÊýÃû³Æ: GetRightBorderSize
-// ·µ»ØÀàÐÍ: int
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetRightBorderSize
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: int
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 int CControlUI::GetRightBorderSize() const
 {
@@ -1061,10 +1179,10 @@ int CControlUI::GetRightBorderSize() const
 }
 
 //************************************
-// º¯ÊýÃû³Æ: SetRightBorderSize
-// ·µ»ØÀàÐÍ: void
-// ²ÎÊýÐÅÏ¢: int nSize
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetRightBorderSize
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: int nSize
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 void CControlUI::SetRightBorderSize( int nSize )
 {
@@ -1073,9 +1191,9 @@ void CControlUI::SetRightBorderSize( int nSize )
 }
 
 //************************************
-// º¯ÊýÃû³Æ: GetBottomBorderSize
-// ·µ»ØÀàÐÍ: int
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetBottomBorderSize
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: int
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 int CControlUI::GetBottomBorderSize() const
 {
@@ -1083,10 +1201,10 @@ int CControlUI::GetBottomBorderSize() const
 }
 
 //************************************
-// º¯ÊýÃû³Æ: SetBottomBorderSize
-// ·µ»ØÀàÐÍ: void
-// ²ÎÊýÐÅÏ¢: int nSize
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetBottomBorderSize
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: int nSize
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 void CControlUI::SetBottomBorderSize( int nSize )
 {
@@ -1095,9 +1213,9 @@ void CControlUI::SetBottomBorderSize( int nSize )
 }
 
 //************************************
-// º¯ÊýÃû³Æ: GetBorderStyle
-// ·µ»ØÀàÐÍ: int
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetBorderStyle
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: int
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 int CControlUI::GetBorderStyle() const
 {
@@ -1105,10 +1223,10 @@ int CControlUI::GetBorderStyle() const
 }
 
 //************************************
-// º¯ÊýÃû³Æ: SetBorderStyle
-// ·µ»ØÀàÐÍ: void
-// ²ÎÊýÐÅÏ¢: int nStyle
-// º¯ÊýËµÃ÷: 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetBorderStyle
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: int nStyle
+// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 //************************************
 void CControlUI::SetBorderStyle( int nStyle )
 {

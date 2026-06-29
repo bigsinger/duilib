@@ -591,7 +591,7 @@ void CLayoutManager::Init(HWND hWnd,LPCTSTR pstrLoad)
 		g_HookAPI.EnableCreateFile(true);
 
 		CDialogBuilder builder;
-		CControlUI* pRoot=builder.Create(pstrLoad,(UINT)0,this,&m_Manager);
+		CControlUI* pRoot=builder.Create(pstrLoad,NULL,this,&m_Manager);
 		if(pRoot)
 			m_pFormUI->Add(pRoot);
 
@@ -658,7 +658,7 @@ void CLayoutManager::DrawGrid(CDC* pDC, CRect& rect)
 	}
 }
 
-CControlUI* CLayoutManager::NewUI(int nClass,CRect& rect,CControlUI* pParent, CLayoutManager* pLayout)
+CControlUI* CLayoutManager::NewUI(int nClass,const CRect& rect,CControlUI* pParent, CLayoutManager* pLayout)
 {
 	CControlUI* pControl=NULL;
 
@@ -690,6 +690,11 @@ CControlUI* CLayoutManager::NewUI(int nClass,CRect& rect,CControlUI* pParent, CL
 	case classButton:
 		pControl=new CButtonUI;
 		pExtended->nClass=classButton;
+		pControl->SetFloat(true);
+		break;
+	case classSwitchButton:
+		pControl=new CSwitchButtonUI;
+		pExtended->nClass=classSwitchButton;
 		pControl->SetFloat(true);
 		break;
 	case classEdit:
@@ -726,10 +731,6 @@ CControlUI* CLayoutManager::NewUI(int nClass,CRect& rect,CControlUI* pParent, CL
 		pControl=new CListUI;
 		pExtended->nClass=classList;
 		pControl->SetFloat(false);
-		break;
-	case classActiveX:
-		pControl=new CActiveXUI;
-		pExtended->nClass=classActiveX;
 		break;
 	case classContainer:
 		pControl=new CContainerUI;
@@ -939,7 +940,7 @@ void CLayoutManager::TestForm(LPCTSTR pstrFile)
 	// 使用新建的XML树来预览，不会挂掉
 	pManager->Init(h_wnd);
 	CDialogBuilder builder;
-	CContainerUI* pRoot=static_cast<CContainerUI*>(builder.Create(pstrFile,(UINT)0,NULL,pManager));
+	CContainerUI* pRoot=static_cast<CContainerUI*>(builder.Create(pstrFile,NULL,NULL,pManager));
 	if(pRoot==NULL)
 		return;
 
@@ -1035,9 +1036,6 @@ CControlUI* CLayoutManager::CloneControl(CControlUI* pControl)
 	case classCombo:
 		pCopyControl = new CComboUI(*static_cast<CComboUI*>(pControl->GetInterface(_T("Combo"))));
 		break;
-	case classActiveX:
-		pCopyControl = new CActiveXUI(*static_cast<CActiveXUI*>(pControl->GetInterface(_T("ActiveX"))));
-		break;
 	case classContainer:
 		pCopyControl = new CContainerUI(*static_cast<CContainerUI*>(pControl->GetInterface(_T("Container"))));
 		break;
@@ -1068,9 +1066,6 @@ CControlUI* CLayoutManager::CloneControl(CControlUI* pControl)
 	case classListContainerElement:
 		pCopyControl = new CListContainerElementUI(*static_cast<CListContainerElementUI*>(pControl->GetInterface(_T("ListContainerElement"))));
 		break;
-	case classWebBrowser:
-		pCopyControl=new CWebBrowserUI(*static_cast<CWebBrowserUI*>(pControl->GetInterface(_T("WebBrowser"))));
-			break;
 	case classList:
 		{//0917 by 邓景仁(cddjr) , 在不改动duilib的前提下，只能采用如下代码 
 			CListUI &copyList = *static_cast<CListUI*>(pControl->GetInterface(_T("List")));
@@ -1488,22 +1483,22 @@ void CLayoutManager::SaveControlProperty(CControlUI* pControl, TiXmlElement* pNo
 {
 	TCHAR szBuf[MAX_PATH] = {0};
 
-	if(pControl->GetName() && _tcslen(pControl->GetName()) > 0)
+	if(!pControl->GetName().empty())
 	{
-			CString strUIName=pControl->GetName();
+			CString strUIName=pControl->GetName().c_str();
 			//命名规范：name不允许以类名打头
 			if (strUIName.Find(pControl->GetClass()) != 0)
 			{
-				CString strControlName = pControl->GetName();
+				CString strControlName = pControl->GetName().c_str();
 				pNode->SetAttribute("name", StringConvertor::WideToUtf8(strControlName));
 			}
 	}
 
-	if(pControl->GetText() && _tcslen(pControl->GetText()) > 0)
-		pNode->SetAttribute("text", StringConvertor::WideToUtf8(pControl->GetText()));
+	if(!pControl->GetText().empty())
+		pNode->SetAttribute("text", StringConvertor::WideToUtf8(pControl->GetText().c_str()));
 
-	if(pControl->GetToolTip() && _tcslen(pControl->GetToolTip()) > 0)
-		pNode->SetAttribute("tooltip", StringConvertor::WideToUtf8(pControl->GetToolTip()));
+	if(!pControl->GetToolTip().empty())
+		pNode->SetAttribute("tooltip", StringConvertor::WideToUtf8(pControl->GetToolTip().c_str()));
 
 	if(!pControl->IsVisible() && !((static_cast<IContainerUI*>(pControl->GetInterface(_T("IContainer"))) != NULL) && (static_cast<CContainerUI*>(pControl->GetInterface(_T("Container"))) != NULL)))
 	{
@@ -2228,30 +2223,6 @@ void CLayoutManager::SaveTileLayoutProperty(CControlUI* pControl, TiXmlElement* 
 	SaveContainerProperty(pControl, pNode);
 }
 
-void CLayoutManager::SaveActiveXProperty(CControlUI* pControl, TiXmlElement* pNode)
-{
-	SaveControlProperty(pControl, pNode);
-	CActiveXUI* pActiveUI = static_cast<CActiveXUI*>(pControl->GetInterface(_T("ActiveX")));
-
-	TCHAR szBuf[128] = {0};	
-
-	CLSID clsid = pActiveUI->GetClisd();
-	if (clsid != IID_NULL)
-	{
-		StringFromGUID2(clsid,szBuf,128);
-		pNode->SetAttribute("clsid", StringConvertor::WideToUtf8(szBuf));
-	}
-
-	if (!pActiveUI->IsDelayCreate())
-	{
-		pNode->SetAttribute("delaycreate","false");
-	}
-
-	if (pActiveUI->GetModuleName()&&_tcslen(pActiveUI->GetModuleName())>0)
-	{
-		pNode->SetAttribute("modulename",StringConvertor::WideToUtf8(pActiveUI->GetModuleName()));
-	}
-}
 void CLayoutManager::SaveListContainerElementProperty(CControlUI* pControl, TiXmlElement* pNode)
 {
 	SaveContainerProperty(pControl, pNode);
@@ -2340,9 +2311,6 @@ void CLayoutManager::SaveProperties(CControlUI* pControl, TiXmlElement* pParentN
 	case classListHeaderItem:
 		SaveListHeaderItemProperty(pControl, pNode);
 		break;
-	case classActiveX:
-		SaveActiveXProperty(pControl, pNode);
-		break;
 	case classListHeader:
 		SaveListHeaderProperty(pControl,pNode);
 		break;
@@ -2361,9 +2329,6 @@ void CLayoutManager::SaveProperties(CControlUI* pControl, TiXmlElement* pParentN
 		break;
 	case classChildLayout:
 		SaveChildWindowProperty(pControl,pNode);
-		break;
-	case classWebBrowser:
-		SaveWebBrowserProperty(pControl,pNode);
 		break;
 	default:
 		break;
@@ -2601,7 +2566,7 @@ void CLayoutManager::SetDefaultUIName(CControlUI* pControl)
 	m_Manager.ReapObjects(pControl);
 
 	BOOL bNeedName = FALSE;
-	CString strName = pControl->GetName();
+	CString strName = pControl->GetName().c_str();
 	if(strName.IsEmpty())
 		bNeedName = TRUE;
 	else
@@ -2752,17 +2717,17 @@ void CLayoutManager::SaveItemProperty( CControlUI* pControl, TiXmlElement* pNode
 		pNode->SetAttribute("itemlinecolor", StringConvertor::WideToUtf8(szBuf));
 	}
 
-	if(pListInfo->sBkImage && _tcslen(pListInfo->sBkImage) > 0)
-		pNode->SetAttribute("itembkimage", StringConvertor::WideToUtf8(ConvertImageFileName(pListInfo->sBkImage)));
+	if(!pListInfo->sBkImage.empty())
+		pNode->SetAttribute("itembkimage", StringConvertor::WideToUtf8(ConvertImageFileName(pListInfo->sBkImage.c_str())));
 
-	if(pListInfo->sSelectedImage && _tcslen(pListInfo->sSelectedImage) > 0)
-		pNode->SetAttribute("itemselectedimage", StringConvertor::WideToUtf8(ConvertImageFileName(pListInfo->sSelectedImage)));
+	if(!pListInfo->sSelectedImage.empty())
+		pNode->SetAttribute("itemselectedimage", StringConvertor::WideToUtf8(ConvertImageFileName(pListInfo->sSelectedImage.c_str())));
 
-	if(pListInfo->sHotImage && _tcslen(pListInfo->sHotImage) > 0)
-		pNode->SetAttribute("itemhotimage", StringConvertor::WideToUtf8(ConvertImageFileName(pListInfo->sHotImage)));
+	if(!pListInfo->sHotImage.empty())
+		pNode->SetAttribute("itemhotimage", StringConvertor::WideToUtf8(ConvertImageFileName(pListInfo->sHotImage.c_str())));
 
-	if(pListInfo->sDisabledImage && _tcslen(pListInfo->sDisabledImage) > 0)
-		pNode->SetAttribute("itemdisabledimage", StringConvertor::WideToUtf8(ConvertImageFileName(pListInfo->sDisabledImage)));
+	if(!pListInfo->sDisabledImage.empty())
+		pNode->SetAttribute("itemdisabledimage", StringConvertor::WideToUtf8(ConvertImageFileName(pListInfo->sDisabledImage.c_str())));
 
 	CString tstrAlgin;
 	UINT uTextStyle = pListInfo->uTextStyle;
@@ -2804,9 +2769,9 @@ void CLayoutManager::SaveChildWindowProperty( CControlUI* pControl, TiXmlElement
 	CChildLayoutUI* pChildWindow=static_cast<CChildLayoutUI*>(pControl->GetInterface(_T("ChildLayout")));
 	ASSERT(pChildWindow);
 
-	if ( ! pChildWindow->GetChildLayoutXML().IsEmpty())
+	if (!pChildWindow->GetChildLayoutXML().empty())
 	{
-		pNode->SetAttribute("xmlfile",StringConvertor::WideToUtf8(pChildWindow->GetChildLayoutXML()));
+		pNode->SetAttribute("xmlfile",StringConvertor::WideToUtf8(pChildWindow->GetChildLayoutXML().c_str()));
 	}
 }
 
@@ -2826,23 +2791,6 @@ void CLayoutManager::SaveListHeaderProperty( CControlUI* pControl, TiXmlElement*
 	if(pListHeaderUI->IsSepImmMode())
 	{
 		pNode->SetAttribute("sepimm","true");
-	}
-}
-
-void CLayoutManager::SaveWebBrowserProperty( CControlUI* pControl, TiXmlElement* pNode )
-{
-	SaveControlProperty(pControl, pNode);
-
-	CWebBrowserUI * pWebBrowserUI = static_cast<CWebBrowserUI*>(pControl->GetInterface(_T("WebBrowser")));
-
-	if (pWebBrowserUI->IsAutoNavigation())
-	{
-		pNode->SetAttribute("autonavi", "true");
-	}
-
-	if (pWebBrowserUI->GetHomePage() && _tcslen(pWebBrowserUI->GetHomePage()) >0 )
-	{
-		pNode->SetAttribute("homepage", StringConvertor::WideToUtf8(pWebBrowserUI->GetHomePage()));
 	}
 }
 

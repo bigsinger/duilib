@@ -14,15 +14,15 @@ namespace DuiLib {
 void UILIB_API DUI__Trace(LPCTSTR pstrFormat, ...)
 {
 #ifdef _DEBUG
-    CDuiString strMsg;
+    tstring strMsg;
     va_list Args;
 
     va_start(Args, pstrFormat);
-    strMsg.Format(pstrFormat, Args);
+    DuiStringFormatV(strMsg, pstrFormat, Args);
     va_end(Args);
     
     strMsg += _T("\n");
-    OutputDebugString(strMsg.GetData());
+    OutputDebugString(strMsg.c_str());
 
 #endif
 }
@@ -100,14 +100,14 @@ DUI_END_MESSAGE_MAP()
 
 static const DUI_MSGMAP_ENTRY* DuiFindMessageEntry(const DUI_MSGMAP_ENTRY* lpEntry,TNotifyUI& msg )
 {
-	CDuiString sMsgType = msg.sType;
-	CDuiString sCtrlName = msg.pSender->GetName();
+	tstring sMsgType = msg.sType;
+	tstring sCtrlName = msg.pSender->GetName();
 	const DUI_MSGMAP_ENTRY* pMsgTypeEntry = NULL;
 	while (lpEntry->nSig != DuiSig_end)
 	{
 		if(lpEntry->sMsgType==sMsgType)
 		{
-			if(!lpEntry->sCtrlName.IsEmpty())
+			if(!lpEntry->sCtrlName.empty())
 			{
 				if(lpEntry->sCtrlName==sCtrlName)
 				{
@@ -124,21 +124,21 @@ static const DUI_MSGMAP_ENTRY* DuiFindMessageEntry(const DUI_MSGMAP_ENTRY* lpEnt
 	return pMsgTypeEntry;
 }
 
-bool CNotifyPump::AddVirtualWnd(CDuiString strName,CNotifyPump* pObject)
+bool CNotifyPump::AddVirtualWnd(tstring strName,CNotifyPump* pObject)
 {
-	if( m_VirtualWndMap.Find(strName) == NULL )
+	if( m_VirtualWndMap.Find(strName.c_str()) == NULL )
 	{
-		m_VirtualWndMap.Insert(strName.GetData(),(LPVOID)pObject);
+		m_VirtualWndMap.Insert(strName.c_str(),(LPVOID)pObject);
 		return true;
 	}
 	return false;
 }
 
-bool CNotifyPump::RemoveVirtualWnd(CDuiString strName)
+bool CNotifyPump::RemoveVirtualWnd(tstring strName)
 {
-	if( m_VirtualWndMap.Find(strName) != NULL )
+	if( m_VirtualWndMap.Find(strName.c_str()) != NULL )
 	{
-		m_VirtualWndMap.Remove(strName);
+		m_VirtualWndMap.Remove(strName.c_str());
 		return true;
 	}
 	return false;
@@ -193,11 +193,11 @@ LDispatch:
 
 void CNotifyPump::NotifyPump(TNotifyUI& msg)
 {
-	///±éÀúÐéÄâ´°¿Ú
-	if( !msg.sVirtualWnd.IsEmpty() ){
+	///ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â´°ï¿½ï¿½
+	if( !msg.sVirtualWnd.empty() ){
 		for( int i = 0; i< m_VirtualWndMap.GetSize(); i++ ) {
 			if( LPCTSTR key = m_VirtualWndMap.GetAt(i) ) {
-				if( _tcsicmp(key, msg.sVirtualWnd.GetData()) == 0 ){
+				if( _tcsicmp(key, msg.sVirtualWnd.c_str()) == 0 ){
 					CNotifyPump* pObject = static_cast<CNotifyPump*>(m_VirtualWndMap.Find(key, false));
 					if( pObject && pObject->LoopDispatch(msg) )
 						return;
@@ -207,7 +207,7 @@ void CNotifyPump::NotifyPump(TNotifyUI& msg)
 	}
 
 	///
-	//±éÀúÖ÷´°¿Ú
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	LoopDispatch( msg );
 }
 
@@ -295,7 +295,7 @@ UINT CWindowWnd::ShowModal()
     MSG msg = { 0 };
     while( ::IsWindow(m_hWnd) && ::GetMessage(&msg, NULL, 0, 0) ) {
         if( msg.message == WM_CLOSE && msg.hwnd == m_hWnd ) {
-            nRet = msg.wParam;
+            nRet = static_cast<UINT>(msg.wParam);
             ::EnableWindow(hWndParent, TRUE);
             ::SetFocus(hWndParent);
         }
@@ -307,7 +307,7 @@ UINT CWindowWnd::ShowModal()
     }
     ::EnableWindow(hWndParent, TRUE);
     ::SetFocus(hWndParent);
-    if( msg.message == WM_QUIT ) ::PostQuitMessage(msg.wParam);
+    if( msg.message == WM_QUIT ) ::PostQuitMessage(static_cast<int>(msg.wParam));
     return nRet;
 }
 
@@ -332,7 +332,7 @@ void CWindowWnd::CenterWindow()
 	if (hWndCenter!=NULL)
 		hWnd=hWndCenter;
 
-	// ´¦Àí¶àÏÔÊ¾Æ÷Ä£Ê½ÏÂÆÁÄ»¾ÓÖÐ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½
 	MONITORINFO oMonitor = {};
 	oMonitor.cbSize = sizeof(oMonitor);
 	::GetMonitorInfo(::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
@@ -361,13 +361,13 @@ void CWindowWnd::CenterWindow()
 void CWindowWnd::SetIcon(UINT nRes)
 {
 	HICON hIcon = (HICON)::LoadImage(CPaintManagerUI::GetInstance(), MAKEINTRESOURCE(nRes), IMAGE_ICON,
-		(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// ·ÀÖ¹¸ßDPIÏÂÍ¼±êÄ£ºý
+		(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// ï¿½ï¿½Ö¹ï¿½ï¿½DPIï¿½ï¿½Í¼ï¿½ï¿½Ä£ï¿½ï¿½
 		LR_DEFAULTCOLOR);
 	ASSERT(hIcon);
 	::SendMessage(m_hWnd, WM_SETICON, (WPARAM) TRUE, (LPARAM) hIcon);
 
 	hIcon = (HICON)::LoadImage(CPaintManagerUI::GetInstance(), MAKEINTRESOURCE(nRes), IMAGE_ICON,
-		(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// ·ÀÖ¹¸ßDPIÏÂÍ¼±êÄ£ºý
+		(::GetSystemMetrics(SM_CXICON) + 15) & ~15, (::GetSystemMetrics(SM_CYICON) + 15) & ~15,	// ï¿½ï¿½Ö¹ï¿½ï¿½DPIï¿½ï¿½Í¼ï¿½ï¿½Ä£ï¿½ï¿½
 		LR_DEFAULTCOLOR);
 	ASSERT(hIcon);
 	::SendMessage(m_hWnd, WM_SETICON, (WPARAM) FALSE, (LPARAM) hIcon);

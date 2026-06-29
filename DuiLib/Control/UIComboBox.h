@@ -5,8 +5,8 @@
 
 namespace DuiLib
 {
-	/// À©Õ¹ÏÂÀ­ÁÐ±í¿ò
-	/// Ôö¼ÓarrowimageÊôÐÔ,Ò»ÕÅÍ¼Æ¬Æ½¾ù·Ö³É5·Ý,Normal/Hot/Pushed/Focused/Disabled(±ØÐëÓÐsourceÊôÐÔ)
+	/// ï¿½ï¿½Õ¹ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½
+	/// ï¿½ï¿½ï¿½ï¿½arrowimageï¿½ï¿½ï¿½ï¿½,Ò»ï¿½ï¿½Í¼Æ¬Æ½ï¿½ï¿½ï¿½Ö³ï¿½5ï¿½ï¿½,Normal/Hot/Pushed/Focused/Disabled(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sourceï¿½ï¿½ï¿½ï¿½)
 	/// <Default name="ComboBox" value="arrowimage=&quot;file='sys_combo_btn.png' source='0,0,16,16'&quot; "/>
 	class UILIB_API CComboBoxUI : public CComboUI
 	{
@@ -20,7 +20,7 @@ namespace DuiLib
 		void PaintStatusImage(HDC hDC);
 
 	protected:
-		CDuiString m_sArrowImage;
+		tstring m_sArrowImage;
 		int        m_nArrowWidth;
 	};
 }

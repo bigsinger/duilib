@@ -72,7 +72,7 @@ namespace DuiLib
 
 	LPCTSTR CProgressUI::GetForeImage() const
 	{
-		return m_sForeImage;
+		return m_sForeImage.c_str();
 	}
 
 	void CProgressUI::SetForeImage(LPCTSTR pStrImage)
@@ -111,16 +111,16 @@ namespace DuiLib
 			rc.bottom = m_rcItem.bottom - m_rcItem.top;
 		}
 
-		if( !m_sForeImage.IsEmpty() ) {
-			m_sForeImageModify.Empty();
+		if( !m_sForeImage.empty() ) {
+			m_sForeImageModify.clear();
 			if (m_bStretchForeImage)
-				m_sForeImageModify.SmallFormat(_T("dest='%d,%d,%d,%d'"), rc.left, rc.top, rc.right, rc.bottom);
+				DuiStringSmallFormat(m_sForeImageModify, _T("dest='%d,%d,%d,%d'"), rc.left, rc.top, rc.right, rc.bottom);
 			else
-				m_sForeImageModify.SmallFormat(_T("dest='%d,%d,%d,%d' source='%d,%d,%d,%d'")
+				DuiStringSmallFormat(m_sForeImageModify, _T("dest='%d,%d,%d,%d' source='%d,%d,%d,%d'")
 				, rc.left, rc.top, rc.right, rc.bottom
 				, rc.left, rc.top, rc.right, rc.bottom);
 
-			if( !DrawImage(hDC, (LPCTSTR)m_sForeImage, (LPCTSTR)m_sForeImageModify) ) m_sForeImage.Empty();
+			if( !DrawImage(hDC, m_sForeImage.c_str(), m_sForeImageModify.c_str()) ) m_sForeImage.clear();
 			else return;
 		}
 	}

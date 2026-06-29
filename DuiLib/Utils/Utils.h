@@ -3,8 +3,41 @@
 
 #pragma once
 
+#include <cstdarg>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <vector>
+
 namespace DuiLib
 {
+#ifdef _UNICODE
+	using tstring_base = std::wstring;
+#else
+	using tstring_base = std::string;
+#endif
+	using tstring = tstring_base;
+	using tstring_view = std::basic_string_view<TCHAR>;
+
+	/////////////////////////////////////////////////////////////////////////////////////
+	//
+
+	UILIB_API LPCTSTR DuiSafeString(LPCTSTR text);
+	UILIB_API int DuiStringLength(const tstring& text);
+	UILIB_API tstring DuiStringAssign(LPCTSTR text, int length = -1);
+	UILIB_API int DuiStringFind(tstring_view text, TCHAR ch, int pos = 0);
+	UILIB_API int DuiStringFind(tstring_view text, LPCTSTR value, int pos = 0);
+	UILIB_API int DuiStringReverseFind(tstring_view text, TCHAR ch);
+	UILIB_API tstring DuiStringLeft(tstring_view text, int length);
+	UILIB_API tstring DuiStringMid(tstring_view text, int pos, int length = -1);
+	UILIB_API tstring DuiStringRight(tstring_view text, int length);
+	UILIB_API int DuiStringReplace(tstring& text, LPCTSTR from, LPCTSTR to);
+	UILIB_API void DuiStringMakeUpper(tstring& text);
+	UILIB_API void DuiStringMakeLower(tstring& text);
+	UILIB_API int DuiStringFormatV(tstring& text, LPCTSTR format, va_list args);
+	UILIB_API int __cdecl DuiStringFormat(tstring& text, LPCTSTR format, ...);
+	UILIB_API int __cdecl DuiStringSmallFormat(tstring& text, LPCTSTR format, ...);
+
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
 
@@ -17,32 +50,6 @@ namespace DuiLib
 		{ }
 		LPCTSTR m_lpstr;
 	};
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-
-	//class UILIB_API CPoint : public tagPOINT
-	//{
-	//public:
-	//	CPoint();
-	//	CPoint(const POINT& src);
-	//	CPoint(int x, int y);
-	//	CPoint(LPARAM lParam);
-	//};
-
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-
-	//class UILIB_API CSize : public tagSIZE
-	//{
-	//public:
-	//	CSize();
-	//	CSize(const SIZE& src);
-	//	CSize(const RECT rc);
-	//	CSize(int cx, int cy);
-	//};
-
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -128,88 +135,10 @@ namespace DuiLib
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
 
-	class UILIB_API CDuiString
-	{
-	public:
-		enum { MAX_LOCAL_STRING_LEN = 63 };
-
-		CDuiString();
-		CDuiString(const TCHAR ch);
-		CDuiString(const CDuiString& src);
-		CDuiString(LPCTSTR lpsz, int nLen = -1);
-		~CDuiString();
-
-		void Empty();
-		int GetLength() const;
-		bool IsEmpty() const;
-		TCHAR GetAt(int nIndex) const;
-		void Append(LPCTSTR pstr);
-		void Assign(LPCTSTR pstr, int nLength = -1);
-		LPCTSTR GetData() const;
-
-		void SetAt(int nIndex, TCHAR ch);
-		operator LPCTSTR() const;
-
-		TCHAR operator[] (int nIndex) const;
-		const CDuiString& operator=(const CDuiString& src);
-		const CDuiString& operator=(const TCHAR ch);
-		const CDuiString& operator=(LPCTSTR pstr);
-#ifdef _UNICODE
-		const CDuiString& operator=(LPCSTR lpStr);
-		const CDuiString& operator+=(LPCSTR lpStr);
-#else
-		const CDuiString& operator=(LPCWSTR lpwStr);
-		const CDuiString& operator+=(LPCWSTR lpwStr);
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
 #endif
-		CDuiString operator+(const CDuiString& src) const;
-		CDuiString operator+(LPCTSTR pstr) const;
-		const CDuiString& operator+=(const CDuiString& src);
-		const CDuiString& operator+=(LPCTSTR pstr);
-		const CDuiString& operator+=(const TCHAR ch);
-
-		bool operator == (LPCTSTR str) const;
-		bool operator != (LPCTSTR str) const;
-		bool operator <= (LPCTSTR str) const;
-		bool operator <  (LPCTSTR str) const;
-		bool operator >= (LPCTSTR str) const;
-		bool operator >  (LPCTSTR str) const;
-
-		int Compare(LPCTSTR pstr) const;
-		int CompareNoCase(LPCTSTR pstr) const;
-
-		void MakeUpper();
-		void MakeLower();
-
-		CDuiString Left(int nLength) const;
-		CDuiString Mid(int iPos, int nLength = -1) const;
-		CDuiString Right(int nLength) const;
-
-		int Find(TCHAR ch, int iPos = 0) const;
-		int Find(LPCTSTR pstr, int iPos = 0) const;
-		int ReverseFind(TCHAR ch) const;
-		int Replace(LPCTSTR pstrFrom, LPCTSTR pstrTo);
-
-		int __cdecl Format(LPCTSTR pstrFormat, ...);
-        int __cdecl Format(LPCTSTR pstrFormat, va_list Args);
-		int __cdecl SmallFormat(LPCTSTR pstrFormat, ...);
-
-	protected:
-		LPTSTR m_pstr;
-		TCHAR m_szBuffer[MAX_LOCAL_STRING_LEN + 1];
-	};
-
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-
-	struct TITEM
-	{
-		CDuiString Key;
-		LPVOID Data;
-		struct TITEM* pPrev;
-		struct TITEM* pNext;
-	};
-
 	class UILIB_API CStdStringPtrMap
 	{
 	public:
@@ -227,10 +156,22 @@ namespace DuiLib
 		LPCTSTR operator[] (int nIndex) const;
 
 	protected:
-		TITEM** m_aT;
+		struct TstringHash
+		{
+			size_t operator()(const tstring& value) const noexcept
+			{
+				return std::hash<tstring_base>{}(value);
+			}
+		};
+
 		int m_nBuckets;
-		int m_nCount;
+		bool m_bEnabled;
+		std::unordered_map<tstring, LPVOID, TstringHash> m_items;
+		std::vector<tstring> m_keys;
 	};
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -286,6 +227,6 @@ namespace DuiLib
 		}
 	};
 
-}// namespace DuiLib
+}
 
 #endif // __UTILS_H__

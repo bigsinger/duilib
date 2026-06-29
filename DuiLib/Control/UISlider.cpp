@@ -65,7 +65,7 @@ namespace DuiLib
 
 	LPCTSTR CSliderUI::GetThumbImage() const
 	{
-		return m_sThumbImage;
+		return m_sThumbImage.c_str();
 	}
 
 	void CSliderUI::SetThumbImage(LPCTSTR pStrImage)
@@ -76,7 +76,7 @@ namespace DuiLib
 
 	LPCTSTR CSliderUI::GetThumbHotImage() const
 	{
-		return m_sThumbHotImage;
+		return m_sThumbHotImage.c_str();
 	}
 
 	void CSliderUI::SetThumbHotImage(LPCTSTR pStrImage)
@@ -87,7 +87,7 @@ namespace DuiLib
 
 	LPCTSTR CSliderUI::GetThumbPushedImage() const
 	{
-		return m_sThumbPushedImage;
+		return m_sThumbPushedImage.c_str();
 	}
 
 	void CSliderUI::SetThumbPushedImage(LPCTSTR pStrImage)
@@ -176,7 +176,7 @@ namespace DuiLib
 		{
 			RECT rcThumb = GetThumbRect();
 			if( IsEnabled() && ::PtInRect(&rcThumb, event.ptMouse) ) {
-				::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND)));
+				::SetCursor(::LoadCursor(NULL, IDC_HAND));
 				return;
 			}
 		}
@@ -228,26 +228,26 @@ namespace DuiLib
 		rcThumb.right -= m_rcItem.left;
 		rcThumb.bottom -= m_rcItem.top;
 		if( (m_uButtonState & UISTATE_CAPTURED) != 0 ) {
-			if( !m_sThumbPushedImage.IsEmpty() ) {
-				m_sImageModify.Empty();
-				m_sImageModify.SmallFormat(_T("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
-				if( !DrawImage(hDC, (LPCTSTR)m_sThumbPushedImage, (LPCTSTR)m_sImageModify) ) m_sThumbPushedImage.Empty();
+			if( !m_sThumbPushedImage.empty() ) {
+				m_sImageModify.clear();
+				DuiStringSmallFormat(m_sImageModify, _T("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
+				if( !DrawImage(hDC, m_sThumbPushedImage.c_str(), m_sImageModify.c_str()) ) m_sThumbPushedImage.clear();
 				else return;
 			}
 		}
 		else if( (m_uButtonState & UISTATE_HOT) != 0 ) {
-			if( !m_sThumbHotImage.IsEmpty() ) {
-				m_sImageModify.Empty();
-				m_sImageModify.SmallFormat(_T("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
-				if( !DrawImage(hDC, (LPCTSTR)m_sThumbHotImage, (LPCTSTR)m_sImageModify) ) m_sThumbHotImage.Empty();
+			if( !m_sThumbHotImage.empty() ) {
+				m_sImageModify.clear();
+				DuiStringSmallFormat(m_sImageModify, _T("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
+				if( !DrawImage(hDC, m_sThumbHotImage.c_str(), m_sImageModify.c_str()) ) m_sThumbHotImage.clear();
 				else return;
 			}
 		}
 
-		if( !m_sThumbImage.IsEmpty() ) {
-			m_sImageModify.Empty();
-			m_sImageModify.SmallFormat(_T("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
-			if( !DrawImage(hDC, (LPCTSTR)m_sThumbImage, (LPCTSTR)m_sImageModify) ) m_sThumbImage.Empty();
+		if( !m_sThumbImage.empty() ) {
+			m_sImageModify.clear();
+			DuiStringSmallFormat(m_sImageModify, _T("dest='%d,%d,%d,%d'"), rcThumb.left, rcThumb.top, rcThumb.right, rcThumb.bottom);
+			if( !DrawImage(hDC, m_sThumbImage.c_str(), m_sImageModify.c_str()) ) m_sThumbImage.clear();
 			else return;
 		}
 	}

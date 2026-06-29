@@ -1,64 +1,14 @@
 #include "stdafx.h"
 #include "Utils.h"
 
+#include <algorithm>
+#include <cctype>
+#include <cwctype>
+#include <utility>
+#include <vector>
+
 namespace DuiLib
 {
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-	//
-
-	/*CPoint::CPoint()
-	{
-		x = y = 0;
-	}
-
-	CPoint::CPoint(const POINT& src)
-	{
-		x = src.x;
-		y = src.y;
-	}
-
-	CPoint::CPoint(int _x, int _y)
-	{
-		x = _x;
-		y = _y;
-	}
-
-	CPoint::CPoint(LPARAM lParam)
-	{
-		x = GET_X_LPARAM(lParam);
-		y = GET_Y_LPARAM(lParam);
-	}*/
-
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	//
-	//
-
-	//CSize::CSize()
-	//{
-	//	cx = cy = 0;
-	//}
-
-	//CSize::CSize(const SIZE& src)
-	//{
-	//	cx = src.cx;
-	//	cy = src.cy;
-	//}
-
-	//CSize::CSize(const RECT rc)
-	//{
-	//	cx = rc.right - rc.left;
-	//	cy = rc.bottom - rc.top;
-	//}
-
-	//CSize::CSize(int _cx, int _cy)
-	//{
-	//	cx = _cx;
-	//	cy = _cy;
-	//}
-
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -293,7 +243,7 @@ namespace DuiLib
 
 	void CStdValArray::Empty()
 	{   
-		m_nCount = 0;  // NOTE: We keep the memory in place
+		m_nCount = 0;
 	}
 
 	bool CStdValArray::IsEmpty() const
@@ -354,633 +304,246 @@ namespace DuiLib
 	//
 	//
 
-	CDuiString::CDuiString() : m_pstr(m_szBuffer)
+	LPCTSTR DuiSafeString(LPCTSTR text)
 	{
-		m_szBuffer[0] = '\0';
+		return text ? text : _T("");
 	}
 
-	CDuiString::CDuiString(const TCHAR ch) : m_pstr(m_szBuffer)
+	int DuiStringLength(const tstring& text)
 	{
-		m_szBuffer[0] = ch;
-		m_szBuffer[1] = '\0';
+		return static_cast<int>(text.length());
 	}
 
-	CDuiString::CDuiString(LPCTSTR lpsz, int nLen) : m_pstr(m_szBuffer)
-	{      
-		ASSERT(!::IsBadStringPtr(lpsz,-1) || lpsz==NULL);
-		m_szBuffer[0] = '\0';
-		Assign(lpsz, nLen);
-	}
-
-	CDuiString::CDuiString(const CDuiString& src) : m_pstr(m_szBuffer)
+	tstring DuiStringAssign(LPCTSTR text, int length)
 	{
-		m_szBuffer[0] = '\0';
-		Assign(src.m_pstr);
+		text = DuiSafeString(text);
+		const int textLength = length < 0 ? static_cast<int>(_tcslen(text)) : length;
+		return tstring(text, static_cast<tstring::size_type>(textLength));
 	}
 
-	CDuiString::~CDuiString()
+	int DuiStringFind(tstring_view text, TCHAR ch, int pos)
 	{
-		if( m_pstr != m_szBuffer ) free(m_pstr);
+		if (pos < 0 || pos > static_cast<int>(text.length())) return -1;
+		const auto found = text.find(ch, static_cast<tstring_view::size_type>(pos));
+		return found == tstring_view::npos ? -1 : static_cast<int>(found);
 	}
 
-	int CDuiString::GetLength() const
-	{ 
-		return (int) _tcslen(m_pstr); 
-	}
-
-	CDuiString::operator LPCTSTR() const 
-	{ 
-		return m_pstr; 
-	}
-
-	void CDuiString::Append(LPCTSTR pstr)
+	int DuiStringFind(tstring_view text, LPCTSTR value, int pos)
 	{
-		int nNewLength = GetLength() + (int) _tcslen(pstr);
-		if( nNewLength >= MAX_LOCAL_STRING_LEN ) {
-			if( m_pstr == m_szBuffer ) {
-				m_pstr = static_cast<LPTSTR>(malloc((nNewLength + 1) * sizeof(TCHAR)));
-				_tcscpy(m_pstr, m_szBuffer);
-				_tcscat(m_pstr, pstr);
-			}
-			else {
-				m_pstr = static_cast<LPTSTR>(realloc(m_pstr, (nNewLength + 1) * sizeof(TCHAR)));
-				_tcscat(m_pstr, pstr);
-			}
+		if (!value || pos < 0 || pos > static_cast<int>(text.length())) return -1;
+		const auto found = text.find(value, static_cast<tstring_view::size_type>(pos));
+		return found == tstring_view::npos ? -1 : static_cast<int>(found);
+	}
+
+	int DuiStringReverseFind(tstring_view text, TCHAR ch)
+	{
+		const auto found = text.rfind(ch);
+		return found == tstring_view::npos ? -1 : static_cast<int>(found);
+	}
+
+	tstring DuiStringLeft(tstring_view text, int length)
+	{
+		if (length < 0) length = 0;
+		if (length > static_cast<int>(text.length())) length = static_cast<int>(text.length());
+		return tstring(text.substr(0, static_cast<tstring_view::size_type>(length)));
+	}
+
+	tstring DuiStringMid(tstring_view text, int pos, int length)
+	{
+		if (pos < 0) pos = 0;
+		if (pos > static_cast<int>(text.length())) return {};
+		if (length < 0 || pos + length > static_cast<int>(text.length())) length = static_cast<int>(text.length()) - pos;
+		if (length <= 0) return {};
+		return tstring(text.substr(static_cast<tstring_view::size_type>(pos), static_cast<tstring_view::size_type>(length)));
+	}
+
+	tstring DuiStringRight(tstring_view text, int length)
+	{
+		if (length < 0) length = 0;
+		if (length > static_cast<int>(text.length())) length = static_cast<int>(text.length());
+		return tstring(text.substr(text.length() - static_cast<tstring_view::size_type>(length)));
+	}
+
+	int DuiStringReplace(tstring& text, LPCTSTR from, LPCTSTR to)
+	{
+		from = DuiSafeString(from);
+		to = DuiSafeString(to);
+		const tstring::size_type fromLength = _tcslen(from);
+		if (fromLength == 0) return 0;
+
+		const tstring::size_type toLength = _tcslen(to);
+		int count = 0;
+		tstring::size_type pos = text.find(from);
+		while (pos != tstring::npos) {
+			text.replace(pos, fromLength, to);
+			pos = text.find(from, pos + toLength);
+			++count;
 		}
-		else {
-			if( m_pstr != m_szBuffer ) {
-				free(m_pstr);
-				m_pstr = m_szBuffer;
-			}
-			_tcscat(m_szBuffer, pstr);
-		}
+		return count;
 	}
 
-	void CDuiString::Assign(LPCTSTR pstr, int cchMax)
+	void DuiStringMakeUpper(tstring& text)
 	{
-		if( pstr == NULL ) pstr = _T("");
-		cchMax = (cchMax < 0 ? (int) _tcslen(pstr) : cchMax);
-		if( cchMax < MAX_LOCAL_STRING_LEN ) {
-			if( m_pstr != m_szBuffer ) {
-				free(m_pstr);
-				m_pstr = m_szBuffer;
-			}
-		}
-		else if( cchMax > GetLength() || m_pstr == m_szBuffer ) {
-			if( m_pstr == m_szBuffer ) m_pstr = NULL;
-			m_pstr = static_cast<LPTSTR>(realloc(m_pstr, (cchMax + 1) * sizeof(TCHAR)));
-		}
-		_tcsncpy(m_pstr, pstr, cchMax);
-		m_pstr[cchMax] = '\0';
-	}
-
-	bool CDuiString::IsEmpty() const 
-	{ 
-		return m_pstr[0] == '\0'; 
-	}
-
-	void CDuiString::Empty() 
-	{ 
-		if( m_pstr != m_szBuffer ) free(m_pstr);
-		m_pstr = m_szBuffer;
-		m_szBuffer[0] = '\0'; 
-	}
-
-	LPCTSTR CDuiString::GetData() const
-	{
-		return m_pstr;
-	}
-
-	TCHAR CDuiString::GetAt(int nIndex) const
-	{
-		return m_pstr[nIndex];
-	}
-
-	TCHAR CDuiString::operator[] (int nIndex) const
-	{ 
-		return m_pstr[nIndex];
-	}   
-
-	const CDuiString& CDuiString::operator=(const CDuiString& src)
-	{      
-		Assign(src);
-		return *this;
-	}
-
-	const CDuiString& CDuiString::operator=(LPCTSTR lpStr)
-	{      
-		if ( lpStr )
-		{
-			ASSERT(!::IsBadStringPtr(lpStr,-1));
-			Assign(lpStr);
-		}
-		else
-		{
-			Empty();
-		}
-		return *this;
-	}
-
+		std::transform(text.begin(), text.end(), text.begin(), [](TCHAR ch) -> TCHAR {
 #ifdef _UNICODE
-
-	const CDuiString& CDuiString::operator=(LPCSTR lpStr)
-	{
-		if ( lpStr )
-		{
-			ASSERT(!::IsBadStringPtrA(lpStr,-1));
-			int cchStr = (int) strlen(lpStr) + 1;
-			LPWSTR pwstr = (LPWSTR) _alloca(cchStr);
-			if( pwstr != NULL ) ::MultiByteToWideChar(::GetACP(), 0, lpStr, -1, pwstr, cchStr) ;
-			Assign(pwstr);
-		}
-		else
-		{
-			Empty();
-		}
-		return *this;
-	}
-
-	const CDuiString& CDuiString::operator+=(LPCSTR lpStr)
-	{
-		if ( lpStr )
-		{
-			ASSERT(!::IsBadStringPtrA(lpStr,-1));
-			int cchStr = (int) strlen(lpStr) + 1;
-			LPWSTR pwstr = (LPWSTR) _alloca(cchStr);
-			if( pwstr != NULL ) ::MultiByteToWideChar(::GetACP(), 0, lpStr, -1, pwstr, cchStr) ;
-			Append(pwstr);
-		}
-		
-		return *this;
-	}
-
+			return static_cast<TCHAR>(std::towupper(ch));
 #else
-
-	const CDuiString& CDuiString::operator=(LPCWSTR lpwStr)
-	{      
-		if ( lpwStr )
-		{
-			ASSERT(!::IsBadStringPtrW(lpwStr,-1));
-			int cchStr = ((int) wcslen(lpwStr) * 2) + 1;
-			LPSTR pstr = (LPSTR) _alloca(cchStr);
-			if( pstr != NULL ) ::WideCharToMultiByte(::GetACP(), 0, lpwStr, -1, pstr, cchStr, NULL, NULL);
-			Assign(pstr);
-		}
-		else
-		{
-			Empty();
-		}
-		
-		return *this;
-	}
-
-	const CDuiString& CDuiString::operator+=(LPCWSTR lpwStr)
-	{
-		if ( lpwStr )
-		{
-			ASSERT(!::IsBadStringPtrW(lpwStr,-1));
-			int cchStr = ((int) wcslen(lpwStr) * 2) + 1;
-			LPSTR pstr = (LPSTR) _alloca(cchStr);
-			if( pstr != NULL ) ::WideCharToMultiByte(::GetACP(), 0, lpwStr, -1, pstr, cchStr, NULL, NULL);
-			Append(pstr);
-		}
-		
-		return *this;
-	}
-
-#endif // _UNICODE
-
-	const CDuiString& CDuiString::operator=(const TCHAR ch)
-	{
-		Empty();
-		m_szBuffer[0] = ch;
-		m_szBuffer[1] = '\0';
-		return *this;
-	}
-
-	CDuiString CDuiString::operator+(const CDuiString& src) const
-	{
-		CDuiString sTemp = *this;
-		sTemp.Append(src);
-		return sTemp;
-	}
-
-	CDuiString CDuiString::operator+(LPCTSTR lpStr) const
-	{
-		if ( lpStr )
-		{
-			ASSERT(!::IsBadStringPtr(lpStr,-1));
-			CDuiString sTemp = *this;
-			sTemp.Append(lpStr);
-			return sTemp;
-		}
-
-		return *this;
-	}
-
-	const CDuiString& CDuiString::operator+=(const CDuiString& src)
-	{      
-		Append(src);
-		return *this;
-	}
-
-	const CDuiString& CDuiString::operator+=(LPCTSTR lpStr)
-	{      
-		if ( lpStr )
-		{
-			ASSERT(!::IsBadStringPtr(lpStr,-1));
-			Append(lpStr);
-		}
-		
-		return *this;
-	}
-
-	const CDuiString& CDuiString::operator+=(const TCHAR ch)
-	{      
-		TCHAR str[] = { ch, '\0' };
-		Append(str);
-		return *this;
-	}
-
-	bool CDuiString::operator == (LPCTSTR str) const { return (Compare(str) == 0); };
-	bool CDuiString::operator != (LPCTSTR str) const { return (Compare(str) != 0); };
-	bool CDuiString::operator <= (LPCTSTR str) const { return (Compare(str) <= 0); };
-	bool CDuiString::operator <  (LPCTSTR str) const { return (Compare(str) <  0); };
-	bool CDuiString::operator >= (LPCTSTR str) const { return (Compare(str) >= 0); };
-	bool CDuiString::operator >  (LPCTSTR str) const { return (Compare(str) >  0); };
-
-	void CDuiString::SetAt(int nIndex, TCHAR ch)
-	{
-		ASSERT(nIndex>=0 && nIndex<GetLength());
-		m_pstr[nIndex] = ch;
-	}
-
-	int CDuiString::Compare(LPCTSTR lpsz) const 
-	{ 
-		return _tcscmp(m_pstr, lpsz); 
-	}
-
-	int CDuiString::CompareNoCase(LPCTSTR lpsz) const 
-	{ 
-		return _tcsicmp(m_pstr, lpsz); 
-	}
-
-	void CDuiString::MakeUpper() 
-	{ 
-		_tcsupr(m_pstr); 
-	}
-
-	void CDuiString::MakeLower() 
-	{ 
-		_tcslwr(m_pstr); 
-	}
-
-	CDuiString CDuiString::Left(int iLength) const
-	{
-		if( iLength < 0 ) iLength = 0;
-		if( iLength > GetLength() ) iLength = GetLength();
-		return CDuiString(m_pstr, iLength);
-	}
-
-	CDuiString CDuiString::Mid(int iPos, int iLength) const
-	{
-		if( iLength < 0 ) iLength = GetLength() - iPos;
-		if( iPos + iLength > GetLength() ) iLength = GetLength() - iPos;
-		if( iLength <= 0 ) return CDuiString();
-		return CDuiString(m_pstr + iPos, iLength);
-	}
-
-	CDuiString CDuiString::Right(int iLength) const
-	{
-		int iPos = GetLength() - iLength;
-		if( iPos < 0 ) {
-			iPos = 0;
-			iLength = GetLength();
-		}
-		return CDuiString(m_pstr + iPos, iLength);
-	}
-
-	int CDuiString::Find(TCHAR ch, int iPos /*= 0*/) const
-	{
-		ASSERT(iPos>=0 && iPos<=GetLength());
-		if( iPos != 0 && (iPos < 0 || iPos >= GetLength()) ) return -1;
-		LPCTSTR p = _tcschr(m_pstr + iPos, ch);
-		if( p == NULL ) return -1;
-		return (int)(p - m_pstr);
-	}
-
-	int CDuiString::Find(LPCTSTR pstrSub, int iPos /*= 0*/) const
-	{
-		ASSERT(!::IsBadStringPtr(pstrSub,-1));
-		ASSERT(iPos>=0 && iPos<=GetLength());
-		if( iPos != 0 && (iPos < 0 || iPos > GetLength()) ) return -1;
-		LPCTSTR p = _tcsstr(m_pstr + iPos, pstrSub);
-		if( p == NULL ) return -1;
-		return (int)(p - m_pstr);
-	}
-
-	int CDuiString::ReverseFind(TCHAR ch) const
-	{
-		LPCTSTR p = _tcsrchr(m_pstr, ch);
-		if( p == NULL ) return -1;
-		return (int)(p - m_pstr);
-	}
-
-	int CDuiString::Replace(LPCTSTR pstrFrom, LPCTSTR pstrTo)
-	{
-		CDuiString sTemp;
-		int nCount = 0;
-		int iPos = Find(pstrFrom);
-		if( iPos < 0 ) return 0;
-		int cchFrom = (int) _tcslen(pstrFrom);
-		int cchTo = (int) _tcslen(pstrTo);
-		while( iPos >= 0 ) {
-			sTemp = Left(iPos);
-			sTemp += pstrTo;
-			sTemp += Mid(iPos + cchFrom);
-			Assign(sTemp);
-			iPos = Find(pstrFrom, iPos + cchTo);
-			nCount++;
-		}
-		return nCount;
-	}
-    
-    int CDuiString::Format(LPCTSTR pstrFormat, va_list Args)
-    {
-#if _MSC_VER <= 1400
-
-        TCHAR *szBuffer = NULL;
-        int size = 512, nLen, counts;
-
-        //
-        //  allocate with init size
-        //
-
-        szBuffer = (TCHAR*)malloc(size);
-        ZeroMemory(szBuffer, size);
-
-        while (TRUE){
-            counts = size / sizeof(TCHAR);
-            nLen = _vsntprintf (szBuffer, counts, pstrFormat, Args);
-            if (nLen != -1 && nLen < counts){
-                break;
-            }
-
-            //
-            //  expand the buffer.
-            //
-
-            if (nLen == -1){
-                size *= 2;
-            }else{
-                size += 1 * sizeof(TCHAR);
-            }
-
-
-            //
-            //  realloc the buffer.
-            //
-
-            if ((szBuffer = (TCHAR*)realloc(szBuffer, size)) != NULL){
-                ZeroMemory(szBuffer, size);
-            }else{
-                break;
-            }
-
-        }
-
-        Assign(szBuffer);
-        free(szBuffer);
-        return nLen;
-#else
-        int nLen, totalLen;
-        TCHAR *szBuffer;
-
-        nLen = _vsntprintf(NULL, 0, pstrFormat, Args);
-        totalLen = (nLen + 1)*sizeof(TCHAR);
-        szBuffer = (TCHAR*)malloc(totalLen);
-        ZeroMemory(szBuffer, totalLen);
-        nLen = _vsntprintf(szBuffer, nLen + 1, pstrFormat, Args);
-
-        Assign(szBuffer);
-        free(szBuffer);
-
-        return nLen;
-
+			return static_cast<TCHAR>(std::toupper(static_cast<unsigned char>(ch)));
 #endif
-    }
+		});
+	}
 
-    int CDuiString::Format(LPCTSTR pstrFormat, ...)
-    {
-        int nRet;
-        va_list Args;
-
-        va_start(Args, pstrFormat);
-        nRet = Format(pstrFormat, Args);
-        va_end(Args);
-
-        return nRet;
-
-    }
-
-	int CDuiString::SmallFormat(LPCTSTR pstrFormat, ...)
+	void DuiStringMakeLower(tstring& text)
 	{
-		CDuiString sFormat = pstrFormat;
-		TCHAR szBuffer[64] = { 0 };
-		va_list argList;
-		va_start(argList, pstrFormat);
-		int iRet = ::_vsntprintf(szBuffer, sizeof(szBuffer), sFormat, argList);
-		va_end(argList);
-		Assign(szBuffer);
-		return iRet;
+		std::transform(text.begin(), text.end(), text.begin(), [](TCHAR ch) -> TCHAR {
+#ifdef _UNICODE
+			return static_cast<TCHAR>(std::towlower(ch));
+#else
+			return static_cast<TCHAR>(std::tolower(static_cast<unsigned char>(ch)));
+#endif
+		});
+	}
+
+	int DuiStringFormatV(tstring& text, LPCTSTR format, va_list args)
+	{
+		if (!format) {
+			text.clear();
+			return 0;
+		}
+
+		va_list argsCopy;
+		va_copy(argsCopy, args);
+		const int length = _vsctprintf(format, argsCopy);
+		va_end(argsCopy);
+		if (length < 0) {
+			text.clear();
+			return length;
+		}
+
+		std::vector<TCHAR> buffer(static_cast<size_t>(length) + 1, _T('\0'));
+		int written = _vsntprintf_s(buffer.data(), buffer.size(), _TRUNCATE, format, args);
+		if (written < 0) written = static_cast<int>(_tcslen(buffer.data()));
+		text.assign(buffer.data(), static_cast<tstring::size_type>(written));
+		return written;
+	}
+
+	int DuiStringFormat(tstring& text, LPCTSTR format, ...)
+	{
+		va_list args;
+		va_start(args, format);
+		const int result = DuiStringFormatV(text, format, args);
+		va_end(args);
+		return result;
+	}
+
+	int DuiStringSmallFormat(tstring& text, LPCTSTR format, ...)
+	{
+		TCHAR buffer[64] = { 0 };
+		va_list args;
+		va_start(args, format);
+		const int written = _vsntprintf_s(buffer, _countof(buffer), _TRUNCATE, format, args);
+		va_end(args);
+		text.assign(buffer);
+		return written;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
 	//
 	//
 
-	static UINT HashKey(LPCTSTR Key)
+	CStdStringPtrMap::CStdStringPtrMap(int nSize) : m_nBuckets(0), m_bEnabled(false)
 	{
-		UINT i = 0;
-		SIZE_T len = _tcslen(Key);
-		while( len-- > 0 ) i = (i << 5) + i + Key[len];
-		return i;
-	}
-
-	static UINT HashKey(const CDuiString& Key)
-	{
-		return HashKey((LPCTSTR)Key);
-	};
-
-	CStdStringPtrMap::CStdStringPtrMap(int nSize) : m_nCount(0)
-	{
-		if( nSize < 16 ) nSize = 16;
-		m_nBuckets = nSize;
-		m_aT = new TITEM*[nSize];
-		memset(m_aT, 0, nSize * sizeof(TITEM*));
+		Resize(nSize);
 	}
 
 	CStdStringPtrMap::~CStdStringPtrMap()
 	{
-		if( m_aT ) {
-			int len = m_nBuckets;
-			while( len-- ) {
-				TITEM* pItem = m_aT[len];
-				while( pItem ) {
-					TITEM* pKill = pItem;
-					pItem = pItem->pNext;
-					delete pKill;
-				}
-			}
-			delete [] m_aT;
-			m_aT = NULL;
-		}
+		RemoveAll();
 	}
 
 	void CStdStringPtrMap::RemoveAll()
 	{
-		this->Resize(m_nBuckets);
+		m_items.clear();
+		m_keys.clear();
 	}
 
 	void CStdStringPtrMap::Resize(int nSize)
 	{
-		if( m_aT ) {
-			int len = m_nBuckets;
-			while( len-- ) {
-				TITEM* pItem = m_aT[len];
-				while( pItem ) {
-					TITEM* pKill = pItem;
-					pItem = pItem->pNext;
-					delete pKill;
-				}
-			}
-			delete [] m_aT;
-			m_aT = NULL;
+		RemoveAll();
+		if( nSize <= 0 ) {
+			m_nBuckets = 0;
+			m_bEnabled = false;
+			return;
 		}
 
-		if( nSize < 0 ) nSize = 0;
-		if( nSize > 0 ) {
-			m_aT = new TITEM*[nSize];
-			memset(m_aT, 0, nSize * sizeof(TITEM*));
-		} 
+		if( nSize < 16 ) nSize = 16;
 		m_nBuckets = nSize;
-		m_nCount = 0;
+		m_bEnabled = true;
+		m_items.reserve(static_cast<size_t>(m_nBuckets));
+		m_keys.reserve(static_cast<size_t>(m_nBuckets));
 	}
 
 	LPVOID CStdStringPtrMap::Find(LPCTSTR key, bool optimize) const
 	{
-		if( m_nBuckets == 0 || GetSize() == 0 ) return NULL;
+		(void)optimize;
+		if( !m_bEnabled || key == nullptr || GetSize() == 0 ) return NULL;
 
-		UINT slot = HashKey(key) % m_nBuckets;
-		for( TITEM* pItem = m_aT[slot]; pItem; pItem = pItem->pNext ) {
-			if( pItem->Key == key ) {
-				if (optimize && pItem != m_aT[slot]) {
-					if (pItem->pNext) {
-						pItem->pNext->pPrev = pItem->pPrev;
-					}
-					pItem->pPrev->pNext = pItem->pNext;
-					pItem->pPrev = NULL;
-					pItem->pNext = m_aT[slot];
-					pItem->pNext->pPrev = pItem;
-					//将item移动至链条头部
-					m_aT[slot] = pItem;
-				}
-				return pItem->Data;
-			}        
-		}
-
-		return NULL;
+		auto it = m_items.find(tstring(key));
+		return it == m_items.end() ? NULL : it->second;
 	}
 
 	bool CStdStringPtrMap::Insert(LPCTSTR key, LPVOID pData)
 	{
-		if( m_nBuckets == 0 ) return false;
-		if( Find(key) ) return false;
+		if( !m_bEnabled || key == nullptr ) return false;
 
-		// Add first in bucket
-		UINT slot = HashKey(key) % m_nBuckets;
-		TITEM* pItem = new TITEM;
-		pItem->Key = key;
-		pItem->Data = pData;
-		pItem->pPrev = NULL;
-		pItem->pNext = m_aT[slot];
-		if (pItem->pNext)
-			pItem->pNext->pPrev = pItem;
-		m_aT[slot] = pItem;
-		m_nCount++;
+		tstring itemKey(key);
+		auto inserted = m_items.emplace(itemKey, pData);
+		if( !inserted.second ) return false;
+
+		m_keys.push_back(std::move(itemKey));
 		return true;
 	}
 
 	LPVOID CStdStringPtrMap::Set(LPCTSTR key, LPVOID pData)
 	{
-		if( m_nBuckets == 0 ) return pData;
+		if( !m_bEnabled || key == nullptr ) return pData;
 
-		if (GetSize()>0) {
-			UINT slot = HashKey(key) % m_nBuckets;
-			// Modify existing item
-			for( TITEM* pItem = m_aT[slot]; pItem; pItem = pItem->pNext ) {
-				if( pItem->Key == key ) {
-					LPVOID pOldData = pItem->Data;
-					pItem->Data = pData;
-					return pOldData;
-				}
-			}
+		tstring itemKey(key);
+		auto it = m_items.find(itemKey);
+		if( it != m_items.end() ) {
+			LPVOID pOldData = it->second;
+			it->second = pData;
+			return pOldData;
 		}
 
-		Insert(key, pData);
+		m_items.emplace(itemKey, pData);
+		m_keys.push_back(std::move(itemKey));
 		return NULL;
 	}
 
 	bool CStdStringPtrMap::Remove(LPCTSTR key)
 	{
-		if( m_nBuckets == 0 || GetSize() == 0 ) return false;
+		if( !m_bEnabled || key == nullptr || GetSize() == 0 ) return false;
 
-		UINT slot = HashKey(key) % m_nBuckets;
-		TITEM** ppItem = &m_aT[slot];
-		while( *ppItem ) {
-			if( (*ppItem)->Key == key ) {
-				TITEM* pKill = *ppItem;
-				*ppItem = (*ppItem)->pNext;
-				if (*ppItem)
-					(*ppItem)->pPrev = pKill->pPrev;
-				delete pKill;
-				m_nCount--;
-				return true;
-			}
-			ppItem = &((*ppItem)->pNext);
+		tstring itemKey(key);
+		if( m_items.erase(itemKey) == 0 ) return false;
+
+		auto it = std::find(m_keys.begin(), m_keys.end(), itemKey);
+		if( it != m_keys.end() ) {
+			m_keys.erase(it);
 		}
-
-		return false;
+		return true;
 	}
 
 	int CStdStringPtrMap::GetSize() const
 	{
-#if 0//def _DEBUG
-		int nCount = 0;
-		int len = m_nBuckets;
-		while( len-- ) {
-			for( const TITEM* pItem = m_aT[len]; pItem; pItem = pItem->pNext ) nCount++;
-		}
-		ASSERT(m_nCount==nCount);
-#endif
-		return m_nCount;
+		return static_cast<int>(m_keys.size());
 	}
 
 	LPCTSTR CStdStringPtrMap::GetAt(int iIndex) const
 	{
-		if( m_nBuckets == 0 || GetSize() == 0 ) return nullptr;
-
-		int pos = 0;
-		int len = m_nBuckets;
-		while( len-- ) {
-			for( TITEM* pItem = m_aT[len]; pItem; pItem = pItem->pNext ) {
-				if( pos++ == iIndex ) {
-					return pItem->Key.GetData();
-				}
-			}
-		}
-
-		return nullptr;
+		if( !m_bEnabled || iIndex < 0 || static_cast<size_t>(iIndex) >= m_keys.size() ) return nullptr;
+		return m_keys[static_cast<size_t>(iIndex)].c_str();
 	}
 
 	LPCTSTR CStdStringPtrMap::operator[] (int nIndex) const
@@ -1003,4 +566,4 @@ namespace DuiLib
 		::SetCursor(m_hOrigCursor);
 	}
 
-} // namespace DuiLib
+}

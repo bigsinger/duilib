@@ -27,11 +27,11 @@ CUICommandElement::CUICommandElement(CArray<CControlUI*,CControlUI*>& arrSelecte
 
 		CControlUI* pControl = arrSelected[i];
 		ASSERT(pNode && pControl);
-		pNode->ToElement()->SetAttribute("myname", StringConvertor::WideToUtf8(pControl->GetName()));
+		pNode->ToElement()->SetAttribute("myname", StringConvertor::WideToUtf8(pControl->GetName().c_str()));
 
 		CControlUI* pParent = arrSelected[i]->GetParent();
 		ASSERT(pNode && pParent);
-		pNode->ToElement()->SetAttribute("parentname", StringConvertor::WideToUtf8(pParent->GetName()));
+		pNode->ToElement()->SetAttribute("parentname", StringConvertor::WideToUtf8(pParent->GetName().c_str()));
 	}
 }
 
@@ -113,7 +113,7 @@ void CUICommandNode::Begin(CControlUI* pControl, LPCTSTR pstrName, LPCTSTR pstrV
 	CString strClass = m_pControl->GetClass();
 	strClass = strClass.Mid(0, strClass.GetLength() - 2);
 	TiXmlElement* pNode = new TiXmlElement(StringConvertor::WideToUtf8(strClass.GetBuffer()));
-	pNode->SetAttribute("myname", StringConvertor::WideToUtf8(m_pControl->GetName()));
+	pNode->SetAttribute("myname", StringConvertor::WideToUtf8(m_pControl->GetName().c_str()));
 	pNode->SetAttribute(StringConvertor::WideToUtf8(pstrName), StringConvertor::WideToUtf8(pstrValue));
 	pElement->InsertEndChild(*pNode);
 	m_pBefore->m_pElementXml = pElement;
@@ -155,7 +155,7 @@ void CUICommandNode::End(CControlUI* pControl, LPCTSTR pstrName, LPCTSTR pstrVal
 	CString strClass = m_pControl->GetClass();
 	strClass = strClass.Mid(0, strClass.GetLength() - 2);
 	TiXmlElement* pNode = new TiXmlElement(StringConvertor::WideToUtf8(strClass.GetBuffer()));
-	pNode->SetAttribute("myname", StringConvertor::WideToUtf8(m_pControl->GetName()));
+	pNode->SetAttribute("myname", StringConvertor::WideToUtf8(m_pControl->GetName().c_str()));
 	pNode->SetAttribute(StringConvertor::WideToUtf8(pstrName), StringConvertor::WideToUtf8(pstrValue));
 	pElement->InsertEndChild(*pNode);
 	m_pAfter->m_pElementXml = pElement;
@@ -437,7 +437,7 @@ void CALLBACK CUICommandHistory::UIAdd(TiXmlNode* pNode)
 	delete pRootElem;
 
 	CDialogBuilder builder;
-	CControlUI* pRoot=builder.Create(StringConvertor::Utf8ToWide(printer.CStr()), (UINT)0, NULL, pManager);
+	CControlUI* pRoot=builder.Create(StringConvertor::Utf8ToWide(printer.CStr()), NULL, NULL, pManager);
  	if(pRoot)
 		pUIView->RedoUI(pRoot, pParentControl);
 }

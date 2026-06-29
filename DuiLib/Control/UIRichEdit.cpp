@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#if DUI_HAS_FULL_CONTROLS
+
 // These constants are for backward compatibility. They are the 
 // sizes used for initialization and reset in RichEdit 1.0
 
@@ -334,9 +336,9 @@ BOOL CTxtWinHost::Init(CRichEditUI *re, const CREATESTRUCT *pcs)
         if(FAILED(pserv->TxSetText((TCHAR *)pcs->lpszName)))
             goto err;
 #else
-        size_t iLen = _tcslen(pcs->lpszName);
-        LPWSTR lpText = new WCHAR[iLen + 1];
-        ::ZeroMemory(lpText, (iLen + 1) * sizeof(WCHAR));
+        const int iLen = static_cast<int>(_tcslen(pcs->lpszName)) + 1;
+        LPWSTR lpText = new WCHAR[iLen];
+        ::ZeroMemory(lpText, iLen * sizeof(WCHAR));
         ::MultiByteToWideChar(CP_ACP, 0, pcs->lpszName, -1, (LPWSTR)lpText, iLen) ;
         if(FAILED(pserv->TxSetText((LPWSTR)lpText))) {
             delete[] lpText;
@@ -1205,7 +1207,7 @@ long CRichEditUI::GetTextLength(DWORD dwFlags) const
     return (long)lResult;
 }
 
-CDuiString CRichEditUI::GetText() const
+tstring CRichEditUI::GetText() const
 {
     long lLen = GetTextLength(GTL_DEFAULT);
     LPTSTR lpText = NULL;
@@ -1225,7 +1227,7 @@ CDuiString CRichEditUI::GetText() const
     gt.lpDefaultChar = NULL;
     gt.lpUsedDefChar = NULL;
     TxSendMessage(EM_GETTEXTEX, (WPARAM)&gt, (LPARAM)lpText, 0);
-    CDuiString sText(lpText);
+    tstring sText(lpText);
     delete[] lpText;
     return sText;
 }
@@ -1286,9 +1288,9 @@ void CRichEditUI::ReplaceSel(LPCTSTR lpszNewText, bool bCanUndo)
 #ifdef _UNICODE		
     TxSendMessage(EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM)lpszNewText, 0); 
 #else
-    int iLen = _tcslen(lpszNewText);
-    LPWSTR lpText = new WCHAR[iLen + 1];
-    ::ZeroMemory(lpText, (iLen + 1) * sizeof(WCHAR));
+    const int iLen = static_cast<int>(_tcslen(lpszNewText)) + 1;
+    LPWSTR lpText = new WCHAR[iLen];
+    ::ZeroMemory(lpText, iLen * sizeof(WCHAR));
     ::MultiByteToWideChar(CP_ACP, 0, lpszNewText, -1, (LPWSTR)lpText, iLen) ;
     TxSendMessage(EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM)lpText, 0); 
     delete[] lpText;
@@ -1300,9 +1302,9 @@ void CRichEditUI::ReplaceSelW(LPCWSTR lpszNewText, bool bCanUndo)
     TxSendMessage(EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM)lpszNewText, 0); 
 }
 
-CDuiString CRichEditUI::GetSelText() const
+tstring CRichEditUI::GetSelText() const
 {
-    if( !m_pTwh ) return CDuiString();
+    if( !m_pTwh ) return tstring();
     CHARRANGE cr;
     cr.cpMin = cr.cpMax = 0;
     TxSendMessage(EM_EXGETSEL, 0, (LPARAM)&cr, 0);
@@ -1310,8 +1312,7 @@ CDuiString CRichEditUI::GetSelText() const
     lpText = new WCHAR[cr.cpMax - cr.cpMin + 1];
     ::ZeroMemory(lpText, (cr.cpMax - cr.cpMin + 1) * sizeof(WCHAR));
     TxSendMessage(EM_GETSELTEXT, 0, (LPARAM)lpText, 0);
-    CDuiString sText;
-    sText = (LPCWSTR)lpText;
+    tstring sText = DuiWideToNative(lpText);
     delete[] lpText;
     return sText;
 }
@@ -1384,7 +1385,7 @@ DWORD CRichEditUI::SetEventMask(DWORD dwEventMask)
     return (DWORD)lResult;
 }
 
-CDuiString CRichEditUI::GetTextRange(long nStartChar, long nEndChar) const
+tstring CRichEditUI::GetTextRange(long nStartChar, long nEndChar) const
 {
     TEXTRANGEW tr = { 0 };
     tr.chrg.cpMin = nStartChar;
@@ -1394,8 +1395,7 @@ CDuiString CRichEditUI::GetTextRange(long nStartChar, long nEndChar) const
     ::ZeroMemory(lpText, (nEndChar - nStartChar + 1) * sizeof(WCHAR));
     tr.lpstrText = lpText;
     TxSendMessage(EM_GETTEXTRANGE, 0, (LPARAM)&tr, 0);
-    CDuiString sText;
-    sText = (LPCWSTR)lpText;
+    tstring sText = DuiWideToNative(lpText);
     delete[] lpText;
     return sText;
 }
@@ -1422,6 +1422,43 @@ int CRichEditUI::AppendText(LPCTSTR lpstrText, bool bCanUndo)
     int nRet = SetSel(-1, -1);
     ReplaceSel(lpstrText, bCanUndo);
     return nRet;
+}
+
+void CRichEditUI::AppendMsg(LPCTSTR lpstrText, DWORD rgbColor, int maxLines, int trimLines)
+{
+    if( lpstrText == NULL ) return;
+
+    if( maxLines > 0 && trimLines > 0 && GetLineCount() >= maxLines ) {
+        long nEndChar = LineIndex(trimLines + 1);
+        if( nEndChar > 0 ) {
+            SetSel(0, nEndChar);
+            Clear();
+        }
+    }
+
+    long nStartChar = GetTextLength();
+    SetSel(nStartChar, nStartChar);
+    ReplaceSel(lpstrText, false);
+
+    long nEndChar = GetTextLength();
+    SetSel(nStartChar, nEndChar);
+
+    CHARFORMAT2 cf;
+    ZeroMemory(&cf, sizeof(CHARFORMAT2));
+    cf.cbSize = sizeof(cf);
+    cf.dwMask = CFM_COLOR;
+    cf.crTextColor = rgbColor;
+    SetSelectionCharFormat(cf);
+
+    PARAFORMAT2 pf;
+    ZeroMemory(&pf, sizeof(PARAFORMAT2));
+    pf.cbSize = sizeof(pf);
+    pf.dwMask = PFM_STARTINDENT;
+    pf.dxStartIndent = 0;
+    SetParaFormat(pf);
+
+    SetSel(nEndChar, nEndChar);
+    EndDown();
 }
 
 DWORD CRichEditUI::GetDefaultCharFormat(CHARFORMAT2 &cf) const
@@ -1539,15 +1576,14 @@ int CRichEditUI::GetLineCount() const
     return (int)lResult; 
 }
 
-CDuiString CRichEditUI::GetLine(int nIndex, int nMaxLength) const
+tstring CRichEditUI::GetLine(int nIndex, int nMaxLength) const
 {
     LPWSTR lpText = NULL;
     lpText = new WCHAR[nMaxLength + 1];
     ::ZeroMemory(lpText, (nMaxLength + 1) * sizeof(WCHAR));
     *(LPWORD)lpText = (WORD)nMaxLength;
     TxSendMessage(EM_GETLINE, nIndex, (LPARAM)lpText, 0);
-    CDuiString sText;
-    sText = (LPCWSTR)lpText;
+    tstring sText = DuiWideToNative(lpText);
     delete[] lpText;
     return sText;
 }
@@ -1644,7 +1680,7 @@ void CRichEditUI::DoInit()
     cs.y = 0;
     cs.cy = 0;
     cs.cx = 0;
-    cs.lpszName = m_sText.GetData();
+    cs.lpszName = m_sText.c_str();
     CreateHost(this, &cs, &m_pTwh);
     if( m_pTwh ) {
         m_pTwh->SetTransparent(TRUE);
@@ -1724,8 +1760,8 @@ void CRichEditUI::OnTxNotify(DWORD iNotify, void *pv)
 	}
 }
 
-// ¶àÐÐ·Çrich¸ñÊ½µÄricheditÓÐÒ»¸ö¹ö¶¯Ìõbug£¬ÔÚ×îºóÒ»ÐÐÊÇ¿ÕÐÐÊ±£¬LineDownºÍSetScrollPosÎÞ·¨¹ö¶¯µ½×îºó
-// ÒýÈëiPos¾ÍÊÇÎªÁËÐÞÕýÕâ¸öbug
+// ï¿½ï¿½ï¿½Ð·ï¿½richï¿½ï¿½Ê½ï¿½ï¿½richeditï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bugï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½Ê±ï¿½ï¿½LineDownï¿½ï¿½SetScrollPosï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½iPosï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bug
 void CRichEditUI::SetScrollPos(SIZE szPos)
 {
     int cx = 0;
@@ -1895,7 +1931,7 @@ void CRichEditUI::DoEvent(TEventUI& event)
 
 SIZE CRichEditUI::EstimateSize(SIZE szAvailable)
 {
-    //return CSize(m_rcItem); // ÕâÖÖ·½Ê½ÔÚµÚÒ»´ÎÉèÖÃ´óÐ¡Ö®ºó¾Í´óÐ¡²»±äÁË
+    //return CSize(m_rcItem); // ï¿½ï¿½ï¿½Ö·ï¿½Ê½ï¿½Úµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½Ð¡Ö®ï¿½ï¿½Í´ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     return CContainerUI::EstimateSize(szAvailable);
 }
 
@@ -1962,7 +1998,7 @@ void CRichEditUI::SetPos(RECT rc)
             SetFloatPos(it);
         }
         else {
-            pControl->SetPos(rc); // ËùÓÐ·Çfloat×Ó¿Ø¼þ·Å´óµ½Õû¸ö¿Í»§Çø
+            pControl->SetPos(rc); // ï¿½ï¿½ï¿½Ð·ï¿½floatï¿½Ó¿Ø¼ï¿½ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½
         }
     }
 }
@@ -2135,7 +2171,7 @@ LRESULT CRichEditUI::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, boo
 
 	if (uMsg == WM_IME_COMPOSITION)
 	{
-		// ½â¾öÎ¢ÈíÊäÈë·¨Î»ÖÃÒì³£µÄÎÊÌâ
+		// ï¿½ï¿½ï¿½Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ë·¨Î»ï¿½ï¿½ï¿½ì³£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		HIMC hIMC = ImmGetContext(GetManager()->GetPaintWindow());
 		if (hIMC) 
 		{
@@ -2235,7 +2271,7 @@ LRESULT CRichEditUI::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, boo
 					// This is the first WM_CHAR message, 
 					// accumulate it if this is a LeadByte.  Otherwise, fall thru to
 					// regular WM_CHAR processing.
-					if ( IsDBCSLeadByte ( (WORD)wParam ) )
+					if ( IsDBCSLeadByte ( static_cast<BYTE>(wParam & 0xFF) ) )
 					{
 						// save the Lead Byte and don't process this message
 						m_chLeadByte = (WORD)wParam << 8 ;
@@ -2284,3 +2320,5 @@ bool CRichEditUI::IsAccumulateDBCMode()
 
 
 } // namespace DuiLib
+
+#endif

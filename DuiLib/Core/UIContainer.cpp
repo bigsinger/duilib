@@ -192,15 +192,15 @@ namespace DuiLib
 		}
 	}
 
-	// Âß¼­ÉÏ£¬¶ÔÓÚContainer¿Ø¼þ²»¹«¿ª´Ë·½·¨
-	// µ÷ÓÃ´Ë·½·¨µÄ½á¹ûÊÇ£¬ÄÚ²¿×Ó¿Ø¼þÒþ²Ø£¬¿Ø¼þ±¾ÉíÒÀÈ»ÏÔÊ¾£¬±³¾°µÈÐ§¹û´æÔÚ
+	// ï¿½ß¼ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½Containerï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë·ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½Ã´Ë·ï¿½ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½Ç£ï¿½ï¿½Ú²ï¿½ï¿½Ó¿Ø¼ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È»ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void CContainerUI::SetInternVisible(bool bVisible)
 	{
 		CControlUI::SetInternVisible(bVisible);
 		if( m_items.IsEmpty() ) return;
 		for( int it = 0; it < m_items.GetSize(); it++ ) {
-			// ¿ØÖÆ×Ó¿Ø¼þÏÔÊ¾×´Ì¬
-			// InternVisible×´Ì¬Ó¦ÓÉ×Ó¿Ø¼þ×Ô¼º¿ØÖÆ
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Ø¼ï¿½ï¿½ï¿½Ê¾×´Ì¬
+			// InternVisible×´Ì¬Ó¦ï¿½ï¿½ï¿½Ó¿Ø¼ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½
 			static_cast<CControlUI*>(m_items[it])->SetInternVisible(IsVisible());
 		}
 	}
@@ -547,36 +547,53 @@ namespace DuiLib
 				int nAnchorMode = pControl->GetAnchorMode();
 				if ( nAnchorMode >0 ) {
 					DWORD dwFlag = nAnchorMode;
-					if ( dwFlag & Left ) {
-						rcCtrl.left = rc.left + pControl->m_nMarginLeft;
-						if ( dwFlag & Right ) {
-							rcCtrl.right = rc.right + pControl->m_nMarginRight;
-						}else{
-							rcCtrl.right = rcCtrl.left + m_nWidth;
-						}
-					}else{
-						if ( dwFlag & Right ) {
-							rcCtrl.right = rc.right + pControl->m_nMarginRight;
-						}
-						rcCtrl.left = rcCtrl.right - m_nWidth;
+					if (pControl->m_nWidth <= 0 && pControl->m_nHeight <= 0) {
+						RECT rcCurrent = pControl->GetPos();
+						const SIZE szXY = pControl->GetFixedXY();
+						int width = rcCurrent.right - rcCurrent.left;
+						int height = rcCurrent.bottom - rcCurrent.top;
+						if (width <= 0) width = pControl->GetFixedWidth();
+						if (height <= 0) height = pControl->GetFixedHeight();
+						const int parentWidth = rc.right - rc.left;
+						const int parentHeight = rc.bottom - rc.top;
+						const int left = (rcCurrent.right > rcCurrent.left) ? rcCurrent.left - rc.left : (szXY.cx >= 0 ? szXY.cx : parentWidth + szXY.cx - width);
+						const int top = (rcCurrent.bottom > rcCurrent.top) ? rcCurrent.top - rc.top : (szXY.cy >= 0 ? szXY.cy : parentHeight + szXY.cy - height);
+						pControl->m_nMarginLeft = left;
+						pControl->m_nMarginTop = top;
+						pControl->m_nMarginRight = left + width - parentWidth;
+						pControl->m_nMarginBottom = top + height - parentHeight;
+						pControl->m_nWidth = width;
+						pControl->m_nHeight = height;
 					}
 
-					if ( dwFlag & Top ) {
-						rcCtrl.top = rc.top + m_nMarginTop;
-						if ( dwFlag & Bottom ) {
-							rcCtrl.bottom = rc.bottom + pControl->m_nMarginBottom;
-						}else{
-							rcCtrl.bottom = rcCtrl.top + m_nHeight;
-						}
-					}else{
-						if ( dwFlag & Bottom ) {
-							rcCtrl.bottom = rc.bottom + pControl->m_nMarginBottom;
-						}
-						rcCtrl.top = rcCtrl.bottom - m_nHeight;
+					if ( (dwFlag & Left) && (dwFlag & Right) ) {
+						rcCtrl.left = rc.left + pControl->m_nMarginLeft;
+						rcCtrl.right = rc.right + pControl->m_nMarginRight;
+					}
+					else if ( dwFlag & Right ) {
+						rcCtrl.right = rc.right + pControl->m_nMarginRight;
+						rcCtrl.left = rcCtrl.right - pControl->m_nWidth;
+					}
+					else {
+						rcCtrl.left = rc.left + pControl->m_nMarginLeft;
+						rcCtrl.right = rcCtrl.left + pControl->m_nWidth;
+					}
+
+					if ( (dwFlag & Top) && (dwFlag & Bottom) ) {
+						rcCtrl.top = rc.top + pControl->m_nMarginTop;
+						rcCtrl.bottom = rc.bottom + pControl->m_nMarginBottom;
+					}
+					else if ( dwFlag & Bottom ) {
+						rcCtrl.bottom = rc.bottom + pControl->m_nMarginBottom;
+						rcCtrl.top = rcCtrl.bottom - pControl->m_nHeight;
+					}
+					else {
+						rcCtrl.top = rc.top + pControl->m_nMarginTop;
+						rcCtrl.bottom = rcCtrl.top + pControl->m_nHeight;
 					}
 				}
 
-				pControl->SetPos(rcCtrl); // ËùÓÐ·Çfloat×Ó¿Ø¼þ·Å´óµ½Õû¸ö¿Í»§Çø
+				pControl->SetPos(rcCtrl); // ï¿½ï¿½ï¿½Ð·ï¿½floatï¿½Ó¿Ø¼ï¿½ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½
 			}
 		}
 	}
@@ -746,7 +763,7 @@ namespace DuiLib
 
 	void CContainerUI::SetFloatPos(int iIndex)
 	{
-		// ÒòÎªCControlUI::SetPos¶ÔfloatµÄ²Ù×÷Ó°Ïì£¬ÕâÀï²»ÄÜ¶Ôfloat×é¼þÌí¼Ó¹ö¶¯ÌõµÄÓ°Ïì
+		// ï¿½ï¿½ÎªCControlUI::SetPosï¿½ï¿½floatï¿½Ä²ï¿½ï¿½ï¿½Ó°ï¿½ì£¬ï¿½ï¿½ï¿½ï²»ï¿½Ü¶ï¿½floatï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½
 		if( iIndex < 0 || iIndex >= m_items.GetSize() ) return;
 
 		CControlUI* pControl = static_cast<CControlUI*>(m_items[iIndex]);
@@ -773,21 +790,6 @@ namespace DuiLib
 			rcCtrl.top = m_rcItem.bottom + szXY.cy - sz.cy;
 			rcCtrl.bottom = m_rcItem.bottom + szXY.cy;
 		}
-		//if( pControl->IsRelativePos() )
-		//{
-		//	TRelativePosUI tRelativePos = pControl->GetRelativePos();
-		//	SIZE szParent = {m_rcItem.right-m_rcItem.left,m_rcItem.bottom-m_rcItem.top};
-		//	if(tRelativePos.szParent.cx != 0)
-		//	{
-		//		int nIncrementX = szParent.cx-tRelativePos.szParent.cx;
-		//		int nIncrementY = szParent.cy-tRelativePos.szParent.cy;
-		//		rcCtrl.left += (nIncrementX*tRelativePos.nMoveXPercent/100);
-		//		rcCtrl.top += (nIncrementY*tRelativePos.nMoveYPercent/100);
-		//		rcCtrl.right = rcCtrl.left+sz.cx+(nIncrementX*tRelativePos.nZoomXPercent/100);
-		//		rcCtrl.bottom = rcCtrl.top+sz.cy+(nIncrementY*tRelativePos.nZoomYPercent/100);
-		//	}
-		//	pControl->SetRelativeParentSize(szParent);
-		//}
 		pControl->SetPos(rcCtrl);
 	}
 
@@ -891,7 +893,7 @@ namespace DuiLib
 			return FALSE;
 	}
 
-	DuiLib::CDuiString CContainerUI::GetSubControlText( LPCTSTR pstrSubControlName )
+	DuiLib::tstring CContainerUI::GetSubControlText( LPCTSTR pstrSubControlName )
 	{
 		CControlUI* pSubControl=NULL;
 		pSubControl=this->FindSubControl(pstrSubControlName);
@@ -921,7 +923,7 @@ namespace DuiLib
 			return pSubControl->GetFixedWidth();
 	}
 
-	const CDuiString CContainerUI::GetSubControlUserData( LPCTSTR pstrSubControlName )
+	const tstring CContainerUI::GetSubControlUserData( LPCTSTR pstrSubControlName )
 	{
 		CControlUI* pSubControl=NULL;
 		pSubControl=this->FindSubControl(pstrSubControlName);

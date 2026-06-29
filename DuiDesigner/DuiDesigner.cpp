@@ -9,6 +9,7 @@
 #include "ChildFrm.h"
 #include "UIDesignerDoc.h"
 #include "UIDesignerView.h"
+#include "GlobalVariable.h"
 #include "afxwin.h"
 
 #ifdef _DEBUG
@@ -58,6 +59,7 @@ BOOL CUIDesignerApp::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinAppEx::InitInstance();
+	::SetCurrentDirectory(CGlobalVariable::GetCurPath());
 
 	// ≥ı ºªØ OLE ø‚
 	if (!AfxOleInit())

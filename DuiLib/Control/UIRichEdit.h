@@ -5,6 +5,8 @@
 #include <Imm.h>
 #pragma comment(lib,"imm32.lib")
 
+#if DUI_HAS_FULL_CONTROLS
+
 namespace DuiLib {
 
 class CTxtWinHost;
@@ -41,7 +43,7 @@ public:
     int GetLimitText();
     void SetLimitText(int iChars);
     long GetTextLength(DWORD dwFlags = GTL_DEFAULT) const;
-    CDuiString GetText() const;
+    tstring GetText() const;
     void SetText(LPCTSTR pstrText);
     bool GetModify() const;
     void SetModify(bool bModified = true) const;
@@ -51,7 +53,7 @@ public:
     int SetSel(long nStartChar, long nEndChar);
     void ReplaceSel(LPCTSTR lpszNewText, bool bCanUndo);
     void ReplaceSelW(LPCWSTR lpszNewText, bool bCanUndo = false);
-    CDuiString GetSelText() const;
+    tstring GetSelText() const;
     int SetSelAll();
     int SetSelNone();
     WORD GetSelectionType() const;
@@ -62,11 +64,12 @@ public:
     bool SetAutoURLDetect(bool bAutoDetect = true);
     DWORD GetEventMask() const;
     DWORD SetEventMask(DWORD dwEventMask);
-    CDuiString GetTextRange(long nStartChar, long nEndChar) const;
+    tstring GetTextRange(long nStartChar, long nEndChar) const;
     void HideSelection(bool bHide = true, bool bChangeStyle = false);
     void ScrollCaret();
     int InsertText(long nInsertAfterChar, LPCTSTR lpstrText, bool bCanUndo = false);
     int AppendText(LPCTSTR lpstrText, bool bCanUndo = false);
+    void AppendMsg(LPCTSTR lpstrText, DWORD rgbColor = RGB(55, 65, 81), int maxLines = 200, int trimLines = 100);
     DWORD GetDefaultCharFormat(CHARFORMAT2 &cf) const;
     bool SetDefaultCharFormat(CHARFORMAT2 &cf);
     DWORD GetSelectionCharFormat(CHARFORMAT2 &cf) const;
@@ -81,7 +84,7 @@ public:
     void Cut();
     void Paste();
     int GetLineCount() const;
-    CDuiString GetLine(int nIndex, int nMaxLength) const;
+    tstring GetLine(int nIndex, int nMaxLength) const;
     int LineIndex(int nLine = -1) const;
     int LineLength(int nLine = -1) const;
     bool LineScroll(int nLines, int nChars = 0);
@@ -97,8 +100,8 @@ public:
 	bool IsAccumulateDBCMode();
 
     void DoInit();
-    // ×¢Òâ£ºTxSendMessageºÍSendMessageÊÇÓÐÇø±ðµÄ£¬TxSendMessageÃ»ÓÐmultibyteºÍunicode×Ô¶¯×ª»»µÄ¹¦ÄÜ£¬
-    // ¶ørichedit2.0ÄÚ²¿ÊÇÒÔunicodeÊµÏÖµÄ£¬ÔÚmultibyte³ÌÐòÖÐ£¬±ØÐë×Ô¼º´¦Àíunicodeµ½multibyteµÄ×ª»»
+    // ×¢ï¿½â£ºTxSendMessageï¿½ï¿½SendMessageï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½TxSendMessageÃ»ï¿½ï¿½multibyteï¿½ï¿½unicodeï¿½Ô¶ï¿½×ªï¿½ï¿½ï¿½Ä¹ï¿½ï¿½Ü£ï¿½
+    // ï¿½ï¿½richedit2.0ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½unicodeÊµï¿½ÖµÄ£ï¿½ï¿½ï¿½multibyteï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½unicodeï¿½ï¿½multibyteï¿½ï¿½×ªï¿½ï¿½
 	bool SetDropAcceptFile(bool bAccept);
     virtual HRESULT TxSendMessage(UINT msg, WPARAM wparam, LPARAM lparam, LRESULT *plresult) const; 
     IDropTarget* GetTxDropTarget();
@@ -148,5 +151,7 @@ protected:
 };
 
 } // namespace DuiLib
+
+#endif
 
 #endif // __UIRICHEDIT_H__

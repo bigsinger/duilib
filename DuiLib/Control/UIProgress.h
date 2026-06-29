@@ -36,8 +36,8 @@ namespace DuiLib
 		int m_nMin;
 		int m_nValue;
 
-		CDuiString m_sForeImage;
-		CDuiString m_sForeImageModify;
+		tstring m_sForeImage;
+		tstring m_sForeImageModify;
 	};
 
 } // namespace DuiLib

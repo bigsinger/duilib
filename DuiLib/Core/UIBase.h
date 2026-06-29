@@ -49,8 +49,8 @@ LPCTSTR UILIB_API DUI__TraceMsg(UINT uMsg);
 class UILIB_API CNotifyPump
 {
 public:
-	bool AddVirtualWnd(CDuiString strName,CNotifyPump* pObject);
-	bool RemoveVirtualWnd(CDuiString strName);
+	bool AddVirtualWnd(tstring strName,CNotifyPump* pObject);
+	bool RemoveVirtualWnd(tstring strName);
 	void NotifyPump(TNotifyUI& msg);
 	bool LoopDispatch(TNotifyUI& msg);
 	DUI_DECLARE_MESSAGE_MAP()
@@ -77,7 +77,7 @@ public:
     void ShowWindow(bool bShow = true, bool bTakeFocus = true);
     UINT ShowModal();
     void Close(UINT nRet = IDOK);
-    void CenterWindow();	// ¾ÓÖÐ£¬Ö§³ÖÀ©Õ¹ÆÁÄ»
+    void CenterWindow();	// ï¿½ï¿½ï¿½Ð£ï¿½Ö§ï¿½ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½Ä»
     void SetIcon(UINT nRes);
 
     LRESULT SendMessage(UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L);

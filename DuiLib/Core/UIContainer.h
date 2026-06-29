@@ -52,7 +52,7 @@ public:
     void SetMouseEnabled(bool bEnable = true);
 
     virtual RECT GetInset() const;
-    virtual void SetInset(RECT rcInset); // ÉèÖÃÄÚ±ß¾à£¬Ïàµ±ÓÚÉèÖÃ¿Í»§Çø
+    virtual void SetInset(RECT rcInset); // ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ß¾à£¬ï¿½àµ±ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿Í»ï¿½ï¿½ï¿½
     virtual int GetChildPadding() const;
     virtual void SetChildPadding(int iPadding);
     virtual bool IsAutoDestroy() const;
@@ -77,10 +77,10 @@ public:
 	bool SetSubControlFixedWdith(LPCTSTR pstrSubControlName,int cx);
 	bool SetSubControlUserData(LPCTSTR pstrSubControlName,LPCTSTR pstrText);
 
-	CDuiString GetSubControlText(LPCTSTR pstrSubControlName);
+	tstring GetSubControlText(LPCTSTR pstrSubControlName);
 	int GetSubControlFixedHeight(LPCTSTR pstrSubControlName);
 	int GetSubControlFixedWdith(LPCTSTR pstrSubControlName);
-	const CDuiString GetSubControlUserData(LPCTSTR pstrSubControlName);
+	const tstring GetSubControlUserData(LPCTSTR pstrSubControlName);
 	CControlUI* FindSubControl(LPCTSTR pstrSubControlName);
 
     virtual SIZE GetScrollPos() const;
@@ -113,7 +113,7 @@ protected:
     bool m_bAutoDestroy;
     bool m_bDelayedDestroy;
     bool m_bMouseChildEnabled;
-    bool m_bScrollProcess; // ·ÀÖ¹SetPosÑ­»·µ÷ÓÃ
+    bool m_bScrollProcess; // ï¿½ï¿½Ö¹SetPosÑ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     CScrollBarUI* m_pVerticalScrollBar;
     CScrollBarUI* m_pHorizontalScrollBar;

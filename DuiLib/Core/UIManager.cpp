@@ -53,9 +53,9 @@ typedef struct tagTIMERINFO
 HPEN m_hUpdateRectPen = NULL;
 HINSTANCE CPaintManagerUI::m_hInstance = NULL;
 HINSTANCE CPaintManagerUI::m_hResourceInstance = NULL;
-CDuiString CPaintManagerUI::m_pStrDefaultFontName;//added by cddjr at 05/18/2012
-CDuiString CPaintManagerUI::m_pStrResourcePath;
-CDuiString CPaintManagerUI::m_pStrResourceZip;
+tstring CPaintManagerUI::m_pStrDefaultFontName;//added by cddjr at 05/18/2012
+tstring CPaintManagerUI::m_pStrResourcePath;
+tstring CPaintManagerUI::m_pStrResourceZip;
 bool CPaintManagerUI::m_bCachedResourceZip = false;
 HANDLE CPaintManagerUI::m_hResourceZip = NULL;
 short CPaintManagerUI::m_H = 180;
@@ -100,9 +100,9 @@ m_bCanResize(FALSE)
     LOGFONT lf = { 0 };
     ::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
     lf.lfCharSet = DEFAULT_CHARSET;
-	if (CPaintManagerUI::m_pStrDefaultFontName.GetLength()>0)
+	if (CPaintManagerUI::m_pStrDefaultFontName.length()>0)
 	{
-		_tcscpy_s(lf.lfFaceName, LF_FACESIZE, CPaintManagerUI::m_pStrDefaultFontName.GetData());
+		_tcscpy_s(lf.lfFaceName, LF_FACESIZE, CPaintManagerUI::m_pStrDefaultFontName.c_str());
 	}
     HFONT hDefaultFont = ::CreateFontIndirect(&lf);
     m_DefaultFontInfo.hFont = hDefaultFont;
@@ -172,19 +172,19 @@ HINSTANCE CPaintManagerUI::GetInstance()
     return m_hInstance;
 }
 
-CDuiString CPaintManagerUI::GetInstancePath()
+tstring CPaintManagerUI::GetInstancePath()
 {
-    if( m_hInstance == NULL ) return _T('\0');
+    if( m_hInstance == NULL ) return tstring();
     
     TCHAR tszModule[MAX_PATH + 1] = { 0 };
     ::GetModuleFileName(m_hInstance, tszModule, MAX_PATH);
-    CDuiString sInstancePath = tszModule;
-    int pos = sInstancePath.ReverseFind(_T('\\'));
-    if( pos >= 0 ) sInstancePath = sInstancePath.Left(pos + 1);
+    tstring sInstancePath = tszModule;
+    int pos = DuiStringReverseFind(sInstancePath, _T('\\'));
+    if( pos >= 0 ) sInstancePath = DuiStringLeft(sInstancePath, pos + 1);
     return sInstancePath;
 }
 
-CDuiString CPaintManagerUI::GetCurrentPath()
+tstring CPaintManagerUI::GetCurrentPath()
 {
     TCHAR tszModule[MAX_PATH + 1] = { 0 };
     ::GetCurrentDirectory(MAX_PATH, tszModule);
@@ -197,12 +197,12 @@ HINSTANCE CPaintManagerUI::GetResourceDll()
     return m_hResourceInstance;
 }
 
-const CDuiString& CPaintManagerUI::GetResourcePath()
+const tstring& CPaintManagerUI::GetResourcePath()
 {
     return m_pStrResourcePath;
 }
 
-const CDuiString& CPaintManagerUI::GetResourceZip()
+const tstring& CPaintManagerUI::GetResourceZip()
 {
     return m_pStrResourceZip;
 }
@@ -235,8 +235,8 @@ void CPaintManagerUI::SetResourceDll(HINSTANCE hInst)
 void CPaintManagerUI::SetResourcePath(LPCTSTR pStrPath)
 {
     m_pStrResourcePath = pStrPath;
-    if( m_pStrResourcePath.IsEmpty() ) return;
-    TCHAR cEnd = m_pStrResourcePath.GetAt(m_pStrResourcePath.GetLength() - 1);
+    if( m_pStrResourcePath.empty() ) return;
+    TCHAR cEnd = m_pStrResourcePath[m_pStrResourcePath.length() - 1];
     if( cEnd != _T('\\') && cEnd != _T('/') ) m_pStrResourcePath += _T('\\');
 }
 
@@ -263,9 +263,9 @@ void CPaintManagerUI::SetResourceZip(LPCTSTR pStrPath, bool bCachedResourceZip)
     m_pStrResourceZip = pStrPath;
     m_bCachedResourceZip = bCachedResourceZip;
     if( m_bCachedResourceZip ) {
-        CDuiString sFile = CPaintManagerUI::GetResourcePath();
+        tstring sFile = CPaintManagerUI::GetResourcePath();
         sFile += CPaintManagerUI::GetResourceZip();
-        m_hResourceZip = (HANDLE)OpenZip((void*)sFile.GetData(), 0, 2);
+        m_hResourceZip = (HANDLE)OpenZip((void*)sFile.c_str(), 0, 2);
     }
 }
 
@@ -794,15 +794,15 @@ bool CPaintManagerUI::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, LR
                 m_pEventHover->Event(event);
             }
             // Create tooltip information
-            CDuiString sToolTip = pHover->GetToolTip();
-            if( sToolTip.IsEmpty() ) return true;
+            tstring sToolTip = pHover->GetToolTip();
+            if( sToolTip.empty() ) return true;
             ::ZeroMemory(&m_ToolTip, sizeof(TOOLINFO));
             m_ToolTip.cbSize = sizeof(TOOLINFO);
             m_ToolTip.uFlags = TTF_IDISHWND;
             m_ToolTip.hwnd = m_hWndPaint;
             m_ToolTip.uId = (UINT_PTR) m_hWndPaint;
             m_ToolTip.hinst = m_hInstance;
-            m_ToolTip.lpszText = const_cast<LPTSTR>( (LPCTSTR) sToolTip );
+            m_ToolTip.lpszText = const_cast<LPTSTR>(sToolTip.c_str());
             m_ToolTip.rect = pHover->GetPos();
             if( m_hwndTooltip == NULL ) {
                 m_hwndTooltip = ::CreateWindowEx(0, TOOLTIPS_CLASS, NULL, WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, m_hWndPaint, NULL, m_hInstance, NULL);
@@ -1144,9 +1144,9 @@ void CPaintManagerUI::ReapObjects(CControlUI* pControl)
     if( pControl == m_pEventClick ) m_pEventClick = NULL;
     if( pControl == m_pFocus ) m_pFocus = NULL;
     KillTimer(pControl);
-    const CDuiString& sName = pControl->GetName();
-    if( !sName.IsEmpty() ) {
-        if( pControl == FindControl(sName) ) m_mNameHash.Remove(sName);
+    const tstring& sName = pControl->GetName();
+    if( !sName.empty() ) {
+        if( pControl == FindControl(sName.c_str()) ) m_mNameHash.Remove(sName.c_str());
     }
     for( int i = 0; i < m_aAsyncNotify.GetSize(); i++ ) {
         TNotifyUI* pMsg = static_cast<TNotifyUI*>(m_aAsyncNotify[i]);
@@ -1972,11 +1972,11 @@ void CPaintManagerUI::ReloadAllImages()
         if(LPCTSTR bitmap = m_mImageHash.GetAt(i)) {
             data = static_cast<TImageInfo*>(m_mImageHash.Find(bitmap));
             if( data != NULL ) {
-                if( !data->sResType.IsEmpty() ) {
+                if( !data->sResType.empty() ) {
                     if( isdigit(*bitmap) ) {
                         LPTSTR pstr = NULL;
                         int iIndex = _tcstol(bitmap, &pstr, 10);
-                        pNewData = CRenderEngine::LoadImage(iIndex, data->sResType.GetData(), data->dwMask);
+                        pNewData = CRenderEngine::LoadImage(iIndex, data->sResType.c_str(), data->dwMask);
                     }
                 }
                 else {
@@ -2000,7 +2000,7 @@ void CPaintManagerUI::ReloadAllImages()
 
 void CPaintManagerUI::AddDefaultAttributeList(LPCTSTR pStrControlName, LPCTSTR pStrControlAttrList)
 {
-	CDuiString* pDefaultAttr = new CDuiString(pStrControlAttrList);
+	tstring* pDefaultAttr = new tstring(pStrControlAttrList);
 	if (pDefaultAttr != NULL)
 	{
 		if (m_DefaultAttrHash.Find(pStrControlName) == NULL)
@@ -2012,16 +2012,16 @@ void CPaintManagerUI::AddDefaultAttributeList(LPCTSTR pStrControlName, LPCTSTR p
 
 LPCTSTR CPaintManagerUI::GetDefaultAttributeList(LPCTSTR pStrControlName) const
 {
-    CDuiString* pDefaultAttr = static_cast<CDuiString*>(m_DefaultAttrHash.Find(pStrControlName));
+    tstring* pDefaultAttr = static_cast<tstring*>(m_DefaultAttrHash.Find(pStrControlName));
     if( !pDefaultAttr && m_pParentResourcePM ) return m_pParentResourcePM->GetDefaultAttributeList(pStrControlName);
     
-    if( pDefaultAttr ) return pDefaultAttr->GetData();
+    if( pDefaultAttr ) return pDefaultAttr->c_str();
     else return NULL;
 }
 
 bool CPaintManagerUI::RemoveDefaultAttributeList(LPCTSTR pStrControlName)
 {
-    CDuiString* pDefaultAttr = static_cast<CDuiString*>(m_DefaultAttrHash.Find(pStrControlName));
+    tstring* pDefaultAttr = static_cast<tstring*>(m_DefaultAttrHash.Find(pStrControlName));
     if( !pDefaultAttr ) return false;
 
     delete pDefaultAttr;
@@ -2035,10 +2035,10 @@ const CStdStringPtrMap& CPaintManagerUI::GetDefaultAttribultes() const
 
 void CPaintManagerUI::RemoveAllDefaultAttributeList()
 {
-	CDuiString* pDefaultAttr;
+	tstring* pDefaultAttr;
 	for( int i = 0; i< m_DefaultAttrHash.GetSize(); i++ ) {
 		if(LPCTSTR key = m_DefaultAttrHash.GetAt(i)) {
-			pDefaultAttr = static_cast<CDuiString*>(m_DefaultAttrHash.Find(key));
+			pDefaultAttr = static_cast<tstring*>(m_DefaultAttrHash.Find(key));
 			delete pDefaultAttr;
 		}
 	}
@@ -2063,6 +2063,12 @@ CControlUI* CPaintManagerUI::FindControl(LPCTSTR pstrName) const
     return static_cast<CControlUI*>(m_mNameHash.Find(pstrName));
 }
 
+CControlUI* CPaintManagerUI::FindControlUtf8(std::string_view name) const
+{
+    const DuiNativeString nativeName = DuiUtf8ToNative(name);
+    return FindControl(nativeName.c_str());
+}
+
 CControlUI* CPaintManagerUI::FindSubControlByPoint(CControlUI* pParent, POINT pt) const
 {
     if( pParent == NULL ) pParent = GetRoot();
@@ -2075,6 +2081,12 @@ CControlUI* CPaintManagerUI::FindSubControlByName(CControlUI* pParent, LPCTSTR p
     if( pParent == NULL ) pParent = GetRoot();
     ASSERT(pParent);
     return pParent->FindControl(__FindControlFromName, (LPVOID)pstrName, UIFIND_ALL);
+}
+
+CControlUI* CPaintManagerUI::FindSubControlByNameUtf8(CControlUI* pParent, std::string_view name) const
+{
+    const DuiNativeString nativeName = DuiUtf8ToNative(name);
+    return FindSubControlByName(pParent, nativeName.c_str());
 }
 
 CControlUI* CPaintManagerUI::FindSubControlByClass(CControlUI* pParent, LPCTSTR pstrClass, int iIndex)
@@ -2102,10 +2114,10 @@ CStdPtrArray* CPaintManagerUI::GetSubControlsByClass()
 CControlUI* CALLBACK CPaintManagerUI::__FindControlFromNameHash(CControlUI* pThis, LPVOID pData)
 {
     CPaintManagerUI* pManager = static_cast<CPaintManagerUI*>(pData);
-    const CDuiString& sName = pThis->GetName();
-    if( sName.IsEmpty() ) return NULL;
+    const tstring& sName = pThis->GetName();
+    if( sName.empty() ) return NULL;
     // Add this control to the hash list
-    pManager->m_mNameHash.Set(sName, pThis);
+    pManager->m_mNameHash.Set(sName.c_str(), pThis);
     return NULL; // Attempt to add all controls
 }
 
@@ -2153,9 +2165,9 @@ CControlUI* CALLBACK CPaintManagerUI::__FindControlFromUpdate(CControlUI* pThis,
 CControlUI* CALLBACK CPaintManagerUI::__FindControlFromName(CControlUI* pThis, LPVOID pData)
 {
     LPCTSTR pstrName = static_cast<LPCTSTR>(pData);
-    const CDuiString& sName = pThis->GetName();
-    if( sName.IsEmpty() ) return NULL;
-    return (_tcsicmp(sName, pstrName) == 0) ? pThis : NULL;
+    const tstring& sName = pThis->GetName();
+    if( sName.empty() ) return NULL;
+    return (_tcsicmp(sName.c_str(), pstrName) == 0) ? pThis : NULL;
 }
 
 CControlUI* CALLBACK CPaintManagerUI::__FindControlFromClass(CControlUI* pThis, LPVOID pData)

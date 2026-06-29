@@ -48,7 +48,7 @@ namespace DuiLib
 			SetWindowFont(m_hWnd, m_pOwner->GetManager()->GetFontInfo(m_pOwner->GetFont())->hFont, TRUE);
 		}
 
-		if (m_pOwner->GetText().IsEmpty())
+		if (m_pOwner->GetText().empty())
 			::GetLocalTime(&m_pOwner->m_sysTime);
 
 		::SendMessage(m_hWnd, DTM_SETSYSTEMTIME, 0, (LPARAM)&m_pOwner->m_sysTime);
@@ -168,7 +168,7 @@ namespace DuiLib
 		m_bReadOnly = false;
 		m_pWindow = NULL;
 		m_nDTUpdateFlag=DT_UPDATE;
-		UpdateText();		// add by:daviyang35 初始化界面时显示时间
+		UpdateText();		// add by:daviyang35 锟斤拷始锟斤拷锟斤拷锟斤拷时锟斤拷示时锟斤拷
 		m_nDTUpdateFlag = DT_NONE;
 	}
 
@@ -211,10 +211,10 @@ namespace DuiLib
 			SetText(_T(""));
 		else if (m_nDTUpdateFlag == DT_UPDATE)
 		{
-			CDuiString sText;
-			sText.SmallFormat(_T("%4d-%02d-%02d"),
+			tstring sText;
+			DuiStringSmallFormat(sText, _T("%4d-%02d-%02d"),
 				m_sysTime.wYear, m_sysTime.wMonth, m_sysTime.wDay, m_sysTime.wHour, m_sysTime.wMinute);
-			SetText(sText);
+			SetText(sText.c_str());
 		}
 	}
 
@@ -228,7 +228,7 @@ namespace DuiLib
 
 		if( event.Type == UIEVENT_SETCURSOR && IsEnabled() )
 		{
-			::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_IBEAM)));
+			::SetCursor(::LoadCursor(NULL, IDC_IBEAM));
 			return;
 		}
 		if( event.Type == UIEVENT_WINDOWSIZE )

@@ -994,7 +994,7 @@ void CUIDesignerView::OnEditPaste()
 void CUIDesignerView::PasteUI(LPCTSTR xml)
 {
 	CDialogBuilder builder;
-	CControlUI* pRoot=builder.Create(xml, (UINT)0, NULL, m_LayoutManager.GetManager());
+	CControlUI* pRoot=builder.Create(xml, NULL, NULL, m_LayoutManager.GetManager());
 	if(pRoot)
 	{
 		CControlUI* pParent = m_MultiTracker.GetFocused();
@@ -1155,8 +1155,6 @@ void CUIDesignerView::ShowPropertyDialog(CControlUI* pControl)
 	case classSlider:
 		break;
 	case classCombo: 
-		break;
-	case classActiveX:
 		break;
 	case classContainer:
 		break;

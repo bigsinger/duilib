@@ -206,12 +206,12 @@ void CMarkupNode::_MapAttributes()
     pstr += _tcslen(pstr) + 1;
     while( pstr < pstrEnd ) {
         m_pOwner->_SkipWhitespace(pstr);
-        m_aAttributes[m_nAttributes].iName = pstr - m_pOwner->m_pstrXML;
+        m_aAttributes[m_nAttributes].iName = static_cast<ULONG>(pstr - m_pOwner->m_pstrXML);
         pstr += _tcslen(pstr) + 1;
         m_pOwner->_SkipWhitespace(pstr);
         if( *pstr++ != _T('\"') ) return; // if( *pstr != _T('\"') ) { pstr = ::CharNext(pstr); return; }
         
-        m_aAttributes[m_nAttributes++].iValue = pstr - m_pOwner->m_pstrXML;
+        m_aAttributes[m_nAttributes++].iValue = static_cast<ULONG>(pstr - m_pOwner->m_pstrXML);
         if( m_nAttributes >= MAX_XML_ATTRIBUTES ) return;
         pstr += _tcslen(pstr) + 1;
     }
@@ -293,7 +293,7 @@ bool CMarkup::LoadFromMem(BYTE* pByte, DWORD dwSize, int encoding)
 
                 for ( DWORD nSwap = 0 ; nSwap < dwSize ; nSwap ++ )
                 {
-                    register CHAR nTemp = pByte[ ( nSwap << 1 ) + 0 ];
+                    CHAR nTemp = pByte[ ( nSwap << 1 ) + 0 ];
                     pByte[ ( nSwap << 1 ) + 0 ] = pByte[ ( nSwap << 1 ) + 1 ];
                     pByte[ ( nSwap << 1 ) + 1 ] = nTemp;
                 }
@@ -343,7 +343,7 @@ bool CMarkup::LoadFromMem(BYTE* pByte, DWORD dwSize, int encoding)
 
                 for ( DWORD nSwap = 0 ; nSwap < dwSize ; nSwap ++ )
                 {
-                    register CHAR nTemp = pByte[ ( nSwap << 1 ) + 0 ];
+                    CHAR nTemp = pByte[ ( nSwap << 1 ) + 0 ];
                     pByte[ ( nSwap << 1 ) + 0 ] = pByte[ ( nSwap << 1 ) + 1 ];
                     pByte[ ( nSwap << 1 ) + 1 ] = nTemp;
                 }
@@ -377,10 +377,10 @@ bool CMarkup::LoadFromMem(BYTE* pByte, DWORD dwSize, int encoding)
 bool CMarkup::LoadFromFile(LPCTSTR pstrFilename, int encoding)
 {
     Release();
-    CDuiString sFile = CPaintManagerUI::GetResourcePath();
-    if( CPaintManagerUI::GetResourceZip().IsEmpty() ) {
+    tstring sFile = CPaintManagerUI::GetResourcePath();
+    if( CPaintManagerUI::GetResourceZip().empty() ) {
         sFile += pstrFilename;
-        HANDLE hFile = ::CreateFile(sFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        HANDLE hFile = ::CreateFile(sFile.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
         if( hFile == INVALID_HANDLE_VALUE ) return _Failed(_T("Error opening file"));
         DWORD dwSize = ::GetFileSize(hFile, NULL);
         if( dwSize == 0 ) return _Failed(_T("File is empty"));
@@ -405,7 +405,7 @@ bool CMarkup::LoadFromFile(LPCTSTR pstrFilename, int encoding)
         sFile += CPaintManagerUI::GetResourceZip();
         HZIP hz = NULL;
         if( CPaintManagerUI::IsCachedResourceZip() ) hz = (HZIP)CPaintManagerUI::GetResourceZipHandle();
-        else hz = OpenZip((void*)sFile.GetData(), 0, 2);
+        else hz = OpenZip((void*)sFile.c_str(), 0, 2);
         if( hz == NULL ) return _Failed(_T("Error opening zip file"));
         ZIPENTRY ze; 
         int i; 
@@ -486,8 +486,8 @@ bool CMarkup::_Parse(LPTSTR& pstrText, ULONG iParent)
         _SkipWhitespace(pstrText);
         // Fill out element structure
         XMLELEMENT* pEl = _ReserveElement();
-        ULONG iPos = pEl - m_pElements;
-        pEl->iStart = pstrText - m_pstrXML;
+        ULONG iPos = static_cast<ULONG>(pEl - m_pElements);
+        pEl->iStart = static_cast<ULONG>(pstrText - m_pstrXML);
         pEl->iParent = iParent;
         pEl->iNext = pEl->iChild = 0;
         if( iPrevious != 0 ) m_pElements[iPrevious].iNext = iPos;
@@ -503,7 +503,7 @@ bool CMarkup::_Parse(LPTSTR& pstrText, ULONG iParent)
         _SkipWhitespace(pstrText);
         if( pstrText[0] == _T('/') && pstrText[1] == _T('>') )
         {
-            pEl->iData = pstrText - m_pstrXML;
+            pEl->iData = static_cast<ULONG>(pstrText - m_pstrXML);
             *pstrText = _T('\0');
             pstrText += 2;
         }
@@ -511,7 +511,7 @@ bool CMarkup::_Parse(LPTSTR& pstrText, ULONG iParent)
         {
             if( *pstrText != _T('>') ) return _Failed(_T("Expected start-tag closing"), pstrText);
             // Parse node data
-            pEl->iData = ++pstrText - m_pstrXML;
+            pEl->iData = static_cast<ULONG>(++pstrText - m_pstrXML);
             LPTSTR pstrDest = pstrText;
             if( !_ParseData(pstrText, pstrDest, _T('<')) ) return false;
             // Determine type of next element
@@ -561,13 +561,13 @@ void CMarkup::_SkipWhitespace(LPTSTR& pstr) const
 
 void CMarkup::_SkipIdentifier(LPCTSTR& pstr) const
 {
-    // ÊôÐÔÖ»ÄÜÓÃÓ¢ÎÄ£¬ËùÒÔÕâÑù´¦ÀíÃ»ÓÐÎÊÌâ
+    // ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½Ó¢ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     while( *pstr != _T('\0') && (*pstr == _T('_') || *pstr == _T(':') || _istalnum(*pstr)) ) pstr = ::CharNext(pstr);
 }
 
 void CMarkup::_SkipIdentifier(LPTSTR& pstr) const
 {
-    // ÊôÐÔÖ»ÄÜÓÃÓ¢ÎÄ£¬ËùÒÔÕâÑù´¦ÀíÃ»ÓÐÎÊÌâ
+    // ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½Ó¢ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     while( *pstr != _T('\0') && (*pstr == _T('_') || *pstr == _T(':') || _istalnum(*pstr)) ) pstr = ::CharNext(pstr);
 }
 

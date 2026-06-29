@@ -27,6 +27,8 @@
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "Core/UIProfile.h"
+
 #if defined(UILIB_EXPORTS)
 #if defined(_MSC_VER)
 #define UILIB_API __declspec(dllexport)
@@ -66,6 +68,8 @@
 #include <atltypes.h>
 
 #include "Utils/Utils.h"
+#include "Utils/UIStringUtil.h"
+#include "Utils/UIMultiLanguage.h"
 #include "Utils/UIDelegate.h"
 #include "Core/UIDefine.h"
 #include "Core/UIManager.h"
@@ -86,7 +90,6 @@
 #include "Control/UIList.h"
 #include "Control/UICombo.h"
 #include "Control/UIScrollBar.h"
-#include "Control/UITreeView.h"
 
 #include "Control/UILabel.h"
 #include "Control/UIText.h"
@@ -96,16 +99,25 @@
 #include "Control/UIOption.h"
 #include "Control/UICheckBox.h"
 #include "Control/UIComboBox.h"
-
-
-#ifdef FULL_DUILIB
 #include "Control/UIProgress.h"
 #include "Control/UISlider.h"
-#include "Control/UIRichEdit.h"
 #include "Control/UIDateTime.h"
+#include "Control/UIMenu.h"
+#include "Control/UIHotKey.h"
+#include "Control/UIPageControl.h"
+#include "Control/UIGroupBox.h"
+#include "Control/UISwitchButton.h"
 
-#include "Control/UIActiveX.h"
-#include "Control/UIWebBrowser.h"
-//#include "Control/UIFlash.h"
-#endif // !FULL_DUILIB
+#if DUI_HAS_STANDARD_CONTROLS
+#include "Control/UITreeView.h"
+#include "Control/UIGifAnim.h"
+#include "Control/UIIPAddress.h"
+#include "Control/UIRollText.h"
+#endif
+
+#if DUI_HAS_FULL_CONTROLS
+#include "Control/UIRichEdit.h"
+#include "Control/UIListEx.h"
+#include "Control/UIFadeButton.h"
+#endif
 

@@ -174,9 +174,6 @@ void CPropertyTabLayoutUI::OnBnClickedButtonTabLayoutUIAdd()
 	case ID_UI_CONTROL_SLIDER:
 		nClass=classSlider;
 		break;
-	case ID_UI_CONTROL_ACTIVEX:
-		nClass=classActiveX;
-		break;
 	case ID_UI_LAYOUT_VERTICAL:
 		nClass=classVerticalLayout;
 		break;

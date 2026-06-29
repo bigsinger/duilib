@@ -10,10 +10,10 @@ namespace DuiLib
 
 	void CChildLayoutUI::Init()
 	{
-		if (!m_pstrXMLFile.IsEmpty())
+		if (!m_pstrXMLFile.empty())
 		{
 			CDialogBuilder builder;
-			CContainerUI* pChildWindow = static_cast<CContainerUI*>(builder.Create(m_pstrXMLFile.GetData(), NULL, NULL, m_pManager));
+			CContainerUI* pChildWindow = static_cast<CContainerUI*>(builder.Create(m_pstrXMLFile.c_str(), NULL, NULL, m_pManager));
 			if (pChildWindow)
 			{
 				this->Add(pChildWindow);
@@ -33,14 +33,14 @@ namespace DuiLib
 			CContainerUI::SetAttribute(pstrName,pstrValue);
 	}
 
-	void CChildLayoutUI::SetChildLayoutXML( DuiLib::CDuiString pXML )
+	void CChildLayoutUI::SetChildLayoutXML( DuiLib::tstring pXML )
 	{
 		m_pstrXMLFile=pXML;
 	}
 
-	DuiLib::CDuiString CChildLayoutUI::GetChildLayoutXML()
+	DuiLib::tstring CChildLayoutUI::GetChildLayoutXML()
 	{
-		return m_pstrXMLFile;
+		return m_pstrXMLFile.c_str();
 	}
 
 	LPVOID CChildLayoutUI::GetInterface( LPCTSTR pstrName )

@@ -1,14 +1,16 @@
 #include "StdAfx.h"
 #include "UITreeView.h"
 
+#if DUI_HAS_STANDARD_CONTROLS
+
 #pragma warning( disable: 4251 )
 namespace DuiLib
 {
 	//************************************
-	// º¯ÊýÃû³Æ: CTreeNodeUI
-	// ·µ»ØÀàÐÍ: 
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * _ParentNode
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: CTreeNodeUI
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * _ParentNode
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	CTreeNodeUI::CTreeNodeUI( CTreeNodeUI* _ParentNode /*= NULL*/ )
 	{
@@ -57,10 +59,10 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: ~CTreeNodeUI
-	// ·µ»ØÀàÐÍ: 
-	// ²ÎÊýÐÅÏ¢: void
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: ~CTreeNodeUI
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: void
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	CTreeNodeUI::~CTreeNodeUI( void )
 	{
@@ -68,9 +70,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetClass
-	// ·µ»ØÀàÐÍ: LPCTSTR
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetClass
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: LPCTSTR
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	LPCTSTR CTreeNodeUI::GetClass() const
 	{
@@ -78,10 +80,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetInterface
-	// ·µ»ØÀàÐÍ: LPVOID
-	// ²ÎÊýÐÅÏ¢: LPCTSTR pstrName
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetInterface
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: LPVOID
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: LPCTSTR pstrName
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	LPVOID CTreeNodeUI::GetInterface( LPCTSTR pstrName )
 	{
@@ -91,10 +93,10 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: DoEvent
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: TEventUI & event
-	// º¯ÊýËµÃ÷:
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: DoEvent
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: TEventUI & event
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½:
 	//************************************
 	void CTreeNodeUI::DoEvent( TEventUI& event )
 	{
@@ -143,9 +145,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: Invalidate
-	// ·µ»ØÀàÐÍ: void
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Invalidate
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::Invalidate()
 	{
@@ -193,10 +195,10 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: Select
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: bool bSelect
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Select
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: bool bSelect
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeNodeUI::Select( bool bSelect /*= true*/ )
 	{
@@ -210,10 +212,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: Add
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: CControlUI * _pTreeNodeUI
-	// º¯ÊýËµÃ÷: Í¨¹ý½Úµã¶ÔÏóÌí¼Ó½Úµã
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Add
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CControlUI * _pTreeNodeUI
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: Í¨ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½Úµï¿½
 	//************************************
 	bool CTreeNodeUI::Add( CControlUI* _pTreeNodeUI )
 	{
@@ -224,11 +226,11 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: AddAt
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: CControlUI * pControl
-	// ²ÎÊýÐÅÏ¢: int iIndex				¸Ã²ÎÊý½öÕë¶Ôµ±Ç°½ÚµãÏÂµÄÐÖµÜË÷Òý£¬²¢·ÇÁÐ±íÊÓÍ¼Ë÷Òý
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: AddAt
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CControlUI * pControl
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: int iIndex				ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½Ç°ï¿½Úµï¿½ï¿½Âµï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeNodeUI::AddAt( CControlUI* pControl, int iIndex )
 	{
@@ -257,10 +259,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: Remove
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: CControlUI * pControl
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Remove
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CControlUI * pControl
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeNodeUI::Remove( CControlUI* pControl )
 	{
@@ -268,10 +270,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetVisibleTag
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: bool _IsVisible
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetVisibleTag
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: bool _IsVisible
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetVisibleTag( bool _IsVisible )
 	{
@@ -279,9 +281,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetVisibleTag
-	// ·µ»ØÀàÐÍ: bool
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetVisibleTag
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeNodeUI::GetVisibleTag()
 	{
@@ -289,10 +291,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetItemText
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: LPCTSTR pstrValue
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetItemText
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: LPCTSTR pstrValue
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetItemText( LPCTSTR pstrValue )
 	{
@@ -300,20 +302,20 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetItemText
-	// ·µ»ØÀàÐÍ: UiLib::CDuiString
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetItemText
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: UiLib::tstring
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
-	CDuiString CTreeNodeUI::GetItemText()
+	tstring CTreeNodeUI::GetItemText()
 	{
 		return pItemButton->GetText();
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: CheckBoxSelected
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: bool _Selected
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: CheckBoxSelected
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: bool _Selected
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::CheckBoxSelected( bool _Selected )
 	{
@@ -321,9 +323,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: IsCheckBoxSelected
-	// ·µ»ØÀàÐÍ: bool
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: IsCheckBoxSelected
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeNodeUI::IsCheckBoxSelected() const
 	{
@@ -331,9 +333,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: IsHasChild
-	// ·µ»ØÀàÐÍ: bool
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: IsHasChild
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeNodeUI::IsHasChild() const
 	{
@@ -341,10 +343,10 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: AddChildNode
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * _pTreeNodeUI
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: AddChildNode
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * _pTreeNodeUI
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeNodeUI::AddChildNode( CTreeNodeUI* _pTreeNodeUI )
 	{
@@ -359,23 +361,28 @@ namespace DuiLib
 		bool nRet = true;
 
 		if(pTreeView){
-			CTreeNodeUI* pNode = static_cast<CTreeNodeUI*>(mTreeNodes.GetAt(mTreeNodes.GetSize()-1));
+			CTreeNodeUI* pNode = NULL;
+			if (mTreeNodes.GetSize() > 0)
+				pNode = static_cast<CTreeNodeUI*>(mTreeNodes.GetAt(mTreeNodes.GetSize() - 1));
 			if(!pNode || !pNode->GetLastNode())
 				nRet = pTreeView->AddAt(_pTreeNodeUI,GetTreeIndex()+1) >= 0;
 			else nRet = pTreeView->AddAt(_pTreeNodeUI,pNode->GetLastNode()->GetTreeIndex()+1) >= 0;
 		}
 
-		if(nRet)
+		if(nRet) {
+			if (!IsVisible() || pFolderButton->GetCheck())
+				_pTreeNodeUI->SetVisible(false);
 			mTreeNodes.Add(_pTreeNodeUI);
+		}
 
 		return nRet;
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: RemoveAt
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * _pTreeNodeUI
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: RemoveAt
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * _pTreeNodeUI
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeNodeUI::RemoveAt( CTreeNodeUI* _pTreeNodeUI )
 	{
@@ -397,10 +404,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetParentNode
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * _pParentTreeNode
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetParentNode
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * _pParentTreeNode
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetParentNode( CTreeNodeUI* _pParentTreeNode )
 	{
@@ -408,9 +415,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetParentNode
-	// ·µ»ØÀàÐÍ: CTreeNodeUI*
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetParentNode
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: CTreeNodeUI*
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	CTreeNodeUI* CTreeNodeUI::GetParentNode()
 	{
@@ -418,9 +425,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetCountChild
-	// ·µ»ØÀàÐÍ: long
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetCountChild
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: long
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	long CTreeNodeUI::GetCountChild()
 	{
@@ -428,10 +435,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetTreeView
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: CTreeViewUI * _CTreeViewUI
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetTreeView
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeViewUI * _CTreeViewUI
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetTreeView( CTreeViewUI* _CTreeViewUI )
 	{
@@ -439,9 +446,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetTreeView
-	// ·µ»ØÀàÐÍ: CTreeViewUI*
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetTreeView
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: CTreeViewUI*
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	CTreeViewUI* CTreeNodeUI::GetTreeView()
 	{
@@ -449,11 +456,11 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetAttribute
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: LPCTSTR pstrName
-	// ²ÎÊýÐÅÏ¢: LPCTSTR pstrValue
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetAttribute
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: LPCTSTR pstrName
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: LPCTSTR pstrValue
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetAttribute( LPCTSTR pstrName, LPCTSTR pstrValue )
 	{
@@ -469,6 +476,12 @@ namespace DuiLib
 			pCheckBox->ApplyAttributeList(pstrValue);
 		else if(_tcscmp(pstrName, _T("itemattr")) == 0 )
 			pItemButton->ApplyAttributeList(pstrValue);
+		else if(_tcscmp(pstrName, _T("expanded")) == 0 ) {
+			const bool expanded = _tcscmp(pstrValue, _T("true")) == 0;
+			pFolderButton->Selected(!expanded);
+			SetVisibleTag(expanded);
+			if (pTreeView != NULL) pTreeView->SetItemExpand(expanded, this);
+		}
 		else if(_tcscmp(pstrName, _T("itemtextcolor")) == 0 ){
 			if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
 			LPTSTR pstr = NULL;
@@ -497,9 +510,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetTreeNodes
-	// ·µ»ØÀàÐÍ: UiLib::CStdPtrArray
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetTreeNodes
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: UiLib::CStdPtrArray
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	CStdPtrArray CTreeNodeUI::GetTreeNodes()
 	{
@@ -507,10 +520,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetChildNode
-	// ·µ»ØÀàÐÍ: CTreeNodeUI*
-	// ²ÎÊýÐÅÏ¢: int _nIndex
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetChildNode
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: CTreeNodeUI*
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: int _nIndex
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	CTreeNodeUI* CTreeNodeUI::GetChildNode( int _nIndex )
 	{
@@ -518,10 +531,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetVisibleFolderBtn
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: bool _IsVisibled
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetVisibleFolderBtn
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: bool _IsVisibled
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetVisibleFolderBtn( bool _IsVisibled )
 	{
@@ -529,9 +542,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetVisibleFolderBtn
-	// ·µ»ØÀàÐÍ: bool
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetVisibleFolderBtn
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeNodeUI::GetVisibleFolderBtn()
 	{
@@ -539,10 +552,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetVisibleCheckBtn
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: bool _IsVisibled
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetVisibleCheckBtn
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: bool _IsVisibled
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetVisibleCheckBtn( bool _IsVisibled )
 	{
@@ -550,9 +563,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetVisibleCheckBtn
-	// ·µ»ØÀàÐÍ: bool
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetVisibleCheckBtn
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeNodeUI::GetVisibleCheckBtn()
 	{
@@ -560,9 +573,9 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: GetNodeIndex
-	// ·µ»ØÀàÐÍ: int
-	// º¯ÊýËµÃ÷: È¡µÃÈ«¾ÖÊ÷ÊÓÍ¼µÄË÷Òý
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetNodeIndex
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: int
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: È¡ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//************************************
 	int CTreeNodeUI::GetTreeIndex()
 	{
@@ -578,9 +591,9 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: GetNodeIndex
-	// ·µ»ØÀàÐÍ: int
-	// º¯ÊýËµÃ÷: È¡µÃÏà¶ÔÓÚÐÖµÜ½ÚµãµÄµ±Ç°Ë÷Òý
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetNodeIndex
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: int
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÜ½Úµï¿½Äµï¿½Ç°ï¿½ï¿½ï¿½ï¿½
 	//************************************
 	int CTreeNodeUI::GetNodeIndex()
 	{
@@ -594,9 +607,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetLastNode
-	// ·µ»ØÀàÐÍ: CTreeNodeUI*
-	// º¯ÊýËµÃ÷:
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetLastNode
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: CTreeNodeUI*
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½:
 	//************************************
 	CTreeNodeUI* CTreeNodeUI::GetLastNode( )
 	{
@@ -610,7 +623,7 @@ namespace DuiLib
 			if(!pNode)
 				continue;
 
-			CDuiString aa = pNode->GetItemText();
+			tstring aa = pNode->GetItemText();
 
 			if(pNode->IsHasChild())
 				nRetNode = pNode->GetLastNode();
@@ -622,10 +635,10 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: CalLocation
-	// ·µ»ØÀàÐÍ: CTreeNodeUI*
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * _pTreeNodeUI
-	// º¯ÊýËµÃ÷: Ëõ½ø¼ÆËã
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: CalLocation
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: CTreeNodeUI*
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * _pTreeNodeUI
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//************************************
 	CTreeNodeUI* CTreeNodeUI::CalLocation( CTreeNodeUI* _pTreeNodeUI )
 	{
@@ -639,10 +652,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetTextColor
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: DWORD _dwTextColor
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetTextColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: DWORD _dwTextColor
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetItemTextColor( DWORD _dwItemTextColor )
 	{
@@ -651,9 +664,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetTextColor
-	// ·µ»ØÀàÐÍ: DWORD
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetTextColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: DWORD
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	DWORD CTreeNodeUI::GetItemTextColor() const
 	{
@@ -661,10 +674,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetTextHotColor
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: DWORD _dwTextHotColor
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetTextHotColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: DWORD _dwTextHotColor
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetItemHotTextColor( DWORD _dwItemHotTextColor )
 	{
@@ -673,9 +686,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetTextHotColor
-	// ·µ»ØÀàÐÍ: DWORD
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetTextHotColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: DWORD
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	DWORD CTreeNodeUI::GetItemHotTextColor() const
 	{
@@ -683,10 +696,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetSelItemTextColor
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: DWORD _dwSelItemTextColor
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetSelItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: DWORD _dwSelItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetSelItemTextColor( DWORD _dwSelItemTextColor )
 	{
@@ -695,9 +708,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetSelItemTextColor
-	// ·µ»ØÀàÐÍ: DWORD
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetSelItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: DWORD
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	DWORD CTreeNodeUI::GetSelItemTextColor() const
 	{
@@ -705,10 +718,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetSelHotItemTextColor
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: DWORD _dwSelHotItemTextColor
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetSelHotItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: DWORD _dwSelHotItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeNodeUI::SetSelItemHotTextColor( DWORD _dwSelHotItemTextColor )
 	{
@@ -717,9 +730,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetSelHotItemTextColor
-	// ·µ»ØÀàÐÍ: DWORD
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetSelHotItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: DWORD
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	DWORD CTreeNodeUI::GetSelItemHotTextColor() const
 	{
@@ -731,10 +744,10 @@ namespace DuiLib
 	/*****************************************************************************/
 	
 	//************************************
-	// º¯ÊýÃû³Æ: CTreeViewUI
-	// ·µ»ØÀàÐÍ: 
-	// ²ÎÊýÐÅÏ¢: void
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: CTreeViewUI
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: void
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	CTreeViewUI::CTreeViewUI( void ) : m_bVisibleFolderBtn(true),m_bVisibleCheckBtn(false),m_uItemMinWidth(0)
 	{
@@ -742,10 +755,10 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: ~CTreeViewUI
-	// ·µ»ØÀàÐÍ: 
-	// ²ÎÊýÐÅÏ¢: void
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: ~CTreeViewUI
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: void
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	CTreeViewUI::~CTreeViewUI( void )
 	{
@@ -753,9 +766,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetClass
-	// ·µ»ØÀàÐÍ: LPCTSTR
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetClass
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: LPCTSTR
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	LPCTSTR CTreeViewUI::GetClass() const
 	{
@@ -763,10 +776,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetInterface
-	// ·µ»ØÀàÐÍ: LPVOID
-	// ²ÎÊýÐÅÏ¢: LPCTSTR pstrName
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetInterface
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: LPVOID
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: LPCTSTR pstrName
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	LPVOID CTreeViewUI::GetInterface( LPCTSTR pstrName )
 	{
@@ -775,10 +788,28 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: Add
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * pControl
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Add
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CControlUI * pControl
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½:
+	//************************************
+	bool CTreeViewUI::Add(CControlUI* pControl)
+	{
+		if (pControl == NULL)
+			return false;
+
+		CTreeNodeUI* pTreeNode = static_cast<CTreeNodeUI*>(pControl->GetInterface(_T("TreeNode")));
+		if (pTreeNode != NULL)
+			return Add(pTreeNode);
+
+		return CListUI::Add(pControl);
+	}
+
+	//************************************
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Add
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * pControl
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeViewUI::Add( CTreeNodeUI* pControl )
 	{
@@ -815,11 +846,11 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: AddAt
-	// ·µ»ØÀàÐÍ: long
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * pControl
-	// ²ÎÊýÐÅÏ¢: int iIndex
-	// º¯ÊýËµÃ÷: ¸Ã·½·¨²»»á½«´ý²åÈëµÄ½Úµã½øÐÐËõÎ»´¦Àí£¬Èô´òËã²åÈëµÄ½ÚµãÎª·Ç¸ù½Úµã£¬ÇëÊ¹ÓÃAddAt(CTreeNodeUI* pControl,CTreeNodeUI* _IndexNode) ·½·¨
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: AddAt
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: long
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * pControl
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: int iIndex
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á½«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµï¿½Îªï¿½Ç¸ï¿½ï¿½Úµã£¬ï¿½ï¿½Ê¹ï¿½ï¿½AddAt(CTreeNodeUI* pControl,CTreeNodeUI* _IndexNode) ï¿½ï¿½ï¿½ï¿½
 	//************************************
 	long CTreeViewUI::AddAt( CTreeNodeUI* pControl, int iIndex )
 	{
@@ -828,6 +859,9 @@ namespace DuiLib
 
 		if (_tcsicmp(pControl->GetClass(), _T("TreeNodeUI")) != 0)
 			return -1;
+
+		if (iIndex >= GetCount())
+			return Add(pControl) ? GetCount() - 1 : -1;
 
 		CTreeNodeUI* pParent = static_cast<CTreeNodeUI*>(GetItemAt(iIndex));
 		if(!pParent)
@@ -862,11 +896,11 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: AddAt
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * pControl
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * _IndexNode
-	// º¯ÊýËµÃ÷:
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: AddAt
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * pControl
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * _IndexNode
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½:
 	//************************************
 	bool CTreeViewUI::AddAt( CTreeNodeUI* pControl,CTreeNodeUI* _IndexNode )
 	{
@@ -889,10 +923,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: Remove
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * pControl
-	// º¯ÊýËµÃ÷: pControl ¶ÔÏóÒÔ¼°ÏÂµÄËùÓÐ½Úµã½«±»Ò»²¢ÒÆ³ý
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Remove
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * pControl
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: pControl ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½Ð½Úµã½«ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Æ³ï¿½
 	//************************************
 	bool CTreeViewUI::Remove( CTreeNodeUI* pControl )
 	{
@@ -912,10 +946,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: RemoveAt
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: int iIndex
-	// º¯ÊýËµÃ÷: iIndex Ë÷ÒýÒÔ¼°ÏÂµÄËùÓÐ½Úµã½«±»Ò»²¢ÒÆ³ý
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: RemoveAt
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: int iIndex
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: iIndex ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½Ð½Úµã½«ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Æ³ï¿½
 	//************************************
 	bool CTreeViewUI::RemoveAt( int iIndex )
 	{
@@ -931,10 +965,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: Notify
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: TNotifyUI & msg
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Notify
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: TNotifyUI & msg
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeViewUI::Notify( TNotifyUI& msg )
 	{
@@ -942,10 +976,10 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: OnCheckBoxChanged
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: void * param
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: OnCheckBoxChanged
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: void * param
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeViewUI::OnCheckBoxChanged( void* param )
 	{
@@ -961,10 +995,10 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: OnFolderChanged
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: void * param
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: OnFolderChanged
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: void * param
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeViewUI::OnFolderChanged( void* param )
 	{
@@ -981,10 +1015,10 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: OnDBClickItem
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: void * param
-	// º¯ÊýËµÃ÷:
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: OnDBClickItem
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: void * param
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½:
 	//************************************
 	bool CTreeViewUI::OnDBClickItem( void* param )
 	{
@@ -1002,11 +1036,11 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetItemCheckBox
-	// ·µ»ØÀàÐÍ: bool
-	// ²ÎÊýÐÅÏ¢: bool _Selected
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * _TreeNode
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetItemCheckBox
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: bool _Selected
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * _TreeNode
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeViewUI::SetItemCheckBox( bool _Selected,CTreeNodeUI* _TreeNode /*= NULL*/ )
 	{
@@ -1044,11 +1078,11 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetItemExpand
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: bool _Expanded
-	// ²ÎÊýÐÅÏ¢: CTreeNodeUI * _TreeNode
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetItemExpand
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: bool _Expanded
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: CTreeNodeUI * _TreeNode
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeViewUI::SetItemExpand( bool _Expanded,CTreeNodeUI* _TreeNode /*= NULL*/ )
 	{
@@ -1086,10 +1120,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetVisibleFolderBtn
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: bool _IsVisibled
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetVisibleFolderBtn
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: bool _IsVisibled
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeViewUI::SetVisibleFolderBtn( bool _IsVisibled )
 	{
@@ -1103,9 +1137,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetVisibleFolderBtn
-	// ·µ»ØÀàÐÍ: bool
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetVisibleFolderBtn
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeViewUI::GetVisibleFolderBtn()
 	{
@@ -1113,10 +1147,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetVisibleCheckBtn
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: bool _IsVisibled
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetVisibleCheckBtn
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: bool _IsVisibled
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeViewUI::SetVisibleCheckBtn( bool _IsVisibled )
 	{
@@ -1130,9 +1164,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetVisibleCheckBtn
-	// ·µ»ØÀàÐÍ: bool
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetVisibleCheckBtn
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: bool
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	bool CTreeViewUI::GetVisibleCheckBtn()
 	{
@@ -1140,10 +1174,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetItemMinWidth
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: UINT _ItemMinWidth
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetItemMinWidth
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: UINT _ItemMinWidth
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeViewUI::SetItemMinWidth( UINT _ItemMinWidth )
 	{
@@ -1158,9 +1192,9 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: GetItemMinWidth
-	// ·µ»ØÀàÐÍ: UINT
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: GetItemMinWidth
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: UINT
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	UINT CTreeViewUI::GetItemMinWidth()
 	{
@@ -1168,10 +1202,10 @@ namespace DuiLib
 	}
 	
 	//************************************
-	// º¯ÊýÃû³Æ: SetItemTextColor
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: DWORD _dwItemTextColor
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: DWORD _dwItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeViewUI::SetItemTextColor( DWORD _dwItemTextColor )
 	{
@@ -1183,10 +1217,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetItemHotTextColor
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: DWORD _dwItemHotTextColor
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetItemHotTextColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: DWORD _dwItemHotTextColor
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeViewUI::SetItemHotTextColor( DWORD _dwItemHotTextColor )
 	{
@@ -1198,10 +1232,10 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetSelItemTextColor
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: DWORD _dwSelItemTextColor
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetSelItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: DWORD _dwSelItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeViewUI::SetSelItemTextColor( DWORD _dwSelItemTextColor )
 	{
@@ -1213,10 +1247,10 @@ namespace DuiLib
 	}
 		
 	//************************************
-	// º¯ÊýÃû³Æ: SetSelItemHotTextColor
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: DWORD _dwSelHotItemTextColor
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetSelItemHotTextColor
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: DWORD _dwSelHotItemTextColor
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeViewUI::SetSelItemHotTextColor( DWORD _dwSelHotItemTextColor )
 	{
@@ -1228,11 +1262,11 @@ namespace DuiLib
 	}
 
 	//************************************
-	// º¯ÊýÃû³Æ: SetAttribute
-	// ·µ»ØÀàÐÍ: void
-	// ²ÎÊýÐÅÏ¢: LPCTSTR pstrName
-	// ²ÎÊýÐÅÏ¢: LPCTSTR pstrValue
-	// º¯ÊýËµÃ÷: 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SetAttribute
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: void
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: LPCTSTR pstrName
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢: LPCTSTR pstrValue
+	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½: 
 	//************************************
 	void CTreeViewUI::SetAttribute( LPCTSTR pstrName, LPCTSTR pstrValue )
 	{
@@ -1270,3 +1304,5 @@ namespace DuiLib
 	}
 
 }
+
+#endif

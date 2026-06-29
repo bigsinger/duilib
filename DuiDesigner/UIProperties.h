@@ -211,11 +211,6 @@ enum PropertyTag
 	tagComboTextPadding,
 	tagComboDropBoxSize,
 
-	//ActiveX
-	tagActiveX,
-	tagClsid=tagActiveX,
-	tagDelayCreate,
-	tagModuleName,
 
 	//Container
 	tagContainer,
@@ -281,10 +276,6 @@ enum PropertyTag
 	tagListHeaderItemFocusedImage,
 	tagSepImage,
 
-	// WebBrowser
-	tagWebBrowser,
-	tagWebBrowserHomePage=tagWebBrowser,
-	tagWebBrowserAutoNavi,
 };
 
 extern UINT WM_UI_PROPERTY_CHANGED;
@@ -326,13 +317,11 @@ protected:
 	void ShowProgressProperty(CControlUI* pControl);
 	void ShowSliderProperty(CControlUI* pControl);
 	void ShowComboProperty(CControlUI* pControl);
-	void ShowActiveXProperty(CControlUI* pControl);
 	void ShowListProperty(CControlUI* pControl);
 	void ShowItemProperty(CControlUI* pControl);
 	void ShowScrollBarProperty(CControlUI* pControl);
 	void ShowTabLayoutPropery(CControlUI* pControl);
 	void ShowListHeaderItemPropery(CControlUI* pControl);
-	void ShowWebBrowserPropery(CControlUI* pControl);
 
 	//Container Property
 	void ShowContainerProperty(CControlUI* pControl);

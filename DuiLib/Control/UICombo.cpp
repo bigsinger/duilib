@@ -40,9 +40,9 @@ void CComboWnd::Init(CComboUI* pOwner)
     SIZE szDrop = m_pOwner->GetDropBoxSize();
     RECT rcOwner = pOwner->GetPos();
     RECT rc = rcOwner;
-    rc.top = rc.bottom;		// ¸¸´°¿Úleft¡¢bottomÎ»ÖÃ×÷Îªµ¯³ö´°¿ÚÆðµã
-    rc.bottom = rc.top + szDrop.cy;	// ¼ÆËãµ¯³ö´°¿Ú¸ß¶È
-    if( szDrop.cx > 0 ) rc.right = rc.left + szDrop.cx;	// ¼ÆËãµ¯³ö´°¿Ú¿í¶È
+    rc.top = rc.bottom;		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½leftï¿½ï¿½bottomÎ»ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    rc.bottom = rc.top + szDrop.cy;	// ï¿½ï¿½ï¿½ãµ¯ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ß¶ï¿½
+    if( szDrop.cx > 0 ) rc.right = rc.left + szDrop.cx;	// ï¿½ï¿½ï¿½ãµ¯ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½
 
     SIZE szAvailable = { rc.right - rc.left, rc.bottom - rc.top };
     int cyFixed = 0;
@@ -52,7 +52,7 @@ void CComboWnd::Init(CComboUI* pOwner)
         SIZE sz = pControl->EstimateSize(szAvailable);
         cyFixed += sz.cy;
     }
-    cyFixed += 4; // CVerticalLayoutUI Ä¬ÈÏµÄInset µ÷Õû
+    cyFixed += 4; // CVerticalLayoutUI Ä¬ï¿½Ïµï¿½Inset ï¿½ï¿½ï¿½ï¿½
     rc.bottom = rc.top + MIN(cyFixed, szDrop.cy);
 
     ::MapWindowRect(pOwner->GetManager()->GetPaintWindow(), HWND_DESKTOP, &rc);
@@ -261,7 +261,7 @@ bool CComboUI::SelectItem(int iIndex, bool bTakeFocus)
         CControlUI* pControl = static_cast<CControlUI*>(m_items[m_iCurSel]);
         if( !pControl ) return false;
         IListItemUI* pListItem = static_cast<IListItemUI*>(pControl->GetInterface(_T("ListItem")));
-        if( pListItem != NULL ) pListItem->Select(false);
+        if( pListItem != NULL ) pListItem->Select(false, false);
         m_iCurSel = -1;
     }
     if( iIndex < 0 ) return false;
@@ -273,11 +273,16 @@ bool CComboUI::SelectItem(int iIndex, bool bTakeFocus)
     if( pListItem == NULL ) return false;
     m_iCurSel = iIndex;
     if( m_pWindow != NULL || bTakeFocus ) pControl->SetFocus();
-    pListItem->Select(true);
+    pListItem->Select(true, false);
     if( m_pManager != NULL ) m_pManager->SendNotify(this, DUI_MSGTYPE_ITEMSELECT, m_iCurSel, iOldSel);
     Invalidate();
 
     return true;
+}
+
+bool CComboUI::SelectRange(int iIndex, bool bTakeFocus)
+{
+    return SelectItem(iIndex, bTakeFocus);
 }
 
 bool CComboUI::SetItemIndex(CControlUI* pControl, int iIndex)
@@ -311,14 +316,16 @@ bool CComboUI::Add(CControlUI* pControl)
         pListItem->SetOwner(this);
         pListItem->SetIndex(m_items.GetSize());
     }
-    return CContainerUI::Add(pControl);
+    if( !CContainerUI::Add(pControl) ) return false;
+    pControl->SetInternVisible(true);
+    return true;
 }
 
 bool CComboUI::AddAt(CControlUI* pControl, int iIndex)
 {
     if (!CContainerUI::AddAt(pControl, iIndex)) return false;
+    pControl->SetInternVisible(true);
 
-    // The list items should know about us
     IListItemUI* pListItem = static_cast<IListItemUI*>(pControl->GetInterface(_T("ListItem")));
     if( pListItem != NULL ) {
         pListItem->SetOwner(this);
@@ -495,7 +502,7 @@ bool CComboUI::Activate()
     return true;
 }
 
-CDuiString CComboUI::GetText() const
+tstring CComboUI::GetText() const
 {
     if( m_iCurSel < 0 ) return _T("");
     CControlUI* pControl = static_cast<CControlUI*>(m_items[m_iCurSel]);
@@ -508,7 +515,7 @@ void CComboUI::SetEnabled(bool bEnable)
     if( !IsEnabled() ) m_uButtonState = 0;
 }
 
-CDuiString CComboUI::GetDropBoxAttributeList()
+tstring CComboUI::GetDropBoxAttributeList()
 {
     return m_sDropBoxAttributes;
 }
@@ -541,7 +548,7 @@ void CComboUI::SetTextPadding(RECT rc)
 
 LPCTSTR CComboUI::GetNormalImage() const
 {
-    return m_sNormalImage;
+    return m_sNormalImage.c_str();
 }
 
 void CComboUI::SetNormalImage(LPCTSTR pStrImage)
@@ -552,7 +559,7 @@ void CComboUI::SetNormalImage(LPCTSTR pStrImage)
 
 LPCTSTR CComboUI::GetHotImage() const
 {
-    return m_sHotImage;
+    return m_sHotImage.c_str();
 }
 
 void CComboUI::SetHotImage(LPCTSTR pStrImage)
@@ -563,7 +570,7 @@ void CComboUI::SetHotImage(LPCTSTR pStrImage)
 
 LPCTSTR CComboUI::GetPushedImage() const
 {
-    return m_sPushedImage;
+    return m_sPushedImage.c_str();
 }
 
 void CComboUI::SetPushedImage(LPCTSTR pStrImage)
@@ -574,7 +581,7 @@ void CComboUI::SetPushedImage(LPCTSTR pStrImage)
 
 LPCTSTR CComboUI::GetFocusedImage() const
 {
-    return m_sFocusedImage;
+    return m_sFocusedImage.c_str();
 }
 
 void CComboUI::SetFocusedImage(LPCTSTR pStrImage)
@@ -585,7 +592,7 @@ void CComboUI::SetFocusedImage(LPCTSTR pStrImage)
 
 LPCTSTR CComboUI::GetDisabledImage() const
 {
-    return m_sDisabledImage;
+    return m_sDisabledImage.c_str();
 }
 
 void CComboUI::SetDisabledImage(LPCTSTR pStrImage)
@@ -650,7 +657,7 @@ DWORD CComboUI::GetItemBkColor() const
 
 LPCTSTR CComboUI::GetItemBkImage() const
 {
-	return m_ListInfo.sBkImage;
+	return m_ListInfo.sBkImage.c_str();
 }
 
 bool CComboUI::IsAlternateBk() const
@@ -690,7 +697,7 @@ DWORD CComboUI::GetSelectedItemBkColor() const
 
 LPCTSTR CComboUI::GetSelectedItemImage() const
 {
-	return m_ListInfo.sSelectedImage;
+	return m_ListInfo.sSelectedImage.c_str();
 }
 
 void CComboUI::SetHotItemTextColor(DWORD dwTextColor)
@@ -719,7 +726,7 @@ DWORD CComboUI::GetHotItemBkColor() const
 
 LPCTSTR CComboUI::GetHotItemImage() const
 {
-	return m_ListInfo.sHotImage;
+	return m_ListInfo.sHotImage.c_str();
 }
 
 void CComboUI::SetDisabledItemTextColor(DWORD dwTextColor)
@@ -749,7 +756,7 @@ DWORD CComboUI::GetDisabledItemBkColor() const
 
 LPCTSTR CComboUI::GetDisabledItemImage() const
 {
-	return m_ListInfo.sDisabledImage;
+	return m_ListInfo.sDisabledImage.c_str();
 }
 
 DWORD CComboUI::GetItemLineColor() const
@@ -909,32 +916,32 @@ void CComboUI::PaintStatusImage(HDC hDC)
     else m_uButtonState &= ~ UISTATE_DISABLED;
 
     if( (m_uButtonState & UISTATE_DISABLED) != 0 ) {
-        if( !m_sDisabledImage.IsEmpty() ) {
-            if( !DrawImage(hDC, (LPCTSTR)m_sDisabledImage) ) m_sDisabledImage.Empty();
+        if( !m_sDisabledImage.empty() ) {
+            if( !DrawImage(hDC, m_sDisabledImage.c_str()) ) m_sDisabledImage.clear();
             else return;
         }
     }
     else if( (m_uButtonState & UISTATE_PUSHED) != 0 ) {
-        if( !m_sPushedImage.IsEmpty() ) {
-            if( !DrawImage(hDC, (LPCTSTR)m_sPushedImage) ) m_sPushedImage.Empty();
+        if( !m_sPushedImage.empty() ) {
+            if( !DrawImage(hDC, m_sPushedImage.c_str()) ) m_sPushedImage.clear();
             else return;
         }
     }
     else if( (m_uButtonState & UISTATE_HOT) != 0 ) {
-        if( !m_sHotImage.IsEmpty() ) {
-            if( !DrawImage(hDC, (LPCTSTR)m_sHotImage) ) m_sHotImage.Empty();
+        if( !m_sHotImage.empty() ) {
+            if( !DrawImage(hDC, m_sHotImage.c_str()) ) m_sHotImage.clear();
             else return;
         }
     }
     else if( (m_uButtonState & UISTATE_FOCUSED) != 0 ) {
-        if( !m_sFocusedImage.IsEmpty() ) {
-            if( !DrawImage(hDC, (LPCTSTR)m_sFocusedImage) ) m_sFocusedImage.Empty();
+        if( !m_sFocusedImage.empty() ) {
+            if( !DrawImage(hDC, m_sFocusedImage.c_str()) ) m_sFocusedImage.clear();
             else return;
         }
     }
 
-    if( !m_sNormalImage.IsEmpty() ) {
-        if( !DrawImage(hDC, (LPCTSTR)m_sNormalImage) ) m_sNormalImage.Empty();
+    if( !m_sNormalImage.empty() ) {
+        if( !DrawImage(hDC, m_sNormalImage.c_str()) ) m_sNormalImage.clear();
         else return;
     }
 }

@@ -59,7 +59,7 @@ BOOL CDialogCustomFonts::OnInitDialog()
 		TFontInfo* pFontInfo = m_pManager->GetFontInfo(i);
 		str.Format(_T("%d"), i);
 		m_lstCustomFonts.InsertItem(i, str);
-		m_lstCustomFonts.SetItemText(i, 1, pFontInfo->sFontName);
+		m_lstCustomFonts.SetItemText(i, 1, pFontInfo->sFontName.c_str());
 		str.Format(_T("%d"), pFontInfo->iSize);
 		m_lstCustomFonts.SetItemText(i, 2, str);
 		m_lstCustomFonts.SetItemText(i, 3, pFontInfo->bBold ? _T("true") : _T("false"));
@@ -131,7 +131,7 @@ void CDialogCustomFonts::OnBnClickedButtonFontModify()
 
 	LOGFONT lf = { 0 };
 	::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
-	_tcscpy(lf.lfFaceName, pFontInfo->sFontName);
+	_tcscpy(lf.lfFaceName, pFontInfo->sFontName.c_str());
 	lf.lfCharSet = DEFAULT_CHARSET;
 	lf.lfHeight = -pFontInfo->iSize;
 	if(pFontInfo->bBold)
@@ -153,7 +153,7 @@ void CDialogCustomFonts::OnBnClickedButtonFontModify()
 		pFontInfo->bUnderline = (lf.lfUnderline!=0);
 
 		CString str;
-		m_lstCustomFonts.SetItemText(nIndex, 1, pFontInfo->sFontName);
+		m_lstCustomFonts.SetItemText(nIndex, 1, pFontInfo->sFontName.c_str());
 		str.Format(_T("%d"), pFontInfo->iSize);
 		m_lstCustomFonts.SetItemText(nIndex, 2, str);
 		m_lstCustomFonts.SetItemText(nIndex, 3, pFontInfo->bBold ? _T("true") : _T("false"));

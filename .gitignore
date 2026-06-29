@@ -1,6 +1,13 @@
 *.ncb
-DuiDesigner.suo
+*.suo
 *.user
+*.obj
+*.log
+*.tlog
 /.vs
 */build
 /temp
+/bin
+/Lib
+/DuiDesigner/Win32
+/DuiDesigner/x64

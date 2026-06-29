@@ -24,16 +24,16 @@ namespace DuiLib
 		void SetTextStyle(UINT uStyle);
 		UINT GetTextStyle() const;
 
-		// ÉèÖÃÁËÒ»¸öÒ×ÓÚÀí½âµÄ½Ó¿Ú£¬Èç¹ûÖ»ÊÇÉèÖÃ¼òµ¥µÄrgb¿ÉÒÔ°²×°Õâ¸ö½Ó¿Úµ÷
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Ó¿Ú£ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ã¼òµ¥µï¿½rgbï¿½ï¿½ï¿½Ô°ï¿½×°ï¿½ï¿½ï¿½ï¿½Ó¿Úµï¿½
 		void SetTextColor(IN BYTE r, IN BYTE g, IN BYTE b);
 
-		// Èç¹ûÊÇ´ÓÆäËûµØ·½»ñÈ¡µÄRGB¸ñÊ½ÑÕÉ«£¬¿ÉÒÔÖ±½ÓÊ¹ÓÃ£¬ÄÚ²¿»á×ª»»
+		// ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ï¿½È¡ï¿½ï¿½RGBï¿½ï¿½Ê½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ê¹ï¿½Ã£ï¿½ï¿½Ú²ï¿½ï¿½ï¿½×ªï¿½ï¿½
 		void SetTextColorRGB(COLORREF rgb);
 
-		// ÉèÖÃµÄÊÇARGB£¨Photoshop¸ñÊ½£©£¬²»ÊÇRGB£¨VC¸ñÊ½£©£¡
+		// ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ARGBï¿½ï¿½Photoshopï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½RGBï¿½ï¿½VCï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
 		void SetTextColor(ARGB dwTextColor);
 
-		// ·µ»ØµÄÊÇARGB£¬×¢ÒâÇø±ðRGBµÄ×Ö½Ú×éÖ¯½á¹¹
+		// ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ARGBï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½RGBï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½Ö¯ï¿½á¹¹
 		ARGB GetTextColor() const;
 
 		void SetDisabledTextColor(DWORD dwTextColor);
@@ -54,7 +54,8 @@ namespace DuiLib
 		void		SetEnabledEffect(bool _EnabledEffect);
 		bool		GetEnabledEffect();
 		void		SetText(LPCTSTR pstrText);
-		CDuiString	GetText() const;
+		void		SetText(const tstring& sText) { SetText(sText.c_str()); }
+		tstring	GetText() const;
 		void		SetTransShadow(int _TransShadow);
 		int			GetTransShadow();
 		void		SetTransShadow1(int _TransShadow);
@@ -111,7 +112,7 @@ namespace DuiLib
 		DWORD					m_dwTextShadowColorB;
 		DWORD					m_dwStrokeColor;
 		RectF					m_ShadowOffset;
-		CDuiString				m_TextValue;
+		tstring				m_TextValue;
 		ULONG_PTR				m_gdiplusToken;
 		GdiplusStartupInput		m_gdiplusStartupInput;
 		TextRenderingHint		m_TextRenderingHintAntiAlias;

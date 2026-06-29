@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "../Utils/UIStringUtil.h"
+
 namespace DuiLib {
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -22,6 +24,10 @@ enum {
 
 typedef CControlUI* (CALLBACK* FINDCONTROLPROC)(CControlUI*, LPVOID);
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
 class UILIB_API CControlUI
 {
 public:
@@ -29,8 +35,10 @@ public:
     virtual ~CControlUI();
 
 public:
-    virtual CDuiString GetName() const;
+    virtual tstring GetName() const;
     virtual void SetName(LPCTSTR pstrName);
+    virtual DuiUtf8String GetNameUtf8() const;
+    virtual void SetNameUtf8(std::string_view name);
     virtual LPCTSTR GetClass() const;
     virtual LPVOID GetInterface(LPCTSTR pstrName);
     virtual UINT GetControlFlags() const;
@@ -40,12 +48,20 @@ public:
     virtual void SetManager(CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true);
     virtual CControlUI* GetParent() const;
 
-    // ÎÄ±¾Ïà¹Ø
-    virtual CDuiString GetText() const;
+    // ï¿½Ä±ï¿½ï¿½ï¿½ï¿½
+    virtual tstring GetText() const;
     virtual void SetText(LPCTSTR pstrText);
+    virtual DuiUtf8String GetTextUtf8() const;
+    virtual void SetTextUtf8(std::string_view text);
+    virtual void BindTextUtf8(DuiTextGetter getter, DuiTextSetter setter = {});
+    virtual void BindTextUtf8(DuiUtf8String& text);
+    virtual void ClearTextBinding();
+    virtual bool HasTextBinding() const;
+    virtual void RefreshTextBinding();
+    virtual void CommitTextBinding() const;
 	virtual void SetTextV(const LPCTSTR lpszFormat, ...) final;
 
-    // Í¼ĞÎÏà¹Ø
+    // Í¼ï¿½ï¿½ï¿½ï¿½ï¿½
     DWORD GetBkColor() const;
     void SetBkColor(DWORD dwBackColor);
     DWORD GetBkColor2() const;
@@ -61,8 +77,10 @@ public:
     SIZE GetBorderRound() const;
     void SetBorderRound(SIZE cxyRound);
     bool DrawImage(HDC hDC, LPCTSTR pStrImage, LPCTSTR pStrModify = NULL);
+    bool DrawImage(HDC hDC, const tstring& sImage, LPCTSTR pStrModify = NULL) { return DrawImage(hDC, sImage.c_str(), pStrModify); }
+    bool DrawImage(HDC hDC, const tstring& sImage, const tstring& sModify) { return DrawImage(hDC, sImage.c_str(), sModify.c_str()); }
 
-	//±ß¿òÏà¹Ø
+	//ï¿½ß¿ï¿½ï¿½ï¿½ï¿½
 	int GetBorderSize() const;
 	void SetBorderSize(int nSize);
 	DWORD GetBorderColor() const;
@@ -80,7 +98,7 @@ public:
 	int GetBorderStyle() const;
 	void SetBorderStyle(int nStyle);
 
-    // Î»ÖÃÏà¹Ø
+    // Î»ï¿½ï¿½ï¿½ï¿½ï¿½
 	int  GetAnchorMode();
 	void SetAnchorMode(int nAnchorMode);
     virtual const RECT& GetPos() const;
@@ -90,13 +108,13 @@ public:
     virtual int GetX() const;
     virtual int GetY() const;
     virtual RECT GetPadding() const;
-    virtual void SetPadding(RECT rcPadding); // ÉèÖÃÍâ±ß¾à£¬ÓÉÉÏ²ã´°¿Ú»æÖÆ
-    virtual SIZE GetFixedXY() const;         // Êµ¼Ê´óĞ¡Î»ÖÃÊ¹ÓÃGetPos»ñÈ¡£¬ÕâÀïµÃµ½µÄÊÇÔ¤ÉèµÄ²Î¿¼Öµ
-    virtual void SetFixedXY(SIZE szXY);      // ½öfloatÎªtrueÊ±ÓĞĞ§
-    virtual int GetFixedWidth() const;       // Êµ¼Ê´óĞ¡Î»ÖÃÊ¹ÓÃGetPos»ñÈ¡£¬ÕâÀïµÃµ½µÄÊÇÔ¤ÉèµÄ²Î¿¼Öµ
-    virtual void SetFixedWidth(int cx);      // Ô¤ÉèµÄ²Î¿¼Öµ
-    virtual int GetFixedHeight() const;      // Êµ¼Ê´óĞ¡Î»ÖÃÊ¹ÓÃGetPos»ñÈ¡£¬ÕâÀïµÃµ½µÄÊÇÔ¤ÉèµÄ²Î¿¼Öµ
-    virtual void SetFixedHeight(int cy);     // Ô¤ÉèµÄ²Î¿¼Öµ
+    virtual void SetPadding(RECT rcPadding); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¾à£¬ï¿½ï¿½ï¿½Ï²ã´°ï¿½Ú»ï¿½ï¿½ï¿½
+    virtual SIZE GetFixedXY() const;         // Êµï¿½Ê´ï¿½Ğ¡Î»ï¿½ï¿½Ê¹ï¿½ï¿½GetPosï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½Ä²Î¿ï¿½Öµ
+    virtual void SetFixedXY(SIZE szXY);      // ï¿½ï¿½floatÎªtrueÊ±ï¿½ï¿½Ğ§
+    virtual int GetFixedWidth() const;       // Êµï¿½Ê´ï¿½Ğ¡Î»ï¿½ï¿½Ê¹ï¿½ï¿½GetPosï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½Ä²Î¿ï¿½Öµ
+    virtual void SetFixedWidth(int cx);      // Ô¤ï¿½ï¿½Ä²Î¿ï¿½Öµ
+    virtual int GetFixedHeight() const;      // Êµï¿½Ê´ï¿½Ğ¡Î»ï¿½ï¿½Ê¹ï¿½ï¿½GetPosï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½Ä²Î¿ï¿½Öµ
+    virtual void SetFixedHeight(int cy);     // Ô¤ï¿½ï¿½Ä²Î¿ï¿½Öµ
     virtual int GetMinWidth() const;
     virtual void SetMinWidth(int cx);
     virtual int GetMaxWidth() const;
@@ -106,30 +124,36 @@ public:
     virtual int GetMaxHeight() const;
     virtual void SetMaxHeight(int cy);
 
-    // Êó±êÌáÊ¾
-    virtual CDuiString GetToolTip() const;
-    virtual void SetToolTip(LPCTSTR pstrText);
-	virtual void SetToolTipWidth(int nWidth);
-	virtual int	  GetToolTipWidth(void);	// ¶àĞĞToolTipµ¥ĞĞ×î³¤¿í¶È
+    // æç¤ºæ–‡æœ¬
 
-    // ¿ì½İ¼ü
+    virtual tstring GetToolTip() const;
+    virtual void SetToolTip(LPCTSTR pstrText);
+    virtual DuiUtf8String GetToolTipUtf8() const;
+    virtual void SetToolTipUtf8(std::string_view text);
+	virtual void SetToolTipWidth(int nWidth);
+	virtual int	  GetToolTipWidth(void);	// ï¿½ï¿½ï¿½ï¿½ToolTipï¿½ï¿½ï¿½ï¿½ï¿½î³¤ï¿½ï¿½ï¿½ï¿½
+
+    // ï¿½ï¿½İ¼ï¿½
     virtual TCHAR GetShortcut() const;
     virtual void SetShortcut(TCHAR ch);
 
-    // ²Ëµ¥
+    // ï¿½Ëµï¿½
     virtual bool IsContextMenuUsed() const;
     virtual void SetContextMenuUsed(bool bMenuUsed);
 
-    // ÓÃ»§ÊôĞÔ
-    virtual const CDuiString& GetUserData(); // ¸¨Öúº¯Êı£¬¹©ÓÃ»§Ê¹ÓÃ
-    virtual void SetUserData(LPCTSTR pstrText); // ¸¨Öúº¯Êı£¬¹©ÓÃ»§Ê¹ÓÃ
-    virtual UINT_PTR GetTag() const; // ¸¨Öúº¯Êı£¬¹©ÓÃ»§Ê¹ÓÃ
-    virtual void SetTag(UINT_PTR pTag); // ¸¨Öúº¯Êı£¬¹©ÓÃ»§Ê¹ÓÃ
+    // ç”¨æˆ·æ•°æ®
 
-    // Ò»Ğ©ÖØÒªµÄÊôĞÔ
+    virtual const tstring& GetUserData(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ê¹ï¿½ï¿½
+    virtual void SetUserData(LPCTSTR pstrText); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ê¹ï¿½ï¿½
+    virtual DuiUtf8String GetUserDataUtf8() const;
+    virtual void SetUserDataUtf8(std::string_view text);
+    virtual UINT_PTR GetTag() const; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ê¹ï¿½ï¿½
+    virtual void SetTag(UINT_PTR pTag); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ê¹ï¿½ï¿½
+
+    // Ò»Ğ©ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     virtual bool IsVisible() const;
     virtual void SetVisible(bool bVisible = true);
-    virtual void SetInternVisible(bool bVisible = true); // ½ö¹©ÄÚ²¿µ÷ÓÃ£¬ÓĞĞ©UIÓµÓĞ´°¿Ú¾ä±ú£¬ĞèÒªÖØĞ´´Ëº¯Êı
+    virtual void SetInternVisible(bool bVisible = true); // ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½Ğ©UIÓµï¿½Ğ´ï¿½ï¿½Ú¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ğ´ï¿½Ëºï¿½ï¿½ï¿½
     virtual bool IsEnabled() const;
     virtual void SetEnabled(bool bEnable = true);
     virtual bool IsMouseEnabled() const;
@@ -156,7 +180,11 @@ public:
     virtual void DoEvent(TEventUI& event);
 
     virtual void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
+    void SetAttribute(const tstring& sName, const tstring& sValue) { SetAttribute(sName.c_str(), sValue.c_str()); }
+    virtual void SetAttributeUtf8(std::string_view name, std::string_view value);
     CControlUI* ApplyAttributeList(LPCTSTR pstrList);
+    CControlUI* ApplyAttributeList(const tstring& sList) { return ApplyAttributeList(sList.c_str()); }
+    CControlUI* ApplyAttributeListUtf8(std::string_view attributes);
 
     virtual SIZE EstimateSize(SIZE szAvailable);
 
@@ -169,9 +197,9 @@ public:
 
     virtual void DoPostPaint(HDC hDC, const RECT& rcPaint);
 
-	//ĞéÄâ´°¿Ú²ÎÊı
+	//ï¿½ï¿½ï¿½â´°ï¿½Ú²ï¿½ï¿½ï¿½
 	void SetVirtualWnd(LPCTSTR pstrValue);
-	CDuiString GetVirtualWnd() const;
+	tstring GetVirtualWnd() const;
 
 public:
     CEventSource OnInit;
@@ -183,8 +211,8 @@ public:
 protected:
     CPaintManagerUI* m_pManager;
     CControlUI* m_pParent;
-	CDuiString m_sVirtualWnd;
-    CDuiString m_sName;
+	tstring m_sVirtualWnd;
+    tstring m_sName;
     bool m_bUpdateNeeded;
     bool m_bMenuUsed;
     RECT m_rcItem;
@@ -200,19 +228,21 @@ protected:
 	bool m_bKeyboardEnabled ;
     bool m_bFocused;
     bool m_bFloat;
-    bool m_bSetPos; // ·ÀÖ¹SetPosÑ­»·µ÷ÓÃ
+    bool m_bSetPos; // ï¿½ï¿½Ö¹SetPosÑ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    CDuiString m_sText;
-    CDuiString m_sToolTip;
+    tstring m_sText;
+    DuiTextGetter m_textGetter;
+    DuiTextSetter m_textSetter;
+    tstring m_sToolTip;
     TCHAR m_chShortcut;
-    CDuiString m_sUserData;
+    tstring m_sUserData;
     UINT_PTR m_pTag;
 
     DWORD m_dwBackColor;
     DWORD m_dwBackColor2;
     DWORD m_dwBackColor3;
-    CDuiString m_sBkImage;
-	CDuiString m_sForeImage;
+    tstring m_sBkImage;
+	tstring m_sForeImage;
     DWORD m_dwBorderColor;
 	DWORD m_dwFocusBorderColor;
     bool m_bColorHSL;
@@ -232,6 +262,9 @@ public:
 	int		m_nWidth;
 	int		m_nHeight;
 };
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 } // namespace DuiLib
 

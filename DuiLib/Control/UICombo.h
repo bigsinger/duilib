@@ -21,16 +21,17 @@ public:
     void DoInit();
     UINT GetControlFlags() const;
 
-    CDuiString GetText() const;
+    tstring GetText() const;
     void SetEnabled(bool bEnable = true);
 
-    CDuiString GetDropBoxAttributeList();
+    tstring GetDropBoxAttributeList();
     void SetDropBoxAttributeList(LPCTSTR pstrList);
     SIZE GetDropBoxSize() const;
     void SetDropBoxSize(SIZE szDropBox);
 
     int GetCurSel() const;  
     bool SelectItem(int iIndex, bool bTakeFocus = false);
+    bool SelectRange(int iIndex, bool bTakeFocus = false);
 
     bool SetItemIndex(CControlUI* pControl, int iIndex);
     bool Add(CControlUI* pControl);
@@ -104,15 +105,15 @@ protected:
 
     int m_iCurSel;
     RECT m_rcTextPadding;
-    CDuiString m_sDropBoxAttributes;
+    tstring m_sDropBoxAttributes;
     SIZE m_szDropBox;
     UINT m_uButtonState;
 
-    CDuiString m_sNormalImage;
-    CDuiString m_sHotImage;
-    CDuiString m_sPushedImage;
-    CDuiString m_sFocusedImage;
-    CDuiString m_sDisabledImage;
+    tstring m_sNormalImage;
+    tstring m_sHotImage;
+    tstring m_sPushedImage;
+    tstring m_sFocusedImage;
+    tstring m_sDisabledImage;
 
     TListInfoUI m_ListInfo;
 };

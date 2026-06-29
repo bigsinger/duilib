@@ -47,7 +47,7 @@ namespace DuiLib
 		SetWindowFont(m_hWnd, hFont, TRUE);
 		Edit_LimitText(m_hWnd, m_pOwner->GetMaxChar());
 		if( m_pOwner->IsPasswordMode() ) Edit_SetPasswordChar(m_hWnd, m_pOwner->GetPasswordChar());
-		Edit_SetText(m_hWnd, m_pOwner->GetText());
+		Edit_SetText(m_hWnd, m_pOwner->GetText().c_str());
 		Edit_SetModify(m_hWnd, FALSE);
 		SendMessage(EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELPARAM(0, 0));
 		Edit_Enable(m_hWnd, m_pOwner->IsEnabled() == true);
@@ -191,7 +191,7 @@ namespace DuiLib
 
 		if( event.Type == UIEVENT_SETCURSOR && IsEnabled() )
 		{
-			::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_IBEAM)));
+			::SetCursor(::LoadCursor(NULL, IDC_IBEAM));
 			return;
 		}
 		if( event.Type == UIEVENT_WINDOWSIZE )
@@ -293,7 +293,7 @@ namespace DuiLib
 	void CEditUI::SetText(LPCTSTR pstrText)
 	{
 		m_sText = pstrText;
-		if( m_pWindow != NULL ) Edit_SetText(*m_pWindow, m_sText);
+		if( m_pWindow != NULL ) Edit_SetText(*m_pWindow, m_sText.c_str());
 		Invalidate();
 	}
 
@@ -371,7 +371,7 @@ namespace DuiLib
 
 	LPCTSTR CEditUI::GetNormalImage()
 	{
-		return m_sNormalImage;
+		return m_sNormalImage.c_str();
 	}
 
 	void CEditUI::SetNormalImage(LPCTSTR pStrImage)
@@ -382,7 +382,7 @@ namespace DuiLib
 
 	LPCTSTR CEditUI::GetHotImage()
 	{
-		return m_sHotImage;
+		return m_sHotImage.c_str();
 	}
 
 	void CEditUI::SetHotImage(LPCTSTR pStrImage)
@@ -393,7 +393,7 @@ namespace DuiLib
 
 	LPCTSTR CEditUI::GetFocusedImage()
 	{
-		return m_sFocusedImage;
+		return m_sFocusedImage.c_str();
 	}
 
 	void CEditUI::SetFocusedImage(LPCTSTR pStrImage)
@@ -404,7 +404,7 @@ namespace DuiLib
 
 	LPCTSTR CEditUI::GetDisabledImage()
 	{
-		return m_sDisabledImage;
+		return m_sDisabledImage.c_str();
 	}
 
 	void CEditUI::SetDisabledImage(LPCTSTR pStrImage)
@@ -492,26 +492,26 @@ namespace DuiLib
 		else m_uButtonState &= ~ UISTATE_DISABLED;
 
 		if( (m_uButtonState & UISTATE_DISABLED) != 0 ) {
-			if( !m_sDisabledImage.IsEmpty() ) {
-				if( !DrawImage(hDC, (LPCTSTR)m_sDisabledImage) ) m_sDisabledImage.Empty();
+			if( !m_sDisabledImage.empty() ) {
+				if( !DrawImage(hDC, m_sDisabledImage.c_str()) ) m_sDisabledImage.clear();
 				else return;
 			}
 		}
 		else if( (m_uButtonState & UISTATE_FOCUSED) != 0 ) {
-			if( !m_sFocusedImage.IsEmpty() ) {
-				if( !DrawImage(hDC, (LPCTSTR)m_sFocusedImage) ) m_sFocusedImage.Empty();
+			if( !m_sFocusedImage.empty() ) {
+				if( !DrawImage(hDC, m_sFocusedImage.c_str()) ) m_sFocusedImage.clear();
 				else return;
 			}
 		}
 		else if( (m_uButtonState & UISTATE_HOT) != 0 ) {
-			if( !m_sHotImage.IsEmpty() ) {
-				if( !DrawImage(hDC, (LPCTSTR)m_sHotImage) ) m_sHotImage.Empty();
+			if( !m_sHotImage.empty() ) {
+				if( !DrawImage(hDC, m_sHotImage.c_str()) ) m_sHotImage.clear();
 				else return;
 			}
 		}
 
-		if( !m_sNormalImage.IsEmpty() ) {
-			if( !DrawImage(hDC, (LPCTSTR)m_sNormalImage) ) m_sNormalImage.Empty();
+		if( !m_sNormalImage.empty() ) {
+			if( !DrawImage(hDC, m_sNormalImage.c_str()) ) m_sNormalImage.clear();
 			else return;
 		}
 	}
@@ -521,12 +521,12 @@ namespace DuiLib
 		if( m_dwTextColor == 0 ) m_dwTextColor = m_pManager->GetDefaultFontColor();
 		if( m_dwDisabledTextColor == 0 ) m_dwDisabledTextColor = m_pManager->GetDefaultDisabledColor();
 
-		if( m_sText.IsEmpty() ) return;
+		if( m_sText.empty() ) return;
 
-		CDuiString sText = m_sText;
+		tstring sText = m_sText;
 		if( m_bPasswordMode ) {
-			sText.Empty();
-			LPCTSTR p = m_sText.GetData();
+			sText.clear();
+			LPCTSTR p = m_sText.c_str();
 			while( *p != _T('\0') ) {
 				sText += m_cPasswordChar;
 				p = ::CharNext(p);
@@ -539,11 +539,11 @@ namespace DuiLib
 		rc.top += m_rcTextPadding.top;
 		rc.bottom -= m_rcTextPadding.bottom;
 		if( IsEnabled() ) {
-			CRenderEngine::DrawText(hDC, m_pManager, rc, sText, m_dwTextColor, \
+			CRenderEngine::DrawText(hDC, m_pManager, rc, sText.c_str(), m_dwTextColor, \
 				m_iFont, DT_SINGLELINE | m_uTextStyle);
 		}
 		else {
-			CRenderEngine::DrawText(hDC, m_pManager, rc, sText, m_dwDisabledTextColor, \
+			CRenderEngine::DrawText(hDC, m_pManager, rc, sText.c_str(), m_dwDisabledTextColor, \
 				m_iFont, DT_SINGLELINE | m_uTextStyle);
 
 		}

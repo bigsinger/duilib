@@ -14,6 +14,18 @@ HOOKSTRUCT CHookAPI::m_GetImageExHookInfo={0};
 
 CHookAPI::CHookAPI(void)
 {
+#ifdef _WIN64
+#ifdef _DEBUG
+	CreateFileAPI=(pfnCreateFile)HookAPI(_T("KERNEL32.dll"),LPCSTR("CreateFileW"),(FARPROC)Hook_CreateFile,GetModuleHandle(_T("Duilib_ud.dll")));
+#else
+	CreateFileAPI=(pfnCreateFile)HookAPI(_T("KERNEL32.dll"),LPCSTR("CreateFileW"),(FARPROC)Hook_CreateFile,GetModuleHandle(_T("Duilib_u.dll")));
+#endif
+	if(CreateFileAPI == NULL)
+		CreateFileAPI = ::CreateFile;
+	EnableCreateFile(true);
+	EnableInvalidate(false);
+	EnableGetImageEx(false);
+#else
 #ifdef _DEBUG
 	CreateFileAPI=(pfnCreateFile)HookAPI(_T("KERNEL32.dll"),LPCSTR("CreateFileW"),(FARPROC)Hook_CreateFile,GetModuleHandle(_T("Duilib_ud.dll")));
 	EnableCreateFile(true);
@@ -32,6 +44,7 @@ CHookAPI::CHookAPI(void)
 
 	HookAPI(_T("Duilib_u.dll"),LPCSTR("?GetImageEx@CPaintManagerUI@DuiLib@@QAEPAUtagTImageInfo@2@PB_W0K@Z"),(FARPROC)Hook_GetImageEx,m_GetImageExHookInfo);
 	EnableGetImageEx(true);
+#endif
 #endif
 }
 
@@ -77,7 +90,7 @@ FARPROC CHookAPI::HookAPI(LPCTSTR pstrDllName,LPCSTR pstrFuncName,FARPROC pfnNew
 		{
 			DWORD dwOldProtect;
 			//修改内存包含属性
-			VirtualProtect(ppfn, sizeof(DWORD), PAGE_READWRITE, &dwOldProtect);
+			VirtualProtect(ppfn, sizeof(PROC), PAGE_READWRITE, &dwOldProtect);
 			WriteProcessMemory(GetCurrentProcess(),ppfn,&(pfnNewFunc),sizeof(pfnNewFunc),NULL);
 			return pfnOriginFunc;
 		}
@@ -88,28 +101,39 @@ FARPROC CHookAPI::HookAPI(LPCTSTR pstrDllName,LPCSTR pstrFuncName,FARPROC pfnNew
 
 BOOL CHookAPI::HookAPI(LPCTSTR pstrDllName,LPCSTR pstrFuncName,FARPROC pfnNewFunc,HOOKSTRUCT& HookInfo)
 {
+#ifdef _WIN64
+	UNREFERENCED_PARAMETER(pstrDllName);
+	UNREFERENCED_PARAMETER(pstrFuncName);
+	UNREFERENCED_PARAMETER(pfnNewFunc);
+	UNREFERENCED_PARAMETER(HookInfo);
+	return FALSE;
+#else
 	HMODULE hModule=LoadLibrary(pstrDllName);
-	//纪录函数地址
 	HookInfo.pfnFuncAddr=GetProcAddress(hModule,pstrFuncName);
 	FreeLibrary(hModule);
 	if(HookInfo.pfnFuncAddr==NULL)
 		return FALSE;
-	//备份原函数的前5个字节，一般的WIN32 API以__stdcall声明的API理论上都可以这样进行HOOK
 	memcpy(HookInfo.OldCode,HookInfo.pfnFuncAddr,5);
-	HookInfo.NewCode[0]=0xe9;//构造JMP
-	DWORD dwJmpAddr=(DWORD)pfnNewFunc-(DWORD)HookInfo.pfnFuncAddr-5;//计算JMP地址
+	HookInfo.NewCode[0]=0xe9;
+	DWORD dwJmpAddr=(DWORD)pfnNewFunc-(DWORD)HookInfo.pfnFuncAddr-5;
 	memcpy(&HookInfo.NewCode[1],&dwJmpAddr,4);
-	EnableHook(HookInfo,TRUE);//开始进行HOOK
+	EnableHook(HookInfo,TRUE);
 
 	return TRUE;
+#endif
 }
 
 void CHookAPI::EnableHook(HOOKSTRUCT& HookInfo,BOOL bEnable)
 {
+#ifdef _WIN64
+	UNREFERENCED_PARAMETER(HookInfo);
+	UNREFERENCED_PARAMETER(bEnable);
+#else
 	if(bEnable)
-		WriteProcessMemory((HANDLE)-1,HookInfo.pfnFuncAddr,HookInfo.NewCode,5,0);//替换函数地址
+		WriteProcessMemory((HANDLE)-1,HookInfo.pfnFuncAddr,HookInfo.NewCode,5,0);
 	else
-		WriteProcessMemory((HANDLE)-1,HookInfo.pfnFuncAddr,HookInfo.OldCode,5,0);//还原函数地址
+		WriteProcessMemory((HANDLE)-1,HookInfo.pfnFuncAddr,HookInfo.OldCode,5,0);
+#endif
 }
 
 HANDLE WINAPI CHookAPI::Hook_CreateFile(
@@ -133,10 +157,25 @@ HANDLE WINAPI CHookAPI::Hook_CreateFile(
 		}
 	}
 
+	if(CreateFileAPI == NULL)
+		CreateFileAPI = ::CreateFile;
+
 	return CreateFileAPI(lpFileName,dwDesiredAccess,dwShareMode,lpSecurityAttributes,dwCreationDisposition
 		,dwFlagsAndAttributes,hTemplateFile);
 }
 
+#ifdef _WIN64
+void WINAPI CHookAPI::Hook_Invalidate(RECT& rcItem)
+{
+	if(m_bInvalidateEnabled)
+	{
+		::OffsetRect(&rcItem,FORM_OFFSET_X,FORM_OFFSET_Y);
+		::InflateRect(&rcItem,TRACKER_HANDLE_SIZE,TRACKER_HANDLE_SIZE);
+	}
+	if(m_InvalidateHookInfo.pfnFuncAddr != NULL)
+		((pfnInvalidate)m_InvalidateHookInfo.pfnFuncAddr)(rcItem);
+}
+#else
 __declspec(naked) void WINAPI CHookAPI::Hook_Invalidate(RECT& rcItem)
 {
 	_asm
@@ -144,7 +183,7 @@ __declspec(naked) void WINAPI CHookAPI::Hook_Invalidate(RECT& rcItem)
 		push ebp;
 		mov ebp,esp;
 		pushad;
-		push ecx;//push this pointer
+		push ecx;
 	}
 	EnableHook(m_InvalidateHookInfo,FALSE);
 
@@ -153,7 +192,7 @@ __declspec(naked) void WINAPI CHookAPI::Hook_Invalidate(RECT& rcItem)
 	::OffsetRect(&rcItem,FORM_OFFSET_X,FORM_OFFSET_Y);
 	::InflateRect(&rcItem,TRACKER_HANDLE_SIZE,TRACKER_HANDLE_SIZE);
 	}
-	_asm pop ecx;//pop this pointer
+	_asm pop ecx;
 	((pfnInvalidate)m_InvalidateHookInfo.pfnFuncAddr)(rcItem);
 
 	EnableHook(m_InvalidateHookInfo,TRUE);
@@ -164,24 +203,40 @@ __declspec(naked) void WINAPI CHookAPI::Hook_Invalidate(RECT& rcItem)
 		retn 0x04;
 	}
 }
+#endif
 
+#ifdef _WIN64
+TImageInfo* WINAPI CHookAPI::Hook_GetImageEx(LPCTSTR pstrBitmap, LPCTSTR pstrType, DWORD mask)
+{
+	TCHAR sFullPath[MAX_PATH] = {0};
+	if(m_bGetImageExEnabled && pstrBitmap != NULL && _tcslen(pstrBitmap) >= 2 && *(pstrBitmap + 1) != ':')
+	{
+		_tcscpy_s(sFullPath, m_sSkinDir);
+		_tcscat_s(sFullPath, pstrBitmap);
+		pstrBitmap = sFullPath;
+	}
+	if(m_GetImageExHookInfo.pfnFuncAddr == NULL)
+		return NULL;
+	return ((pfnGetImageEx)m_GetImageExHookInfo.pfnFuncAddr)(pstrBitmap, pstrType, mask);
+}
+#else
 __declspec(naked) TImageInfo* WINAPI CHookAPI::Hook_GetImageEx(LPCTSTR pstrBitmap, LPCTSTR pstrType, DWORD mask)
 {
 	_asm
 	{
 		push ebp;
 		mov ebp,esp;
-		sub esp,0x208;//full path
+		sub esp,0x208;
 		push ebx;
 		push esi;
 		push edi;
-		push ecx;//save this pointer
+		push ecx;
 	}
 	EnableHook(m_GetImageExHookInfo,FALSE);
 
 	if(m_bGetImageExEnabled)
 	{
-		if(_tcslen(pstrBitmap)>=2&&*(pstrBitmap+1)!=':')//relative path
+		if(_tcslen(pstrBitmap)>=2&&*(pstrBitmap+1)!=':')
 		{
 			_asm
 			{
@@ -206,18 +261,18 @@ __declspec(naked) TImageInfo* WINAPI CHookAPI::Hook_GetImageEx(LPCTSTR pstrBitma
 
 	_asm
 	{
-		pop ecx;//load this pointer
+		pop ecx;
 		push mask;
 		push pstrType;
 		push pstrBitmap;
 		call m_GetImageExHookInfo.pfnFuncAddr;
-		push eax;//save return value
+		push eax;
 	}
 
 	EnableHook(m_GetImageExHookInfo,TRUE);
 	_asm
 	{
-		pop eax;//load return value
+		pop eax;
 		pop edi;
 		pop esi;
 		pop ebx;
@@ -226,3 +281,4 @@ __declspec(naked) TImageInfo* WINAPI CHookAPI::Hook_GetImageEx(LPCTSTR pstrBitma
 		retn 0x0C;
 	}
 }
+#endif

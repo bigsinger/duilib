@@ -23,7 +23,7 @@ namespace DuiLib
 
 	void CComboBoxUI::PaintStatusImage(HDC hDC)
 	{
-		if (m_sArrowImage.IsEmpty())
+		if (m_sArrowImage.empty())
 			CComboUI::PaintStatusImage(hDC);
 		else
 		{
@@ -44,17 +44,17 @@ namespace DuiLib
 				nIndex = 3;
 
 			// make modify string
-			CDuiString sModify = m_sArrowImage;
+			tstring sModify = m_sArrowImage;
 
-			int nPos1 = sModify.Find(_T("source"));
-			int nPos2 = sModify.Find(_T("'"), nPos1 + 7);
+			int nPos1 = DuiStringFind(sModify, _T("source"));
+			int nPos2 = DuiStringFind(sModify, _T("'"), nPos1 + 7);
 			if (nPos2 == -1) return; //first
-			int nPos3 = sModify.Find(_T("'"), nPos2 + 1);
+			int nPos3 = DuiStringFind(sModify, _T("'"), nPos2 + 1);
 			if (nPos3 == -1) return; //second
 
 			CDuiRect rcBmpPart;
 			LPTSTR lpszValue = NULL;
-			rcBmpPart.left = _tcstol(sModify.GetData() + nPos2 + 1, &lpszValue, 10);  ASSERT(lpszValue);    
+			rcBmpPart.left = _tcstol(sModify.c_str() + nPos2 + 1, &lpszValue, 10);  ASSERT(lpszValue);    
 			rcBmpPart.top = _tcstol(lpszValue + 1, &lpszValue, 10);    ASSERT(lpszValue);    
 			rcBmpPart.right = _tcstol(lpszValue + 1, &lpszValue, 10);  ASSERT(lpszValue);    
 			rcBmpPart.bottom = _tcstol(lpszValue + 1, &lpszValue, 10); ASSERT(lpszValue); 
@@ -67,17 +67,17 @@ namespace DuiLib
 			rcDest.Deflate(GetBorderSize(), GetBorderSize());
 			rcDest.left = rcDest.right - m_nArrowWidth;
 
-			CDuiString sSource = sModify.Mid(nPos1, nPos3 + 1 - nPos1);
-			CDuiString sReplace;
-			sReplace.SmallFormat(_T("source='%d,%d,%d,%d' dest='%d,%d,%d,%d'"),
+			tstring sSource = DuiStringMid(sModify, nPos1, nPos3 + 1 - nPos1);
+			tstring sReplace;
+			DuiStringSmallFormat(sReplace, _T("source='%d,%d,%d,%d' dest='%d,%d,%d,%d'"),
 				rcBmpPart.left, rcBmpPart.top, rcBmpPart.right, rcBmpPart.bottom,
 				rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
 
-			sModify.Replace(sSource, sReplace);
+			DuiStringReplace(sModify, sSource.c_str(), sReplace.c_str());
 
 			// draw image
-			if (!DrawImage(hDC, m_sArrowImage, sModify))
-				m_sNormalImage.Empty();
+			if (!DrawImage(hDC, m_sArrowImage.c_str(), sModify.c_str()))
+				m_sNormalImage.clear();
 		}
 	}
 

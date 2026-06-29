@@ -29,17 +29,17 @@ typedef struct tagTListInfoUI
     RECT rcTextPadding;
     DWORD dwTextColor;
     DWORD dwBkColor;
-    CDuiString sBkImage;
+    tstring sBkImage;
     bool bAlternateBk;
     DWORD dwSelectedTextColor;
     DWORD dwSelectedBkColor;
-    CDuiString sSelectedImage;
+    tstring sSelectedImage;
     DWORD dwHotTextColor;
     DWORD dwHotBkColor;
-    CDuiString sHotImage;
+    tstring sHotImage;
     DWORD dwDisabledTextColor;
     DWORD dwDisabledBkColor;
-    CDuiString sDisabledImage;
+    tstring sDisabledImage;
     DWORD dwLineColor;
     bool bShowHtml;
     bool bMultiExpandable;
@@ -61,6 +61,7 @@ public:
     virtual TListInfoUI* GetListInfo() = 0;
     virtual int GetCurSel() const = 0;
     virtual bool SelectItem(int iIndex, bool bTakeFocus = false) = 0;
+    virtual bool SelectRange(int iIndex, bool bTakeFocus = false) = 0;
     virtual void DoEvent(TEventUI& event) = 0;
 };
 
@@ -83,7 +84,7 @@ public:
     virtual IListOwnerUI* GetOwner() = 0;
     virtual void SetOwner(CControlUI* pOwner) = 0;
     virtual bool IsSelected() const = 0;
-    virtual bool Select(bool bSelect = true) = 0;
+    virtual bool Select(bool bSelect = true, bool bCallback = true) = 0;
     virtual bool IsExpanded() const = 0;
     virtual bool Expand(bool bExpand = true) = 0;
     virtual void DrawItemText(HDC hDC, const RECT& rcItem) = 0;
@@ -111,16 +112,16 @@ public:
 	DWORD GetTextStyle() const;
 	void SetTextStyle(UINT uStyle);
 
-	// ·µ»ØµÄÊÇARGB£¬×¢ÒâÇø±ðRGBµÄ×Ö½Ú×éÖ¯½á¹¹
+	// ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ARGBï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½RGBï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½Ö¯ï¿½á¹¹
 	ARGB GetTextColor() const;
 
-	// ÉèÖÃµÄÊÇARGB£¨Photoshop¸ñÊ½£©£¬²»ÊÇRGB£¨VC¸ñÊ½£©£¡
+	// ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ARGBï¿½ï¿½Photoshopï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½RGBï¿½ï¿½VCï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
 	void SetTextColor(ARGB dwTextColor);
 
-	// ÉèÖÃÁËÒ»¸öÒ×ÓÚÀí½âµÄ½Ó¿Ú£¬Èç¹ûÖ»ÊÇÉèÖÃ¼òµ¥µÄrgb¿ÉÒÔ°²×°Õâ¸ö½Ó¿Úµ÷
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Ó¿Ú£ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ã¼òµ¥µï¿½rgbï¿½ï¿½ï¿½Ô°ï¿½×°ï¿½ï¿½ï¿½ï¿½Ó¿Úµï¿½
 	void SetTextColor(IN BYTE r, IN BYTE g, IN BYTE b);
 
-	// Èç¹ûÊÇ´ÓÆäËûµØ·½»ñÈ¡µÄRGB¸ñÊ½ÑÕÉ«£¬¿ÉÒÔÖ±½ÓÊ¹ÓÃ£¬ÄÚ²¿»á×ª»»
+	// ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ï¿½È¡ï¿½ï¿½RGBï¿½ï¿½Ê½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ê¹ï¿½Ã£ï¿½ï¿½Ú²ï¿½ï¿½ï¿½×ªï¿½ï¿½
 	void SetTextColorRGB(COLORREF rgb);
 
 	void SetTextPadding(RECT rc);
@@ -157,12 +158,12 @@ protected:
 	UINT m_uTextStyle;
 	bool m_bShowHtml;
 	RECT m_rcTextPadding;
-	CDuiString m_sNormalImage;
-	CDuiString m_sHotImage;
-	CDuiString m_sPushedImage;
-	CDuiString m_sFocusedImage;
-	CDuiString m_sSepImage;
-	CDuiString m_sSepImageModify;
+	tstring m_sNormalImage;
+	tstring m_sHotImage;
+	tstring m_sPushedImage;
+	tstring m_sFocusedImage;
+	tstring m_sSepImage;
+	tstring m_sSepImageModify;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -184,6 +185,7 @@ public:
     void SetScrollSelect(bool bScrollSelect);
     int GetCurSel() const;
     bool SelectItem(int iIndex, bool bTakeFocus = false);
+    bool SelectRange(int iIndex, bool bTakeFocus = false);
 
     CListHeaderUI* GetHeader() const;  
     CContainerUI* GetList() const;
@@ -195,14 +197,14 @@ public:
     int GetCount() const;
 	//////////////////////////////////////////////////////////////////////////
 	/**
-	 * ²åÈëÁÐ,ÕÕ¾É,´Ó0¿ªÊ¼
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½Õ¾ï¿½,ï¿½ï¿½0ï¿½ï¿½Ê¼
 	 * 
-	 * @param	nCol					ÁÐÊý,ÐèÒª´Ó0¿ªÊ¼ÒÀ´Î²åÈë
-	 * @param	lpszColumnHeaderStr		Ã¿Ò»ÁÐ±êÌâ
-	 * @param	uTextStyle				±êÌâÎÄ×Ö¶ÔÆë·½Ê½
-	 * @param	nWidth					ÁÐ¿í
+	 * @param	nCol					ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½Òªï¿½ï¿½0ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Î²ï¿½ï¿½ï¿½
+	 * @param	lpszColumnHeaderStr		Ã¿Ò»ï¿½Ð±ï¿½ï¿½ï¿½
+	 * @param	uTextStyle				ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½ï¿½ë·½Ê½
+	 * @param	nWidth					ï¿½Ð¿ï¿½
 	 * 
-	 * @return	·µ»ØTrueÎª³É¹¦,FalseÎªÊ§°Ü
+	 * @return	ï¿½ï¿½ï¿½ï¿½TrueÎªï¿½É¹ï¿½,FalseÎªÊ§ï¿½ï¿½
 	 */
 	BOOL InsertColumn(
 		int nCol,
@@ -218,21 +220,21 @@ public:
 	bool SetSubItem(int nItem, int nSubItem, CControlUI* pControl);
 
 	/**
-	 * ¸ù¾ÝË÷Òý»ñÈ¡ÐÐ¿Ø¼þ
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½Ð¿Ø¼ï¿½
 	 * 
-	 * @param	iIndex					ÐÐÊý,´Ó0µ½×î´óÐÐÊý
+	 * @param	iIndex					ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
-	 * @return	³É¹¦Ê±·µ»Ø×Ó¿Ø¼þµØÖ·,·ñÔò·µ»ØNULL
+	 * @return	ï¿½É¹ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Ø¼ï¿½ï¿½ï¿½Ö·,ï¿½ï¿½ï¿½ò·µ»ï¿½NULL
 	 */
 	CListContainerElementUI* GetListItemElement(int iIndex);
 
 	/**
-	 * »ñÈ¡¾ßÌåÎ»ÖÃµÄ¿Ø¼þ
+	 * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Î»ï¿½ÃµÄ¿Ø¼ï¿½
 	 * 
-	 * @param	iIndex					ÐÐÊý,´Ó0µ½×î´óÐÐÊý
-	 * @param	iSubIndex					ÁÐÊý,´Ó0µ½×î´óÐÐÊý
+	 * @param	iIndex					ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * @param	iSubIndex					ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
-	 * @return	³É¹¦Ê±·µ»Ø×Ó¿Ø¼þµØÖ·,·ñÔò·µ»ØNULL
+	 * @return	ï¿½É¹ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Ø¼ï¿½ï¿½ï¿½Ö·,ï¿½ï¿½ï¿½ò·µ»ï¿½NULL
 	 */
 	CHorizontalLayoutUI* GetListSubItem(int iIndex, int iSubIndex);
 	//////////////////////////////////////////////////////////////////////////
@@ -382,11 +384,11 @@ public:
     void SetVisible(bool bVisible = true);
 
     bool IsSelected() const;
-    bool Select(bool bSelect = true);
+    bool Select(bool bSelect = true, bool bCallback = true);
     bool IsExpanded() const;
     bool Expand(bool bExpand = true);
 
-    void Invalidate(); // Ö±½ÓCControl::Invalidate»áµ¼ÖÂ¹ö¶¯ÌõË¢ÐÂ£¬ÖØÐ´¼õÉÙË¢ÐÂÇøÓò
+    void Invalidate(); // Ö±ï¿½ï¿½CControl::Invalidateï¿½áµ¼ï¿½Â¹ï¿½ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½Â£ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     bool Activate();
 
     void DoEvent(TEventUI& event);
@@ -438,7 +440,7 @@ public:
     void SetText(int iIndex, LPCTSTR pstrText);
 
     void SetOwner(CControlUI* pOwner);
-    CDuiString* GetLinkContent(int iIndex);
+    tstring* GetLinkContent(int iIndex);
 
     void DoEvent(TEventUI& event);
     SIZE EstimateSize(SIZE szAvailable);
@@ -449,7 +451,7 @@ protected:
     enum { MAX_LINK = 8 };
     int m_nLinks;
     RECT m_rcLinks[MAX_LINK];
-    CDuiString m_sLinks[MAX_LINK];
+    tstring m_sLinks[MAX_LINK];
     int m_nHoverLink;
     IListUI* m_pOwner;
     CStdPtrArray m_aTexts;
@@ -476,11 +478,11 @@ public:
     void SetEnabled(bool bEnable = true);
 
     bool IsSelected() const;
-    bool Select(bool bSelect = true);
+    bool Select(bool bSelect = true, bool bCallback = true);
     bool IsExpanded() const;
     bool Expand(bool bExpand = true);
 
-    void Invalidate(); // Ö±½ÓCControl::Invalidate»áµ¼ÖÂ¹ö¶¯ÌõË¢ÐÂ£¬ÖØÐ´¼õÉÙË¢ÐÂÇøÓò
+    void Invalidate(); // Ö±ï¿½ï¿½CControl::Invalidateï¿½áµ¼ï¿½Â¹ï¿½ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½Â£ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     bool Activate();
 
     void DoEvent(TEventUI& event);
@@ -489,7 +491,7 @@ public:
 
     void DrawItemText(HDC hDC, const RECT& rcItem);    
     void DrawItemBk(HDC hDC, const RECT& rcItem);
-	//added,//todo...ÊÇ·ñ¿ÉÒÔÓÅ»¯
+	//added,//todo...ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½
 	void SetPos(RECT rc)
 	{
 		CContainerUI::SetPos(rc);
