@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 #include <zmouse.h>
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
 
 DECLARE_HANDLE(HZIP);	// An HZIP identifies a zip file that has been opened
 typedef DWORD ZRESULT;
@@ -64,6 +66,69 @@ short CPaintManagerUI::m_L = 100;
 CStdPtrArray CPaintManagerUI::m_aPreMessages;
 CStdPtrArray CPaintManagerUI::m_aPlugins;
 
+namespace
+{
+	class SharedGdiplusScope
+	{
+	public:
+		SharedGdiplusScope()
+		{
+			Gdiplus::GdiplusStartup(&token_, &input_, NULL);
+		}
+
+		~SharedGdiplusScope()
+		{
+			if (token_ != 0) {
+				Gdiplus::GdiplusShutdown(token_);
+				token_ = 0;
+			}
+		}
+
+	private:
+		ULONG_PTR token_ = 0;
+		Gdiplus::GdiplusStartupInput input_;
+	};
+
+	void EnsureSharedGdiplus()
+	{
+		static SharedGdiplusScope scope;
+	}
+
+	void AddRoundRectPath(Gdiplus::GraphicsPath& path, const Gdiplus::RectF& rc, float radius)
+	{
+		const float diameter = radius * 2.0f;
+		path.AddArc(rc.X, rc.Y, diameter, diameter, 180.0f, 90.0f);
+		path.AddArc(rc.X + rc.Width - diameter, rc.Y, diameter, diameter, 270.0f, 90.0f);
+		path.AddArc(rc.X + rc.Width - diameter, rc.Y + rc.Height - diameter, diameter, diameter, 0.0f, 90.0f);
+		path.AddArc(rc.X, rc.Y + rc.Height - diameter, diameter, diameter, 90.0f, 90.0f);
+		path.CloseFigure();
+	}
+
+	void DrawWindowRoundFrame(HDC hDC, const RECT& rcClient, SIZE roundCorner)
+	{
+		const int width = rcClient.right - rcClient.left;
+		const int height = rcClient.bottom - rcClient.top;
+		if (width <= 0 || height <= 0 || (roundCorner.cx <= 0 && roundCorner.cy <= 0)) return;
+
+		EnsureSharedGdiplus();
+		Gdiplus::Graphics graphics(hDC);
+		graphics.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+		graphics.SetPixelOffsetMode(Gdiplus::PixelOffsetModeHighQuality);
+
+		const float radius = static_cast<float>(max(roundCorner.cx, roundCorner.cy)) * 0.5f;
+		Gdiplus::RectF outer(0.75f, 0.75f, static_cast<float>(width) - 1.5f, static_cast<float>(height) - 1.5f);
+		Gdiplus::GraphicsPath outerPath;
+		AddRoundRectPath(outerPath, outer, radius);
+		Gdiplus::Pen outerPen(Gdiplus::Color(175, 42, 42, 42), 1.4f);
+		graphics.DrawPath(&outerPen, &outerPath);
+
+		Gdiplus::RectF inner(1.75f, 1.75f, static_cast<float>(width) - 3.5f, static_cast<float>(height) - 3.5f);
+		Gdiplus::GraphicsPath innerPath;
+		AddRoundRectPath(innerPath, inner, max(1.0f, radius - 1.0f));
+		Gdiplus::Pen innerPen(Gdiplus::Color(45, 255, 255, 255), 1.0f);
+		graphics.DrawPath(&innerPen, &innerPath);
+	}
+}
 
 CPaintManagerUI::CPaintManagerUI() :
 m_hWndPaint(NULL),
@@ -688,6 +753,11 @@ bool CPaintManagerUI::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, LR
                     CControlUI* pPostPaintControl = static_cast<CControlUI*>(m_aPostPaintControls[i]);
                     pPostPaintControl->DoPostPaint(m_hDcOffscreen, ps.rcPaint);
                 }
+                {
+                    RECT rcClient = { 0 };
+                    ::GetClientRect(m_hWndPaint, &rcClient);
+                    DrawWindowRoundFrame(m_hDcOffscreen, rcClient, m_szRoundCorner);
+                }
                 ::RestoreDC(m_hDcOffscreen, iSaveDC);
                 ::BitBlt(ps.hdc, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right - ps.rcPaint.left,
                     ps.rcPaint.bottom - ps.rcPaint.top, m_hDcOffscreen, ps.rcPaint.left, ps.rcPaint.top, SRCCOPY);
@@ -705,6 +775,11 @@ bool CPaintManagerUI::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, LR
                 // A standard paint job
                 int iSaveDC = ::SaveDC(ps.hdc);
                 m_pRoot->DoPaint(ps.hdc, ps.rcPaint);
+                {
+                    RECT rcClient = { 0 };
+                    ::GetClientRect(m_hWndPaint, &rcClient);
+                    DrawWindowRoundFrame(ps.hdc, rcClient, m_szRoundCorner);
+                }
                 ::RestoreDC(ps.hdc, iSaveDC);
             }
             // All Done!
