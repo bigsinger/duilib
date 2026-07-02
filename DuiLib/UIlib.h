@@ -65,7 +65,22 @@
 #include <assert.h>
 #include <crtdbg.h>
 #include <malloc.h>
-#include <atltypes.h>
+#ifndef DUILIB_WIN32_TYPES_COMPAT_INCLUDED
+#define DUILIB_WIN32_TYPES_COMPAT_INCLUDED
+struct CSize : public tagSIZE
+{
+	CSize() { cx = cy = 0; }
+	CSize(int initCX, int initCY) { cx = initCX; cy = initCY; }
+	CSize(SIZE initSize) { cx = initSize.cx; cy = initSize.cy; }
+};
+
+struct CPoint : public tagPOINT
+{
+	CPoint() { x = y = 0; }
+	CPoint(int initX, int initY) { x = initX; y = initY; }
+	CPoint(POINT initPoint) { x = initPoint.x; y = initPoint.y; }
+};
+#endif
 
 #include "Utils/Utils.h"
 #include "Utils/UIStringUtil.h"

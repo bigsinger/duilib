@@ -1,8 +1,100 @@
 #include "stdafx.h"
 #include "UIScrollBar.h"
 
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
+
 namespace DuiLib
 {
+	namespace
+	{
+		class SharedGdiplusScope
+		{
+		public:
+			SharedGdiplusScope()
+			{
+				Gdiplus::GdiplusStartup(&token_, &input_, NULL);
+			}
+
+			~SharedGdiplusScope()
+			{
+				if( token_ != 0 ) {
+					Gdiplus::GdiplusShutdown(token_);
+					token_ = 0;
+				}
+			}
+
+		private:
+			ULONG_PTR token_ = 0;
+			Gdiplus::GdiplusStartupInput input_;
+		};
+
+		void EnsureSharedGdiplus()
+		{
+			static SharedGdiplusScope scope;
+		}
+
+		Gdiplus::Color ToGdiplusColor(DWORD color)
+		{
+			return Gdiplus::Color(
+				static_cast<BYTE>((color >> 24) & 0xFF),
+				static_cast<BYTE>((color >> 16) & 0xFF),
+				static_cast<BYTE>((color >> 8) & 0xFF),
+				static_cast<BYTE>(color & 0xFF));
+		}
+
+		Gdiplus::Color BlendArgb(DWORD baseColor, DWORD overlayColor, float overlayWeight)
+		{
+			const float baseWeight = 1.0f - overlayWeight;
+			const auto channel = [baseWeight, overlayWeight](DWORD baseValue, DWORD overlayValue, int shift) {
+				return static_cast<BYTE>(
+					(((baseValue >> shift) & 0xFF) * baseWeight) +
+					(((overlayValue >> shift) & 0xFF) * overlayWeight));
+			};
+			return Gdiplus::Color(
+				channel(baseColor, overlayColor, 24),
+				channel(baseColor, overlayColor, 16),
+				channel(baseColor, overlayColor, 8),
+				channel(baseColor, overlayColor, 0));
+		}
+
+		void AddRoundRect(Gdiplus::GraphicsPath& path, const Gdiplus::RectF& rc, float radius)
+		{
+			const float diameter = max(0.0f, radius * 2.0f);
+			if( diameter <= 0.0f ) {
+				path.AddRectangle(rc);
+				return;
+			}
+			path.AddArc(rc.X, rc.Y, diameter, diameter, 180.0f, 90.0f);
+			path.AddArc(rc.X + rc.Width - diameter, rc.Y, diameter, diameter, 270.0f, 90.0f);
+			path.AddArc(rc.X + rc.Width - diameter, rc.Y + rc.Height - diameter, diameter, diameter, 0.0f, 90.0f);
+			path.AddArc(rc.X, rc.Y + rc.Height - diameter, diameter, diameter, 90.0f, 90.0f);
+			path.CloseFigure();
+		}
+
+		void FillRoundRect(HDC hDC, const RECT& rc, DWORD color, float radius)
+		{
+			if( rc.right <= rc.left || rc.bottom <= rc.top || color == 0 ) return;
+			EnsureSharedGdiplus();
+			Gdiplus::Graphics graphics(hDC);
+			graphics.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+			graphics.SetPixelOffsetMode(Gdiplus::PixelOffsetModeHighQuality);
+			Gdiplus::RectF rect(
+				static_cast<Gdiplus::REAL>(rc.left) + 0.5f,
+				static_cast<Gdiplus::REAL>(rc.top) + 0.5f,
+				static_cast<Gdiplus::REAL>(rc.right - rc.left) - 1.0f,
+				static_cast<Gdiplus::REAL>(rc.bottom - rc.top) - 1.0f);
+			Gdiplus::GraphicsPath path;
+			AddRoundRect(path, rect, radius);
+			Gdiplus::LinearGradientBrush brush(
+				rect,
+				BlendArgb(color, 0xFFFFFFFF, 0.10f),
+				BlendArgb(color, 0xFF000000, 0.05f),
+				Gdiplus::LinearGradientModeVertical);
+			graphics.FillPath(&brush, &path);
+		}
+	}
+
 	static DWORD ParseScrollBarColor(LPCTSTR pstrValue)
 	{
 		while( *pstrValue > _T('\0') && *pstrValue <= _T(' ') ) pstrValue = ::CharNext(pstrValue);
@@ -844,8 +936,8 @@ namespace DuiLib
 		PaintBk(hDC);
 		PaintButton1(hDC);
 		PaintButton2(hDC);
-		PaintThumb(hDC);
 		PaintRail(hDC);
+		PaintThumb(hDC);
 	}
 
 	void CScrollBarUI::PaintBk(HDC hDC)
@@ -1001,7 +1093,18 @@ namespace DuiLib
 		if( (m_uThumbState & UISTATE_PUSHED) != 0 && m_dwThumbPushedColor != 0 ) dwColor = m_dwThumbPushedColor;
 		else if( (m_uThumbState & UISTATE_HOT) != 0 && m_dwThumbHotColor != 0 ) dwColor = m_dwThumbHotColor;
 		if( dwColor != 0 ) {
-			CRenderEngine::DrawColor(hDC, m_rcThumb, GetAdjustColor(dwColor));
+			RECT rcThumb = m_rcThumb;
+			if( !m_bHorizontal ) {
+				const int inset = max(1, (m_cxyFixed.cx - 5) / 2);
+				rcThumb.left += inset;
+				rcThumb.right -= inset;
+			}
+			else {
+				const int inset = max(1, (m_cxyFixed.cy - 5) / 2);
+				rcThumb.top += inset;
+				rcThumb.bottom -= inset;
+			}
+			FillRoundRect(hDC, rcThumb, GetAdjustColor(dwColor), static_cast<float>(min(rcThumb.right - rcThumb.left, rcThumb.bottom - rcThumb.top)) / 2.0f);
 		}
 	}
 
@@ -1052,17 +1155,19 @@ namespace DuiLib
 		if( m_dwRailNormalColor != 0 ) {
 			RECT rcRail = {};
 			if( !m_bHorizontal ) {
-				rcRail.left = m_rcItem.left + m_cxyFixed.cx / 2 - 1;
-				rcRail.right = rcRail.left + 2;
-				rcRail.top = m_rcItem.top;
-				rcRail.bottom = m_rcItem.bottom;
+				const int inset = max(2, (m_cxyFixed.cx - 4) / 2);
+				rcRail.left = m_rcItem.left + inset;
+				rcRail.right = m_rcItem.right - inset;
+				rcRail.top = m_bShowButton1 ? m_rcButton1.bottom : m_rcItem.top;
+				rcRail.bottom = m_bShowButton2 ? m_rcButton2.top : m_rcItem.bottom;
 			} else {
-				rcRail.left = m_rcItem.left;
-				rcRail.right = m_rcItem.right;
-				rcRail.top = m_rcItem.top + m_cxyFixed.cy / 2 - 1;
-				rcRail.bottom = rcRail.top + 2;
+				const int inset = max(2, (m_cxyFixed.cy - 4) / 2);
+				rcRail.left = m_bShowButton1 ? m_rcButton1.right : m_rcItem.left;
+				rcRail.right = m_bShowButton2 ? m_rcButton2.left : m_rcItem.right;
+				rcRail.top = m_rcItem.top + inset;
+				rcRail.bottom = m_rcItem.bottom - inset;
 			}
-			CRenderEngine::DrawColor(hDC, rcRail, GetAdjustColor(m_dwRailNormalColor));
+			FillRoundRect(hDC, rcRail, GetAdjustColor(m_dwRailNormalColor), static_cast<float>(min(rcRail.right - rcRail.left, rcRail.bottom - rcRail.top)) / 2.0f);
 		}
 	}
 }

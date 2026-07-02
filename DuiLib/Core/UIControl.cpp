@@ -1,5 +1,4 @@
 ﻿#include "StdAfx.h"
-#include <atlstr.h>
 
 namespace DuiLib {
 namespace {

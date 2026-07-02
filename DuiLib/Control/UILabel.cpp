@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "UILabel.h"
 
-#include <atlconv.h>
 #include <string>
 using namespace std;
 
@@ -9,6 +8,16 @@ namespace DuiLib
 {
 	namespace
 	{
+		std::wstring MultiByteTextToWide(const char* value)
+		{
+			if(value == NULL || *value == '\0') return std::wstring();
+			const int needed = ::MultiByteToWideChar(CP_ACP, 0, value, -1, NULL, 0);
+			if(needed <= 1) return std::wstring();
+			std::wstring result(static_cast<size_t>(needed - 1), L'\0');
+			::MultiByteToWideChar(CP_ACP, 0, value, -1, result.data(), needed);
+			return result;
+		}
+
 		class SharedGdiplusScope
 		{
 		public:
@@ -409,8 +418,7 @@ namespace DuiLib
 				nGraphics.DrawString(m_TextValue.c_str(),static_cast<INT>(m_TextValue.length()),&nFont,nRc,&format,&nLineGrBrushStroke);
 				nRc.Offset(0,-1);
 #else
-				USES_CONVERSION;
-				wstring mTextValue = A2W(m_TextValue.c_str());
+				wstring mTextValue = MultiByteTextToWide(m_TextValue.c_str());
 
 				nRc.Offset(-1,0);
 				nGraphics.DrawString(mTextValue.c_str(),static_cast<INT>(mTextValue.length()),&nFont,nRc,&format,&nLineGrBrushStroke);
@@ -430,8 +438,7 @@ namespace DuiLib
 
 			nGraphics.DrawString(m_TextValue.c_str(),static_cast<INT>(m_TextValue.length()),&nFont,nRc,&format,&nLineGrBrushB);
 #else
-			USES_CONVERSION;
-			wstring mTextValue = A2W(m_TextValue.c_str());
+			wstring mTextValue = MultiByteTextToWide(m_TextValue.c_str());
 
 			if(GetEnabledShadow() && (GetTextShadowColorA() > 0 || GetTextShadowColorB() > 0))
 				nGraphics.DrawString(mTextValue.c_str(),static_cast<INT>(mTextValue.length()),&nFont,nShadowRc,&format,&nLineGrBrushA);
