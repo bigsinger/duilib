@@ -156,8 +156,7 @@ LRESULT CComboWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         event.wParam = MAKELPARAM(zDelta < 0 ? SB_LINEDOWN : SB_LINEUP, 0);
         event.lParam = lParam;
         event.dwTimestamp = ::GetTickCount();
-        m_pOwner->DoEvent(event);
-        EnsureVisible(m_pOwner->GetCurSel());
+        m_pLayout->DoEvent(event);
         return 0;
     }
     else if( uMsg == WM_KILLFOCUS ) {
@@ -456,8 +455,7 @@ void CComboUI::DoEvent(TEventUI& event)
     }
     if( event.Type == UIEVENT_SCROLLWHEEL )
     {
-        bool bDownward = LOWORD(event.wParam) == SB_LINEDOWN;
-        SelectItem(FindSelectable(m_iCurSel + (bDownward ? 1 : -1), bDownward));
+        CControlUI::DoEvent(event);
         return;
     }
     if( event.Type == UIEVENT_CONTEXTMENU )
