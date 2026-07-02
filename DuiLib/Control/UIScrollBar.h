@@ -77,6 +77,13 @@ namespace DuiLib
 		void SetBkPushedImage(LPCTSTR pStrImage);
 		LPCTSTR GetBkDisabledImage();
 		void SetBkDisabledImage(LPCTSTR pStrImage);
+		void SetBkNormalColor(DWORD dwColor);
+		void SetButtonNormalColor(DWORD dwColor);
+		void SetButtonHotColor(DWORD dwColor);
+		void SetThumbNormalColor(DWORD dwColor);
+		void SetThumbHotColor(DWORD dwColor);
+		void SetThumbPushedColor(DWORD dwColor);
+		void SetRailNormalColor(DWORD dwColor);
 
 		void SetPos(RECT rc);
 		void DoEvent(TEventUI& event);
@@ -112,6 +119,13 @@ namespace DuiLib
 		tstring m_sBkHotImage;
 		tstring m_sBkPushedImage;
 		tstring m_sBkDisabledImage;
+		DWORD m_dwBkNormalColor;
+		DWORD m_dwButtonNormalColor;
+		DWORD m_dwButtonHotColor;
+		DWORD m_dwThumbNormalColor;
+		DWORD m_dwThumbHotColor;
+		DWORD m_dwThumbPushedColor;
+		DWORD m_dwRailNormalColor;
 
 		bool m_bShowButton1;
 		RECT m_rcButton1;
