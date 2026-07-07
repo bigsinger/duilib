@@ -9,7 +9,7 @@
 - 使用 Visual Studio 2026、MSVC v145、C++20。
 - DuiLib 主库不再依赖 MFC。
 - 新接口逐步回归 `tstring`、UTF-8 `std::string_view` 和标准库容器。
-- 控件按轻量版、标准版、全量版三档维护，默认启用三档全部控件。
+- 控件按轻量版、标准版、全量版三档维护，默认头文件启用三档全部控件。
 - 面向中小企业常见桌面工具，优先保留表单、列表、菜单、设置页、属性页、进度状态等高频能力。
 
 ## 分档开关
@@ -29,7 +29,7 @@
 - 标准版：`DUI_CONTROLS_LIGHT | DUI_CONTROLS_STANDARD`
 - 全量版：`DUI_CONTROLS_LIGHT | DUI_CONTROLS_STANDARD | DUI_CONTROLS_FULL`
 
-项目预处理器中不再配置控件档位宏。
+`DuiLib.vcxproj` 按产物类型配置默认档位：DLL 配置使用全量版 `0x07`，静态 lib 配置使用轻量版 `0x01`。使用者仍可在包含 `UIlib.h` 前覆盖 `DUI_CONTROLS_FLAG`。
 
 ## 轻量版控件
 
@@ -78,6 +78,9 @@
 - `Slider`
 - `DateTime`
 - `GroupBox`
+- `NumberEdit`
+- `HyperLink`
+- `Line`
 
 ## 标准版控件
 
@@ -88,6 +91,12 @@
 - `TreeView`
 - `TreeNode`
 - `RollText`
+- `ComboButton`
+- `CheckCombo`
+- `FilterCombo`
+- `VirtualListBox`
+- `Splitter`
+- `MenuBar`
 
 适用场景：
 
@@ -104,6 +113,9 @@
 - `ListEx`
 - `ListTextExtElement`
 - `FadeButton`
+- `PropertyGrid`
+- `DirectoryTree`
+- `AddressBar`
 
 `ListEx` 直接依赖 `RichEdit` 做单元格编辑，因此与 `RichEdit` 同属全量版。
 

@@ -65,7 +65,7 @@
 #include <assert.h>
 #include <crtdbg.h>
 #include <malloc.h>
-#ifndef DUILIB_WIN32_TYPES_COMPAT_INCLUDED
+#if !defined(DUILIB_WIN32_TYPES_COMPAT_INCLUDED) && !defined(__ATLTYPES_H__)
 #define DUILIB_WIN32_TYPES_COMPAT_INCLUDED
 struct CSize : public tagSIZE
 {
@@ -135,4 +135,6 @@ struct CPoint : public tagPOINT
 #include "Control/UIListEx.h"
 #include "Control/UIFadeButton.h"
 #endif
+
+#include "Control/UIExtraControls.h"
 

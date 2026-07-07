@@ -12,7 +12,8 @@
 - DuiLib 主库只保留四个配置：`Debug/Release` 为 Unicode DLL，`lib_debug/lib_release` 为多字节静态库。
 - DuiDesigner 只保留 `Debug/Release` 两个解决方案配置。
 - 根目录 `Demo.sln` 已移除，demo 后续在独立仓库维护。
-- 当前默认 profile 是全量版；控件档位通过 `DuiLib/Core/UIProfile.h` 中的 `DUI_CONTROLS_FLAG` 控制。
+- 当前默认头文件 profile 是全量版；控件档位通过 `DuiLib/Core/UIProfile.h` 中的 `DUI_CONTROLS_FLAG` 控制。
+- `DuiLib.vcxproj` 的 DLL 配置默认编译全量版，静态 lib 配置默认编译轻量版。
 - DuiLib 的 PCH、编译 PDB 和 Debug PDB 已隔离到各自中间目录，避免并行构建和项目引用构建互相污染。
 - `DuiLib/CMakeLists.txt` 旧入口已移除，VS2026 构建以 `DuiLib/DuiLib.vcxproj` 为准。
 - 非 MFC `DuiEditor` 路线已暂停；当前编辑器后续以恢复后的 `DuiDesigner` 项目为准。
@@ -42,6 +43,9 @@
 - `DateTime`
 - `GroupBox`
 - `SwitchButton`
+- `NumberEdit`
+- `HyperLink`
+- `Line`
 
 标准版额外包含：
 
@@ -50,6 +54,12 @@
 - `TreeView`
 - `TreeNode`
 - `RollText`
+- `ComboButton`
+- `CheckCombo`
+- `FilterCombo`
+- `VirtualListBox`
+- `Splitter`
+- `MenuBar`
 
 全量版额外包含：
 
@@ -57,6 +67,9 @@
 - `ListEx`
 - `ListTextExtElement`
 - `FadeButton`
+- `PropertyGrid`
+- `DirectoryTree`
+- `AddressBar`
 
 已排除：
 

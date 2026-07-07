@@ -331,6 +331,7 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
                 else if( _tcscmp(pstrClass, DUI_CTR_LIST) == 0 )              pControl = new CListUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_TEXT) == 0 )              pControl = new CTextUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_MENU) == 0 )              pControl = new CMenuUI;
+                else if( _tcscmp(pstrClass, DUI_CTR_LINE) == 0 )              pControl = new CLineUI;
                 break;
             case 5:
                 if( _tcscmp(pstrClass, DUI_CTR_COMBO) == 0 )                  pControl = new CComboUI;
@@ -349,6 +350,7 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
                 if( _tcscmp(pstrClass, DUI_CTR_CONTROL) == 0 )                pControl = new CControlUI;
 #if DUI_HAS_STANDARD_CONTROLS
                 else if( _tcscmp(pstrClass, DUI_CTR_GIFANIM) == 0 )           pControl = new CGifAnimUI;
+                else if( _tcscmp(pstrClass, DUI_CTR_MENUBAR) == 0 )           pControl = new CMenuBarUI;
 #endif
                 break;
             case 8:
@@ -363,12 +365,14 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
 #if DUI_HAS_STANDARD_CONTROLS
 				else if( _tcscmp(pstrClass, DUI_CTR_TREEVIEW) == 0 )          pControl = new CTreeViewUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_ROLLTEXT) == 0 )          pControl = new CRollTextUI;
+                else if( _tcscmp(pstrClass, DUI_CTR_SPLITTER) == 0 )          pControl = new CSplitterUI;
 #endif
                 break;
             case 9:
                 if( _tcscmp(pstrClass, DUI_CTR_CONTAINER) == 0 )              pControl = new CContainerUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_TABLAYOUT) == 0 )         pControl = new CTabLayoutUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_SCROLLBAR) == 0 )         pControl = new CScrollBarUI;
+                else if( _tcscmp(pstrClass, DUI_CTR_HYPERLINK) == 0 )         pControl = new CHyperLinkUI;
 #if DUI_HAS_STANDARD_CONTROLS
                 else if( _tcscmp(pstrClass, DUI_CTR_IPADDRESS) == 0 )         pControl = new CIPAddressUI;
 #endif
@@ -376,21 +380,41 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
             case 10:
                 if( _tcscmp(pstrClass, DUI_CTR_LISTHEADER) == 0 )             pControl = new CListHeaderUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_TILELAYOUT) == 0 )        pControl = new CTileLayoutUI;
+                else if( _tcscmp(pstrClass, DUI_CTR_NUMBEREDIT) == 0 )        pControl = new CNumberEditUI;
 #if DUI_HAS_FULL_CONTROLS
                 else if( _tcscmp(pstrClass, DUI_CTR_FADEBUTTON) == 0 )        pControl = new CFadeButtonUI;
+                else if( _tcscmp(pstrClass, DUI_CTR_ADDRESSBAR) == 0 )        pControl = new CAddressBarUI;
+#endif
+#if DUI_HAS_STANDARD_CONTROLS
+                else if( _tcscmp(pstrClass, DUI_CTR_CHECKCOMBO) == 0 )        pControl = new CCheckComboUI;
 #endif
                 break;
 			case 11:
 				if (_tcscmp(pstrClass, DUI_CTR_CHILDLAYOUT) == 0)			  pControl = new CChildLayoutUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_MENUELEMENT) == 0 )       pControl = new CMenuElementUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_PAGECONTROL) == 0 )       pControl = new CPageControlUI;
+#if DUI_HAS_STANDARD_CONTROLS
+                else if( _tcscmp(pstrClass, DUI_CTR_COMBOBUTTON) == 0 )       pControl = new CComboButtonUI;
+                else if( _tcscmp(pstrClass, DUI_CTR_FILTERCOMBO) == 0 )       pControl = new CFilterComboUI;
+#endif
 				break;
             case 12:
                 if( _tcscmp(pstrClass, DUI_CTR_SWITCHBUTTON) == 0 )           pControl = new CSwitchButtonUI;
+#if DUI_HAS_FULL_CONTROLS
+                else if( _tcscmp(pstrClass, DUI_CTR_PROPERTYGRID) == 0 )      pControl = new CPropertyGridUI;
+#endif
+                break;
+            case 13:
+#if DUI_HAS_FULL_CONTROLS && DUI_HAS_STANDARD_CONTROLS
+                if( _tcscmp(pstrClass, DUI_CTR_DIRECTORYTREE) == 0 )          pControl = new CDirectoryTreeUI;
+#endif
                 break;
             case 14:
                 if( _tcscmp(pstrClass, DUI_CTR_VERTICALLAYOUT) == 0 )         pControl = new CVerticalLayoutUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_LISTHEADERITEM) == 0 )    pControl = new CListHeaderItemUI;
+#if DUI_HAS_STANDARD_CONTROLS
+                else if( _tcscmp(pstrClass, DUI_CTR_VIRTUALLISTBOX) == 0 )    pControl = new CVirtualListBoxUI;
+#endif
                 break;
             case 15:
                 if( _tcscmp(pstrClass, DUI_CTR_LISTTEXTELEMENT) == 0 )        pControl = new CListTextElementUI;

@@ -6,11 +6,11 @@
 
 收集的很多关于duilib开发的demo移动到了这里：[bigsinger/duilibdemo](https://github.com/bigsinger/duilibdemo)
 
-当前维护方向是 VS2026 + C++20，并提供三档控件 profile。当前工程默认启用轻量版、标准版和全量版全部控件，开关集中在 [UIProfile.h](DuiLib/Core/UIProfile.h)：
+当前维护方向是 VS2026 + C++20，并提供三档控件 profile。默认头文件启用轻量版、标准版和全量版全部控件，开关集中在 [UIProfile.h](DuiLib/Core/UIProfile.h)：
 
-- 轻量版：`DUI_CONTROLS_LIGHT`，包含基础布局、表单、菜单、列表、Progress、Slider、DateTime、GroupBox、PageControl、HotKey、SwitchButton。
-- 标准版：`DUI_CONTROLS_STANDARD`，在轻量版基础上增加 GifAnim、IPAddress、TreeView/TreeNode、RollText。
-- 全量版：`DUI_CONTROLS_FULL`，在标准版基础上增加 RichEdit、ListEx/ListTextExtElement、FadeButton。
+- 轻量版：`DUI_CONTROLS_LIGHT`，包含基础布局、表单、菜单、列表、Progress、Slider、DateTime、GroupBox、PageControl、HotKey、SwitchButton、NumberEdit、HyperLink、Line。
+- 标准版：`DUI_CONTROLS_STANDARD`，在轻量版基础上增加 GifAnim、IPAddress、TreeView/TreeNode、RollText、ComboButton、CheckCombo、FilterCombo、VirtualListBox、Splitter、MenuBar。
+- 全量版：`DUI_CONTROLS_FULL`，在标准版基础上增加 RichEdit、ListEx/ListTextExtElement、FadeButton、PropertyGrid、DirectoryTree、AddressBar。
 
 ```cpp
 #define DUI_CONTROLS_FLAG (DUI_CONTROLS_LIGHT | DUI_CONTROLS_STANDARD | DUI_CONTROLS_FULL)
@@ -18,6 +18,7 @@
 
 当前 DuiLib 主库工程不再启用 MFC，主库源码也已清理 MFC 字符串和集合类型残留。本地字符串统一使用 `tstring`，在多字节构建下基于 `std::string`，在 Unicode 构建下基于 `std::wstring`；外部文本交换继续使用 UTF-8 接口和 `std::string_view`。
 DuiLib 主库只保留四个配置：`Debug/Release` 是 Unicode DLL 配置，输出到 `bin`/`bin\x64`；`lib_debug/lib_release` 是多字节静态库配置，输出到 `Lib`/`Lib\x64`。四个配置均使用 `/MT` 或 `/MTd`。
+DLL 配置默认使用全量档 `0x07`，静态 lib 配置默认使用轻量档 `0x01`。
 工程的 PCH 和编译 PDB 已隔离到各自中间目录，项目引用交替构建时不再共用旧 `DuiLib\Build` 预编译头。
 
 不再进入支持 profile 的旧控件包括 Animation、AnimationTabLayout、ColorPalette、Loading、Ring。ActiveX、WebBrowser、Flash 及其事件处理辅助类已从新版主库源码和工程入口移除。
