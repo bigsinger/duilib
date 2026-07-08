@@ -313,6 +313,14 @@ namespace DuiLib
 		if( m_bSelected ) rc.right -= (rc.bottom - rc.top);
 		else rc.left += (rc.bottom - rc.top);
 
-		CRenderEngine::DrawText(hDC, m_pManager, rc, sPaintText.c_str(), GetAdjustColor(dwTextColor), m_iFont, m_uTextStyle);
+		RECT rcText = rc;
+		SIZE szText = CRenderEngine::GetTextSize(hDC, m_pManager, sPaintText.c_str(), m_iFont, DT_SINGLELINE);
+		int cyItem = rc.bottom - rc.top;
+		if( szText.cy > 0 && cyItem > szText.cy ) {
+			rcText.top = rc.top + (cyItem - szText.cy) / 2;
+			rcText.bottom = rcText.top + szText.cy;
+		}
+
+		CRenderEngine::DrawText(hDC, m_pManager, rcText, sPaintText.c_str(), GetAdjustColor(dwTextColor), m_iFont, m_uTextStyle | DT_VCENTER);
 	}
 }
