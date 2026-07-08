@@ -455,7 +455,8 @@ void CComboUI::DoEvent(TEventUI& event)
     }
     if( event.Type == UIEVENT_SCROLLWHEEL )
     {
-        CControlUI::DoEvent(event);
+        if( m_pParent != NULL ) m_pParent->DoEvent(event);
+        else CControlUI::DoEvent(event);
         return;
     }
     if( event.Type == UIEVENT_CONTEXTMENU )

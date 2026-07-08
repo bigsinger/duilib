@@ -73,6 +73,17 @@ namespace DuiLib{
 		else if( uMsg == WM_KEYDOWN && TCHAR(wParam) == VK_RETURN ) {
 			m_pOwner->GetManager()->SendNotify(m_pOwner, _T("return"));
 		}
+		else if( uMsg == WM_KEYDOWN && (wParam == VK_DELETE || wParam == VK_BACK) ) {
+			SetHotKey(0, 0);
+			if( m_pOwner != NULL ) {
+				m_pOwner->m_wVirtualKeyCode = 0;
+				m_pOwner->m_wModifiers = 0;
+				m_pOwner->m_sText = _T("无");
+				m_pOwner->Invalidate();
+				m_pOwner->GetManager()->SendNotify(m_pOwner, _T("textchanged"));
+			}
+			::InvalidateRect(m_hWnd, NULL, FALSE);
+		}
 		else if ( (uMsg == WM_NCACTIVATE) || (uMsg == WM_NCACTIVATE) || (uMsg == WM_NCCALCSIZE) )
 		{
 			return 0;
