@@ -423,6 +423,11 @@ void CListUI::DoEvent(TEventUI& event)
         break;
     case UIEVENT_SCROLLWHEEL:
         {
+            if( GetScrollRange().cy <= 0 ) {
+                if( m_pParent != NULL ) m_pParent->DoEvent(event);
+                else CVerticalLayoutUI::DoEvent(event);
+                return;
+            }
             switch( LOWORD(event.wParam) ) {
             case SB_LINEUP:
                 if( m_bScrollSelect ) SelectItem(FindSelectable(m_iCurSel - 1, false), true);

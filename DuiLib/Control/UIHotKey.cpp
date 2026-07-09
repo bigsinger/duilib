@@ -288,7 +288,9 @@ namespace DuiLib{
 		}
 		if( event.Type == UIEVENT_SCROLLWHEEL )
 		{
-			if( m_pWindow != NULL ) return;
+			if( m_pParent != NULL ) m_pParent->DoEvent(event);
+			else CLabelUI::DoEvent(event);
+			return;
 		}
 		if( event.Type == UIEVENT_SETFOCUS && IsEnabled() )
 		{
