@@ -129,7 +129,7 @@ LRESULT CComboWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         ::GetCursorPos(&pt);
         ::ScreenToClient(m_pm.GetPaintWindow(), &pt);
         CControlUI* pControl = m_pm.FindControl(pt);
-        if( pControl && _tcscmp(pControl->GetClass(), _T("ScrollBarUI")) != 0 ) PostMessage(WM_KILLFOCUS);
+        if( pControl && _tcscmp(pControl->GetClass(), _T("ScrollBarUI")) != 0 && !m_pOwner->IsMultiSelect() ) PostMessage(WM_KILLFOCUS);
     }
     else if( uMsg == WM_KEYDOWN ) {
         switch( wParam ) {
@@ -200,7 +200,7 @@ UINT CComboWnd::GetClassStyle() const
 ////////////////////////////////////////////////////////
 
 
-CComboUI::CComboUI() : m_pWindow(NULL), m_iCurSel(-1), m_uButtonState(0)
+CComboUI::CComboUI() : m_pWindow(NULL), m_iCurSel(-1), m_bMultiSelect(false), m_uButtonState(0)
 {
     m_szDropBox = CSize(0, 150);
     ::ZeroMemory(&m_rcTextPadding, sizeof(m_rcTextPadding));
@@ -253,7 +253,34 @@ int CComboUI::GetCurSel() const
 
 bool CComboUI::SelectItem(int iIndex, bool bTakeFocus)
 {
-    if( m_pWindow != NULL ) m_pWindow->Close();
+    if( !m_bMultiSelect && m_pWindow != NULL ) m_pWindow->Close();
+    if( m_bMultiSelect ) {
+        if( iIndex < 0 || m_items.GetSize() == 0 ) return false;
+        if( iIndex >= m_items.GetSize() ) iIndex = m_items.GetSize() - 1;
+
+        CControlUI* pControl = static_cast<CControlUI*>(m_items[iIndex]);
+        if( !pControl || !pControl->IsVisible() || !pControl->IsEnabled() ) return false;
+        IListItemUI* pListItem = static_cast<IListItemUI*>(pControl->GetInterface(_T("ListItem")));
+        if( pListItem == NULL ) return false;
+
+        const int iOldSel = m_iCurSel;
+        std::vector<int>::iterator found = std::find(m_selectedItems.begin(), m_selectedItems.end(), iIndex);
+        if( found == m_selectedItems.end() ) {
+            m_selectedItems.push_back(iIndex);
+            pListItem->Select(true, false);
+            m_iCurSel = iIndex;
+        } else {
+            m_selectedItems.erase(found);
+            pListItem->Select(false, false);
+            if( m_iCurSel == iIndex ) m_iCurSel = m_selectedItems.empty() ? -1 : m_selectedItems.back();
+        }
+
+        if( m_pWindow != NULL || bTakeFocus ) pControl->SetFocus();
+        if( m_pManager != NULL ) m_pManager->SendNotify(this, DUI_MSGTYPE_ITEMSELECT, m_iCurSel, iOldSel);
+        Invalidate();
+        return true;
+    }
+
     if( iIndex == m_iCurSel ) return true;
     int iOldSel = m_iCurSel;
     if( m_iCurSel >= 0 ) {
@@ -282,6 +309,61 @@ bool CComboUI::SelectItem(int iIndex, bool bTakeFocus)
 bool CComboUI::SelectRange(int iIndex, bool bTakeFocus)
 {
     return SelectItem(iIndex, bTakeFocus);
+}
+
+void CComboUI::SetMultiSelect(bool bMultiSelect)
+{
+    if( m_bMultiSelect == bMultiSelect ) return;
+    if( !bMultiSelect ) {
+        const int selection = m_selectedItems.empty() ? m_iCurSel : m_selectedItems.front();
+        for( int i = 0; i < m_items.GetSize(); ++i ) {
+            CControlUI* pControl = static_cast<CControlUI*>(m_items[i]);
+            IListItemUI* pListItem = pControl == NULL ? NULL : static_cast<IListItemUI*>(pControl->GetInterface(_T("ListItem")));
+            if( pListItem != NULL ) pListItem->Select(false, false);
+        }
+        m_selectedItems.clear();
+        m_iCurSel = -1;
+        m_bMultiSelect = false;
+        if( selection >= 0 ) SelectItem(selection);
+    } else {
+        m_bMultiSelect = true;
+    }
+    Invalidate();
+}
+
+bool CComboUI::IsMultiSelect() const
+{
+    return m_bMultiSelect;
+}
+
+const std::vector<int>& CComboUI::GetSelectedItems() const
+{
+    return m_selectedItems;
+}
+
+void CComboUI::SetSelectedItems(const std::vector<int>& items)
+{
+    if( !m_bMultiSelect ) return;
+
+    for( int i = 0; i < m_items.GetSize(); ++i ) {
+        CControlUI* pControl = static_cast<CControlUI*>(m_items[i]);
+        IListItemUI* pListItem = pControl == NULL ? NULL : static_cast<IListItemUI*>(pControl->GetInterface(_T("ListItem")));
+        if( pListItem != NULL ) pListItem->Select(false, false);
+    }
+
+    m_selectedItems.clear();
+    for( size_t i = 0; i < items.size(); ++i ) {
+        const int index = items[i];
+        if( index < 0 || index >= m_items.GetSize() ) continue;
+        CControlUI* pControl = static_cast<CControlUI*>(m_items[index]);
+        IListItemUI* pListItem = pControl == NULL ? NULL : static_cast<IListItemUI*>(pControl->GetInterface(_T("ListItem")));
+        if( pListItem == NULL || !pControl->IsVisible() || !pControl->IsEnabled() ) continue;
+        pListItem->Select(true, false);
+        m_selectedItems.push_back(index);
+    }
+
+    m_iCurSel = m_selectedItems.empty() ? -1 : m_selectedItems.back();
+    Invalidate();
 }
 
 bool CComboUI::SetItemIndex(CControlUI* pControl, int iIndex)
@@ -388,6 +470,7 @@ bool CComboUI::RemoveAt(int iIndex)
 void CComboUI::RemoveAll()
 {
     m_iCurSel = -1;
+    m_selectedItems.clear();
     CContainerUI::RemoveAll();
 }
 
@@ -503,6 +586,18 @@ bool CComboUI::Activate()
 
 tstring CComboUI::GetText() const
 {
+    if( m_bMultiSelect ) {
+        tstring text;
+        for( size_t i = 0; i < m_selectedItems.size(); ++i ) {
+            const int index = m_selectedItems[i];
+            if( index < 0 || index >= m_items.GetSize() ) continue;
+            CControlUI* pControl = static_cast<CControlUI*>(m_items[index]);
+            if( pControl == NULL ) continue;
+            if( !text.empty() ) text += _T(", ");
+            text += pControl->GetText();
+        }
+        return text;
+    }
     if( m_iCurSel < 0 ) return _T("");
     CControlUI* pControl = static_cast<CControlUI*>(m_items[m_iCurSel]);
     return pControl->GetText();
@@ -807,6 +902,7 @@ void CComboUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     else if( _tcscmp(pstrName, _T("focusedimage")) == 0 ) SetFocusedImage(pstrValue);
     else if( _tcscmp(pstrName, _T("disabledimage")) == 0 ) SetDisabledImage(pstrValue);
     else if( _tcscmp(pstrName, _T("dropbox")) == 0 ) SetDropBoxAttributeList(pstrValue);
+	else if( _tcscmp(pstrName, _T("multiselect")) == 0 ) SetMultiSelect(_tcscmp(pstrValue, _T("true")) == 0);
 	else if( _tcscmp(pstrName, _T("dropboxsize")) == 0)
 	{
 		SIZE szDropBoxSize = { 0 };
@@ -953,7 +1049,13 @@ void CComboUI::PaintText(HDC hDC)
     rcText.top += m_rcTextPadding.top;
     rcText.bottom -= m_rcTextPadding.bottom;
 
-    if( m_iCurSel >= 0 ) {
+    if( m_bMultiSelect ) {
+        const tstring text = GetText();
+        if( !text.empty() ) {
+            CRenderEngine::DrawText(hDC, m_pManager, rcText, text.c_str(), GetAdjustColor(m_ListInfo.dwTextColor), m_ListInfo.nFont, m_ListInfo.uTextStyle | DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS);
+        }
+    }
+    else if( m_iCurSel >= 0 ) {
         CControlUI* pControl = static_cast<CControlUI*>(m_items[m_iCurSel]);
         IListItemUI* pElement = static_cast<IListItemUI*>(pControl->GetInterface(_T("ListItem")));
         if( pElement != NULL ) {

@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <vector>
+
 namespace DuiLib {
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -32,6 +34,11 @@ public:
     int GetCurSel() const;  
     bool SelectItem(int iIndex, bool bTakeFocus = false);
     bool SelectRange(int iIndex, bool bTakeFocus = false);
+
+    void SetMultiSelect(bool bMultiSelect = true);
+    bool IsMultiSelect() const;
+    const std::vector<int>& GetSelectedItems() const;
+    void SetSelectedItems(const std::vector<int>& items);
 
     bool SetItemIndex(CControlUI* pControl, int iIndex);
     bool Add(CControlUI* pControl);
@@ -104,6 +111,8 @@ protected:
     CComboWnd* m_pWindow;
 
     int m_iCurSel;
+    bool m_bMultiSelect;
+    std::vector<int> m_selectedItems;
     RECT m_rcTextPadding;
     tstring m_sDropBoxAttributes;
     SIZE m_szDropBox;
