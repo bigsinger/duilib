@@ -18,6 +18,7 @@ namespace DuiLib
 		LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 		LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		LRESULT OnEditChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		void UpdateAutoVScrollBar();
 
 	protected:
 		CEditUI* m_pOwner;
@@ -34,7 +35,7 @@ namespace DuiLib
 	{
 		m_pOwner = pOwner;
 		RECT rcPos = CalPos();
-		UINT uStyle = WS_CHILD | ES_AUTOHSCROLL;
+		UINT uStyle = WS_CHILD | static_cast<UINT>(m_pOwner->GetWindowStyls());
 		if( m_pOwner->IsPasswordMode() ) uStyle |= ES_PASSWORD;
 		Create(m_pOwner->GetManager()->GetPaintWindow(), NULL, uStyle, 0, rcPos);
 		HFONT hFont=NULL;
@@ -47,16 +48,13 @@ namespace DuiLib
 		SetWindowFont(m_hWnd, hFont, TRUE);
 		Edit_LimitText(m_hWnd, m_pOwner->GetMaxChar());
 		if( m_pOwner->IsPasswordMode() ) Edit_SetPasswordChar(m_hWnd, m_pOwner->GetPasswordChar());
-		Edit_SetText(m_hWnd, m_pOwner->GetText().c_str());
-		Edit_SetModify(m_hWnd, FALSE);
 		SendMessage(EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELPARAM(0, 0));
 		Edit_Enable(m_hWnd, m_pOwner->IsEnabled() == true);
 		Edit_SetReadOnly(m_hWnd, m_pOwner->IsReadOnly() == true);
-		//Styls
-		LONG styleValue = ::GetWindowLong(m_hWnd, GWL_STYLE);
-		styleValue |= pOwner->GetWindowStyls();
-		::SetWindowLong(GetHWND(), GWL_STYLE, styleValue);
 		::ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
+		Edit_SetText(m_hWnd, m_pOwner->m_sText.c_str());
+		Edit_SetModify(m_hWnd, FALSE);
+		UpdateAutoVScrollBar();
 		::SetFocus(m_hWnd);
 		m_bInit = true;    
 	}
@@ -70,7 +68,7 @@ namespace DuiLib
 		rcPos.right -= rcInset.right;
 		rcPos.bottom -= rcInset.bottom;
 		LONG lEditHeight = m_pOwner->GetManager()->GetFontInfo(m_pOwner->GetFont())->tm.tmHeight;
-		if( lEditHeight < rcPos.GetHeight() ) {
+		if( (m_pOwner->GetWindowStyls() & ES_MULTILINE) == 0 && lEditHeight < rcPos.GetHeight() ) {
 			rcPos.top += (rcPos.GetHeight() - lEditHeight) / 2;
 			rcPos.bottom = rcPos.top + lEditHeight;
 		}
@@ -101,12 +99,26 @@ namespace DuiLib
 		LRESULT lRes = 0;
 		BOOL bHandled = TRUE;
 		if( uMsg == WM_KILLFOCUS ) lRes = OnKillFocus(uMsg, wParam, lParam, bHandled);
+		else if( uMsg == WM_SETTEXT ) {
+			lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+			UpdateAutoVScrollBar();
+			return lRes;
+		}
+		else if( uMsg == WM_SIZE ) {
+			lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+			UpdateAutoVScrollBar();
+			return lRes;
+		}
 		else if( uMsg == OCM_COMMAND ) {
-			if( GET_WM_COMMAND_CMD(wParam, lParam) == EN_CHANGE ) lRes = OnEditChanged(uMsg, wParam, lParam, bHandled);
+			if( GET_WM_COMMAND_CMD(wParam, lParam) == EN_CHANGE ) {
+				lRes = OnEditChanged(uMsg, wParam, lParam, bHandled);
+				UpdateAutoVScrollBar();
+			}
 			else if( GET_WM_COMMAND_CMD(wParam, lParam) == EN_UPDATE ) {
 				RECT rcClient;
 				::GetClientRect(m_hWnd, &rcClient);
 				::InvalidateRect(m_hWnd, &rcClient, FALSE);
+				UpdateAutoVScrollBar();
 			}
 		}
 		else if( uMsg == WM_KEYDOWN && TCHAR(wParam) == VK_RETURN ) {
@@ -126,6 +138,39 @@ namespace DuiLib
 		else bHandled = FALSE;
 		if( !bHandled ) return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
 		return lRes;
+	}
+
+	void CEditWnd::UpdateAutoVScrollBar()
+	{
+		if( m_pOwner == NULL || !m_pOwner->IsAutoVScrollBar() ||
+			(m_pOwner->GetWindowStyls() & ES_MULTILINE) == 0 ) return;
+
+		RECT rcFormat = { 0 };
+		::SendMessage(m_hWnd, EM_GETRECT, 0, reinterpret_cast<LPARAM>(&rcFormat));
+		const int availableHeight = rcFormat.bottom - rcFormat.top;
+		const int lineCount = static_cast<int>(::SendMessage(m_hWnd, EM_GETLINECOUNT, 0, 0));
+
+		HDC hDC = ::GetDC(m_hWnd);
+		TEXTMETRIC tm = { 0 };
+		if( hDC != NULL ) {
+			HFONT hFont = reinterpret_cast<HFONT>(::SendMessage(m_hWnd, WM_GETFONT, 0, 0));
+			HGDIOBJ hOldFont = hFont != NULL ? ::SelectObject(hDC, hFont) : NULL;
+			::GetTextMetrics(hDC, &tm);
+			if( hOldFont != NULL ) ::SelectObject(hDC, hOldFont);
+			::ReleaseDC(m_hWnd, hDC);
+		}
+
+		const bool overflow = availableHeight > 0 && tm.tmHeight > 0 &&
+			lineCount * tm.tmHeight > availableHeight;
+		LONG_PTR style = ::GetWindowLongPtr(m_hWnd, GWL_STYLE);
+		const bool visible = (style & WS_VSCROLL) != 0;
+		if( visible == overflow ) return;
+		if( overflow ) style |= WS_VSCROLL;
+		else style &= ~static_cast<LONG_PTR>(WS_VSCROLL);
+		::SetWindowLongPtr(m_hWnd, GWL_STYLE, style);
+		::SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0,
+			SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE |
+			SWP_FRAMECHANGED);
 	}
 
 	LRESULT CEditWnd::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -157,7 +202,8 @@ namespace DuiLib
 
 	CEditUI::CEditUI() : m_pWindow(NULL), m_uMaxChar(255), m_bReadOnly(false), 
 		m_bPasswordMode(false), m_cPasswordChar(_T('*')), m_uButtonState(0), 
-		m_dwEditbkColor(0xFFFFFFFF), m_iWindowStyls(0)
+		m_dwEditbkColor(0xFFFFFFFF), m_iWindowStyls(ES_AUTOHSCROLL),
+		m_bAutoVScrollBar(false)
 	{
 		SetTextPadding(CDuiRect(4, 3, 4, 3));
 		SetBkColor(0xFFFFFFFF);
@@ -293,8 +339,16 @@ namespace DuiLib
 	void CEditUI::SetText(LPCTSTR pstrText)
 	{
 		m_sText = pstrText;
-		if( m_pWindow != NULL ) Edit_SetText(*m_pWindow, m_sText.c_str());
+		if( m_pWindow != NULL ) {
+			Edit_SetText(*m_pWindow, m_sText.c_str());
+			m_pWindow->UpdateAutoVScrollBar();
+		}
 		Invalidate();
+	}
+
+	tstring CEditUI::GetText() const
+	{
+		return m_sText;
 	}
 
 	void CEditUI::SetMaxChar(UINT uMax)
@@ -330,7 +384,7 @@ namespace DuiLib
 		}
 		else
 		{
-			m_iWindowStyls |= ~ES_NUMBER;
+			m_iWindowStyls &= ~ES_NUMBER;
 		}
 	}
 
@@ -342,6 +396,11 @@ namespace DuiLib
 	int CEditUI::GetWindowStyls() const 
 	{
 		return m_iWindowStyls;
+	}
+
+	bool CEditUI::IsAutoVScrollBar() const
+	{
+		return m_bAutoVScrollBar;
 	}
 
 	void CEditUI::SetPasswordMode(bool bPasswordMode)
@@ -470,6 +529,42 @@ namespace DuiLib
 		if( _tcscmp(pstrName, _T("readonly")) == 0 ) SetReadOnly(_tcscmp(pstrValue, _T("true")) == 0);
 		else if( _tcscmp(pstrName, _T("numberonly")) == 0 ) SetNumberOnly(_tcscmp(pstrValue, _T("true")) == 0);
 		else if( _tcscmp(pstrName, _T("password")) == 0 ) SetPasswordMode(_tcscmp(pstrValue, _T("true")) == 0);
+		else if( _tcscmp(pstrName, _T("multiline")) == 0 ) {
+			if( _tcscmp(pstrValue, _T("true")) == 0 ) {
+				m_iWindowStyls |= ES_MULTILINE | ES_WANTRETURN;
+				m_iWindowStyls &= ~ES_AUTOHSCROLL;
+			}
+			else {
+				m_iWindowStyls &= ~(ES_MULTILINE | ES_WANTRETURN | ES_AUTOVSCROLL | WS_VSCROLL);
+				m_iWindowStyls |= ES_AUTOHSCROLL;
+			}
+		}
+		else if( _tcscmp(pstrName, _T("autowrap")) == 0 || _tcscmp(pstrName, _T("wordwrap")) == 0 ) {
+			if( _tcscmp(pstrValue, _T("true")) == 0 ) {
+				m_iWindowStyls |= ES_MULTILINE;
+				m_iWindowStyls &= ~(ES_AUTOHSCROLL | WS_HSCROLL);
+			}
+			else {
+				m_iWindowStyls |= ES_AUTOHSCROLL;
+			}
+		}
+		else if( _tcscmp(pstrName, _T("vscrollbar")) == 0 ) {
+			m_bAutoVScrollBar = false;
+			if( _tcscmp(pstrValue, _T("true")) == 0 ) m_iWindowStyls |= WS_VSCROLL | ES_AUTOVSCROLL;
+			else m_iWindowStyls &= ~(WS_VSCROLL | ES_AUTOVSCROLL);
+		}
+		else if( _tcscmp(pstrName, _T("autovscrollbar")) == 0 ) {
+			m_bAutoVScrollBar = _tcscmp(pstrValue, _T("true")) == 0;
+			if( m_bAutoVScrollBar ) {
+				m_iWindowStyls |= ES_AUTOVSCROLL;
+				m_iWindowStyls &= ~WS_VSCROLL;
+			}
+			else m_iWindowStyls &= ~(WS_VSCROLL | ES_AUTOVSCROLL);
+		}
+		else if( _tcscmp(pstrName, _T("hscrollbar")) == 0 ) {
+			if( _tcscmp(pstrValue, _T("true")) == 0 ) m_iWindowStyls |= WS_HSCROLL | ES_AUTOHSCROLL;
+			else m_iWindowStyls &= ~(WS_HSCROLL | ES_AUTOHSCROLL);
+		}
 		else if( _tcscmp(pstrName, _T("maxchar")) == 0 ) SetMaxChar(_ttoi(pstrValue));
 		else if( _tcscmp(pstrName, _T("normalimage")) == 0 ) SetNormalImage(pstrValue);
 		else if( _tcscmp(pstrName, _T("hotimage")) == 0 ) SetHotImage(pstrValue);
@@ -538,13 +633,21 @@ namespace DuiLib
 		rc.right -= m_rcTextPadding.right;
 		rc.top += m_rcTextPadding.top;
 		rc.bottom -= m_rcTextPadding.bottom;
+		UINT textStyle = m_uTextStyle;
+		if( (m_iWindowStyls & ES_MULTILINE) != 0 ) {
+			textStyle &= ~(DT_SINGLELINE | DT_VCENTER | DT_BOTTOM);
+			textStyle |= DT_TOP | DT_WORDBREAK | DT_EDITCONTROL;
+		}
+		else {
+			textStyle |= DT_SINGLELINE;
+		}
 		if( IsEnabled() ) {
 			CRenderEngine::DrawText(hDC, m_pManager, rc, sText.c_str(), m_dwTextColor, \
-				m_iFont, DT_SINGLELINE | m_uTextStyle);
+				m_iFont, textStyle);
 		}
 		else {
 			CRenderEngine::DrawText(hDC, m_pManager, rc, sText.c_str(), m_dwDisabledTextColor, \
-				m_iFont, DT_SINGLELINE | m_uTextStyle);
+				m_iFont, textStyle);
 
 		}
 	}

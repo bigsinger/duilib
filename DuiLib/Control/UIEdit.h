@@ -19,6 +19,7 @@ namespace DuiLib
 
 		void SetEnabled(bool bEnable = true);
 		void SetText(LPCTSTR pstrText);
+		tstring GetText() const;
 		void SetMaxChar(UINT uMax);
 		UINT GetMaxChar();
 		void SetReadOnly(bool bReadOnly);
@@ -30,6 +31,7 @@ namespace DuiLib
 		void SetNumberOnly(bool bNumberOnly);
 		bool IsNumberOnly() const;
 		int GetWindowStyls() const;
+		bool IsAutoVScrollBar() const;
 
 		LPCTSTR GetNormalImage();
 		void SetNormalImage(LPCTSTR pStrImage);
@@ -70,6 +72,7 @@ namespace DuiLib
 		tstring m_sDisabledImage;
 		DWORD m_dwEditbkColor;
 		int m_iWindowStyls;
+		bool m_bAutoVScrollBar;
 	};
 }
 #endif // __UIEDIT_H__
