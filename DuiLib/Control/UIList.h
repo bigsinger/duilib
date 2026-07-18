@@ -394,13 +394,27 @@ public:
     void DoEvent(TEventUI& event);
     void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
 
+    void SetItemTextColor(DWORD color);
+    void SetHotItemTextColor(DWORD color);
+    void SetSelectedItemTextColor(DWORD color);
+    void SetDisabledItemTextColor(DWORD color);
+    DWORD GetItemTextColor() const;
+    DWORD GetHotItemTextColor() const;
+    DWORD GetSelectedItemTextColor() const;
+    DWORD GetDisabledItemTextColor() const;
+
     void DrawItemBk(HDC hDC, const RECT& rcItem);
 
 protected:
+    DWORD ResolveItemTextColor(const TListInfoUI& info) const;
     int m_iIndex;
     bool m_bSelected;
     UINT m_uButtonState;
     IListOwnerUI* m_pOwner;
+    DWORD m_dwItemTextColor;
+    DWORD m_dwHotItemTextColor;
+    DWORD m_dwSelectedItemTextColor;
+    DWORD m_dwDisabledItemTextColor;
 };
 
 
@@ -438,6 +452,8 @@ public:
 
     LPCTSTR GetText(int iIndex) const;
     void SetText(int iIndex, LPCTSTR pstrText);
+    void SetTextColor(int iIndex, DWORD color);
+    DWORD GetTextColor(int iIndex) const;
 
     void SetOwner(CControlUI* pOwner);
     tstring* GetLinkContent(int iIndex);
@@ -455,6 +471,7 @@ protected:
     int m_nHoverLink;
     IListUI* m_pOwner;
     CStdPtrArray m_aTexts;
+    DWORD m_dwTextColors[UILIST_MAX_COLUMNS];
 };
 
 /////////////////////////////////////////////////////////////////////////////////////

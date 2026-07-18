@@ -603,9 +603,11 @@
     </ClCompile>
     <ClCompile Include="Utils\UIDelegate.cpp" />
     <ClCompile Include="Utils\UIMultiLanguage.cpp" />
+    <ClCompile Include="Utils\UITheme.cpp" />
     <ClCompile Include="Utils\UIStringUtil.cpp" />
     <ClCompile Include="Utils\Utils.cpp" />
     <ClCompile Include="Utils\WinImplBase.cpp" />
+    <ClCompile Include="Utils\UIPopup.cpp" />
     <ClCompile Include="Utils\XUnzip.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='lib_debug|Win32'">
       </PrecompiledHeader>
@@ -671,9 +673,11 @@
     <ClInclude Include="Utils\observer_impl_base.h" />
     <ClInclude Include="Utils\UIDelegate.h" />
     <ClInclude Include="Utils\UIMultiLanguage.h" />
+    <ClInclude Include="Utils\UITheme.h" />
     <ClInclude Include="Utils\UIStringUtil.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Utils\WinImplBase.h" />
+    <ClInclude Include="Utils\UIPopup.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

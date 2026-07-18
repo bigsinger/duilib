@@ -14,11 +14,14 @@ namespace DuiLib
 		void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
 		void SetChildLayoutXML(tstring pXML);
 		DuiLib::tstring GetChildLayoutXML();
+		void SetBuilderCallback(IDialogBuilderCallback* callback);
+		IDialogBuilderCallback* GetBuilderCallback() const;
 		virtual LPVOID GetInterface(LPCTSTR pstrName);
 		virtual LPCTSTR GetClass() const;
 
 	private:
 		DuiLib::tstring m_pstrXMLFile;
+		IDialogBuilderCallback* m_pBuilderCallback;
 	};
 } // namespace DuiLib
 #endif // __UICHILDLAYOUT_H__

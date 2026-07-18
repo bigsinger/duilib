@@ -85,6 +85,7 @@ struct CPoint : public tagPOINT
 #include "Utils/Utils.h"
 #include "Utils/UIStringUtil.h"
 #include "Utils/UIMultiLanguage.h"
+#include "Utils/UITheme.h"
 #include "Utils/UIDelegate.h"
 #include "Core/UIDefine.h"
 #include "Core/UIManager.h"
@@ -95,6 +96,7 @@ struct CPoint : public tagPOINT
 #include "Core/UIDlgBuilder.h"
 #include "Core/UIRender.h"
 #include "Utils/WinImplBase.h"
+#include "Utils/UIPopup.h"
 
 #include "Layout/UIVerticalLayout.h"
 #include "Layout/UIHorizontalLayout.h"

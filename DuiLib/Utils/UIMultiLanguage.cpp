@@ -82,6 +82,18 @@ namespace DuiLib
 		return Apply(pManager->GetRoot());
 	}
 
+	int CMultiLanguageUI::ApplyResolved(CControlUI* pRoot, const TextResolver& resolver)
+	{
+		if( pRoot == NULL || !resolver ) return 0;
+		return ApplyResolvedControl(pRoot, resolver);
+	}
+
+	int CMultiLanguageUI::ApplyResolved(CPaintManagerUI* pManager, const TextResolver& resolver)
+	{
+		if( pManager == NULL ) return 0;
+		return ApplyResolved(pManager->GetRoot(), resolver);
+	}
+
 	DuiUtf8String CMultiLanguageUI::TrimUtf8(std::string_view text)
 	{
 		size_t begin = 0;
@@ -133,6 +145,34 @@ namespace DuiLib
 			for( int i = 0; i < pContainer->GetCount(); ++i ) {
 				CControlUI* pChild = pContainer->GetItemAt(i);
 				if( pChild != NULL ) count += ApplyControl(pChild);
+			}
+		}
+		return count;
+	}
+
+	int CMultiLanguageUI::ApplyResolvedControl(CControlUI* pControl, const TextResolver& resolver)
+	{
+		int count = 0;
+		const tstring name = pControl->GetName();
+		if( !name.empty() ) {
+			tstring value;
+			if( resolver(name.c_str(), value) && !value.empty() ) {
+				pControl->SetText(value.c_str());
+				++count;
+			}
+
+			const tstring tipKey = name + _T("_tip");
+			if( resolver(tipKey.c_str(), value) && !value.empty() ) {
+				pControl->SetToolTip(value.c_str());
+				++count;
+			}
+		}
+
+		IContainerUI* pContainer = static_cast<IContainerUI*>(pControl->GetInterface(_T("IContainer")));
+		if( pContainer != NULL ) {
+			for( int i = 0; i < pContainer->GetCount(); ++i ) {
+				CControlUI* pChild = pContainer->GetItemAt(i);
+				if( pChild != NULL ) count += ApplyResolvedControl(pChild, resolver);
 			}
 		}
 		return count;

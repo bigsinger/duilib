@@ -37,6 +37,8 @@ m_bEnabled(true),
 m_bMouseEnabled(true),
 m_bKeyboardEnabled(true),
 m_bFloat(false),
+m_hitTestRole(ControlHitTestRole::Default),
+m_iNavigationPageIndex(-1),
 m_bSetPos(false),
 m_chShortcut('\0'),
 m_pTag(NULL),
@@ -116,7 +118,28 @@ bool CControlUI::Activate()
 {
     if( !IsVisible() ) return false;
     if( !IsEnabled() ) return false;
+    if( m_pManager != NULL && !m_sNavigationTarget.empty() && m_iNavigationPageIndex >= 0 ) {
+        CControlUI* target = m_pManager->FindControl(m_sNavigationTarget.c_str());
+        CTabLayoutUI* tabs = target == NULL ? NULL :
+            static_cast<CTabLayoutUI*>(target->GetInterface(DUI_CTR_TABLAYOUT));
+        if( tabs != NULL ) tabs->SelectItem(m_iNavigationPageIndex);
+    }
     return true;
+}
+
+ControlHitTestRole CControlUI::GetHitTestRole() const
+{
+    if( m_hitTestRole != ControlHitTestRole::Default ) return m_hitTestRole;
+    return m_pParent != NULL ? m_pParent->GetHitTestRole() : ControlHitTestRole::Default;
+}
+
+void CControlUI::SetHitTestRole(ControlHitTestRole role) { m_hitTestRole = role; }
+const tstring& CControlUI::GetNavigationTarget() const { return m_sNavigationTarget; }
+int CControlUI::GetNavigationPageIndex() const { return m_iNavigationPageIndex; }
+void CControlUI::SetNavigationTarget(LPCTSTR target, int pageIndex)
+{
+    m_sNavigationTarget = DuiStringAssign(target);
+    m_iNavigationPageIndex = pageIndex;
 }
 
 CPaintManagerUI* CControlUI::GetManager() const
@@ -954,6 +977,16 @@ void CControlUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     else if( _tcscmp(pstrName, _T("text")) == 0 ) SetText(pstrValue);
     else if( _tcscmp(pstrName, _T("tooltip")) == 0 ) SetToolTip(pstrValue);
     else if( _tcscmp(pstrName, _T("userdata")) == 0 ) SetUserData(pstrValue);
+    else if( _tcscmp(pstrName, _T("hittest")) == 0 ) {
+        if( _tcsicmp(pstrValue, _T("caption")) == 0 ) SetHitTestRole(ControlHitTestRole::Caption);
+        else if( _tcsicmp(pstrValue, _T("client")) == 0 ) SetHitTestRole(ControlHitTestRole::Client);
+        else if( _tcsicmp(pstrValue, _T("transparent")) == 0 ) SetHitTestRole(ControlHitTestRole::Transparent);
+        else SetHitTestRole(ControlHitTestRole::Default);
+    }
+    else if( _tcscmp(pstrName, _T("draggable")) == 0 )
+        SetHitTestRole(_tcsicmp(pstrValue, _T("true")) == 0 ? ControlHitTestRole::Caption : ControlHitTestRole::Client);
+    else if( _tcscmp(pstrName, _T("target")) == 0 ) m_sNavigationTarget = DuiStringAssign(pstrValue);
+    else if( _tcscmp(pstrName, _T("pageindex")) == 0 ) m_iNavigationPageIndex = _ttoi(pstrValue);
     else if( _tcscmp(pstrName, _T("enabled")) == 0 ) SetEnabled(_tcscmp(pstrValue, _T("true")) == 0);
     else if( _tcscmp(pstrName, _T("mouse")) == 0 ) SetMouseEnabled(_tcscmp(pstrValue, _T("true")) == 0);
 	else if( _tcscmp(pstrName, _T("keyboard")) == 0 ) SetKeyboardEnabled(_tcscmp(pstrValue, _T("true")) == 0);

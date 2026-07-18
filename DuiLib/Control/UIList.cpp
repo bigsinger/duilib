@@ -2,6 +2,16 @@
 
 namespace DuiLib {
 
+namespace {
+DWORD ParseListColor(LPCTSTR value)
+{
+    if( value == NULL ) return 0;
+    while( *value > _T('\0') && *value <= _T(' ') ) value = ::CharNext(value);
+    if( *value == _T('#') ) value = ::CharNext(value);
+    return _tcstoul(value, NULL, 16);
+}
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 //
 //
@@ -1730,7 +1740,11 @@ CListElementUI::CListElementUI() :
 m_iIndex(-1),
 m_pOwner(NULL),
 m_bSelected(false),
-m_uButtonState(0)
+m_uButtonState(0),
+m_dwItemTextColor(0),
+m_dwHotItemTextColor(0),
+m_dwSelectedItemTextColor(0),
+m_dwDisabledItemTextColor(0)
 {
 }
 
@@ -1910,7 +1924,32 @@ void CListElementUI::DoEvent(TEventUI& event)
 void CListElementUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
 {
     if( _tcscmp(pstrName, _T("selected")) == 0 ) Select();
+    else if( _tcscmp(pstrName, _T("textcolor")) == 0 ) SetItemTextColor(ParseListColor(pstrValue));
+    else if( _tcscmp(pstrName, _T("hottextcolor")) == 0 ) SetHotItemTextColor(ParseListColor(pstrValue));
+    else if( _tcscmp(pstrName, _T("selectedtextcolor")) == 0 ) SetSelectedItemTextColor(ParseListColor(pstrValue));
+    else if( _tcscmp(pstrName, _T("disabledtextcolor")) == 0 ) SetDisabledItemTextColor(ParseListColor(pstrValue));
     else CControlUI::SetAttribute(pstrName, pstrValue);
+}
+
+void CListElementUI::SetItemTextColor(DWORD color) { m_dwItemTextColor = color; Invalidate(); }
+void CListElementUI::SetHotItemTextColor(DWORD color) { m_dwHotItemTextColor = color; Invalidate(); }
+void CListElementUI::SetSelectedItemTextColor(DWORD color) { m_dwSelectedItemTextColor = color; Invalidate(); }
+void CListElementUI::SetDisabledItemTextColor(DWORD color) { m_dwDisabledItemTextColor = color; Invalidate(); }
+DWORD CListElementUI::GetItemTextColor() const { return m_dwItemTextColor; }
+DWORD CListElementUI::GetHotItemTextColor() const { return m_dwHotItemTextColor; }
+DWORD CListElementUI::GetSelectedItemTextColor() const { return m_dwSelectedItemTextColor; }
+DWORD CListElementUI::GetDisabledItemTextColor() const { return m_dwDisabledItemTextColor; }
+
+DWORD CListElementUI::ResolveItemTextColor(const TListInfoUI& info) const
+{
+    DWORD color = m_dwItemTextColor != 0 ? m_dwItemTextColor : info.dwTextColor;
+    if( (m_uButtonState & UISTATE_HOT) != 0 )
+        color = m_dwHotItemTextColor != 0 ? m_dwHotItemTextColor : info.dwHotTextColor;
+    if( IsSelected() )
+        color = m_dwSelectedItemTextColor != 0 ? m_dwSelectedItemTextColor : info.dwSelectedTextColor;
+    if( !IsEnabled() )
+        color = m_dwDisabledItemTextColor != 0 ? m_dwDisabledItemTextColor : info.dwDisabledTextColor;
+    return color;
 }
 
 void CListElementUI::DrawItemBk(HDC hDC, const RECT& rcItem)
@@ -2074,16 +2113,7 @@ void CListLabelElementUI::DrawItemText(HDC hDC, const RECT& rcItem)
 
     if( m_pOwner == NULL ) return;
     TListInfoUI* pInfo = m_pOwner->GetListInfo();
-    DWORD iTextColor = pInfo->dwTextColor;
-    if( (m_uButtonState & UISTATE_HOT) != 0 ) {
-        iTextColor = pInfo->dwHotTextColor;
-    }
-    if( IsSelected() ) {
-        iTextColor = pInfo->dwSelectedTextColor;
-    }
-    if( !IsEnabled() ) {
-        iTextColor = pInfo->dwDisabledTextColor;
-    }
+    DWORD iTextColor = ResolveItemTextColor(*pInfo);
     int nLinks = 0;
     RECT rcText = rcItem;
     rcText.left += pInfo->rcTextPadding.left;
@@ -2107,6 +2137,7 @@ void CListLabelElementUI::DrawItemText(HDC hDC, const RECT& rcItem)
 CListTextElementUI::CListTextElementUI() : m_nLinks(0), m_nHoverLink(-1), m_pOwner(NULL)
 {
     ::ZeroMemory(&m_rcLinks, sizeof(m_rcLinks));
+    ::ZeroMemory(&m_dwTextColors, sizeof(m_dwTextColors));
 }
 
 CListTextElementUI::~CListTextElementUI()
@@ -2157,6 +2188,18 @@ void CListTextElementUI::SetText(int iIndex, LPCTSTR pstrText)
 	else
 		m_aTexts.SetAt(iIndex, new tstring(DuiStringAssign(pstrText)));
     Invalidate();
+}
+
+void CListTextElementUI::SetTextColor(int iIndex, DWORD color)
+{
+    if( iIndex < 0 || iIndex >= UILIST_MAX_COLUMNS ) return;
+    m_dwTextColors[iIndex] = color;
+    Invalidate();
+}
+
+DWORD CListTextElementUI::GetTextColor(int iIndex) const
+{
+    return iIndex >= 0 && iIndex < UILIST_MAX_COLUMNS ? m_dwTextColors[iIndex] : 0;
 }
 
 void CListTextElementUI::SetOwner(CControlUI* pOwner)
@@ -2237,17 +2280,7 @@ void CListTextElementUI::DrawItemText(HDC hDC, const RECT& rcItem)
 {
     if( m_pOwner == NULL ) return;
     TListInfoUI* pInfo = m_pOwner->GetListInfo();
-    DWORD iTextColor = pInfo->dwTextColor;
-
-    if( (m_uButtonState & UISTATE_HOT) != 0 ) {
-        iTextColor = pInfo->dwHotTextColor;
-    }
-    if( IsSelected() ) {
-        iTextColor = pInfo->dwSelectedTextColor;
-    }
-    if( !IsEnabled() ) {
-        iTextColor = pInfo->dwDisabledTextColor;
-    }
+    DWORD iTextColor = ResolveItemTextColor(*pInfo);
     IListCallbackUI* pCallback = m_pOwner->GetTextCallback();
     //ASSERT(pCallback);
     //if( pCallback == NULL ) return;
@@ -2265,11 +2298,12 @@ void CListTextElementUI::DrawItemText(HDC hDC, const RECT& rcItem)
         tstring strText;//不使用 LPCTSTR，避免临时字符串生命周期问题 by cddjr 2011/10/20
         if( pCallback ) strText = pCallback->GetItemText(this, m_iIndex, i);
         else strText = DuiStringAssign(GetText(i));
+        const DWORD cellTextColor = m_dwTextColors[i] != 0 ? m_dwTextColors[i] : iTextColor;
         if( pInfo->bShowHtml )
-            CRenderEngine::DrawHtmlText(hDC, m_pManager, rcItem, strText.c_str(), iTextColor, \
+            CRenderEngine::DrawHtmlText(hDC, m_pManager, rcItem, strText.c_str(), cellTextColor, \
                 &m_rcLinks[m_nLinks], &m_sLinks[m_nLinks], nLinks, DT_SINGLELINE | pInfo->uTextStyle);
         else
-            CRenderEngine::DrawText(hDC, m_pManager, rcItem, strText.c_str(), iTextColor, \
+            CRenderEngine::DrawText(hDC, m_pManager, rcItem, strText.c_str(), cellTextColor, \
             pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
 
         m_nLinks += nLinks;

@@ -5,6 +5,8 @@
 
 namespace DuiLib {
 
+enum class ControlHitTestRole { Default, Client, Caption, Transparent };
+
 /////////////////////////////////////////////////////////////////////////////////////
 //
 enum {
@@ -44,6 +46,11 @@ public:
     virtual UINT GetControlFlags() const;
 
     virtual bool Activate();
+    virtual ControlHitTestRole GetHitTestRole() const;
+    virtual void SetHitTestRole(ControlHitTestRole role);
+    virtual const tstring& GetNavigationTarget() const;
+    virtual int GetNavigationPageIndex() const;
+    virtual void SetNavigationTarget(LPCTSTR target, int pageIndex);
     virtual CPaintManagerUI* GetManager() const;
     virtual void SetManager(CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true);
     virtual CControlUI* GetParent() const;
@@ -228,6 +235,9 @@ protected:
 	bool m_bKeyboardEnabled ;
     bool m_bFocused;
     bool m_bFloat;
+    ControlHitTestRole m_hitTestRole;
+    tstring m_sNavigationTarget;
+    int m_iNavigationPageIndex;
     bool m_bSetPos; // 防止SetPos循环调用
 
     tstring m_sText;
