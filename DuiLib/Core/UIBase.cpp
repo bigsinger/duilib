@@ -7,6 +7,42 @@
 
 namespace DuiLib {
 
+namespace {
+
+// A third-party input method can send private messages while a transient
+// popup window is being torn down. A stale subclass procedure must never be
+// invoked as code; fall back to DefWindowProc when it is no longer executable.
+bool IsCallableWindowProc(WNDPROC windowProc)
+{
+    if (windowProc == NULL) return false;
+
+    MEMORY_BASIC_INFORMATION memory = {};
+    if (::VirtualQuery(reinterpret_cast<LPCVOID>(windowProc), &memory, sizeof(memory)) != sizeof(memory)) {
+        return false;
+    }
+    if (memory.State != MEM_COMMIT || (memory.Protect & PAGE_GUARD) != 0) return false;
+
+    switch (memory.Protect & 0xFF) {
+    case PAGE_EXECUTE:
+    case PAGE_EXECUTE_READ:
+    case PAGE_EXECUTE_READWRITE:
+    case PAGE_EXECUTE_WRITECOPY:
+        return true;
+    default:
+        return false;
+    }
+}
+
+LRESULT CallSavedWindowProc(WNDPROC windowProc, HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    if (!IsCallableWindowProc(windowProc)) {
+        return ::DefWindowProc(hWnd, message, wParam, lParam);
+    }
+    return ::CallWindowProc(windowProc, hWnd, message, wParam, lParam);
+}
+
+} // namespace
+
 /////////////////////////////////////////////////////////////////////////////////////
 //
 //
@@ -424,7 +460,7 @@ LRESULT CALLBACK CWindowWnd::__WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
     else {
         pThis = reinterpret_cast<CWindowWnd*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
         if( uMsg == WM_NCDESTROY && pThis != NULL ) {
-            LRESULT lRes = ::CallWindowProc(pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
+            LRESULT lRes = CallSavedWindowProc(pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
             ::SetWindowLongPtr(pThis->m_hWnd, GWLP_USERDATA, 0L);
             if( pThis->m_bSubclassed ) pThis->Unsubclass();
             pThis->m_hWnd = NULL;
@@ -452,7 +488,7 @@ LRESULT CALLBACK CWindowWnd::__ControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
     else {
         pThis = reinterpret_cast<CWindowWnd*>(::GetProp(hWnd, _T("WndX")));
         if( uMsg == WM_NCDESTROY && pThis != NULL ) {
-            LRESULT lRes = ::CallWindowProc(pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
+            LRESULT lRes = CallSavedWindowProc(pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
             if( pThis->m_bSubclassed ) pThis->Unsubclass();
             ::SetProp(hWnd, _T("WndX"), NULL);
             pThis->m_hWnd = NULL;
@@ -493,7 +529,7 @@ void CWindowWnd::ResizeClient(int cx /*= -1*/, int cy /*= -1*/)
 
 LRESULT CWindowWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    return ::CallWindowProc(m_OldWndProc, m_hWnd, uMsg, wParam, lParam);
+    return CallSavedWindowProc(m_OldWndProc, m_hWnd, uMsg, wParam, lParam);
 }
 
 void CWindowWnd::OnFinalMessage(HWND /*hWnd*/)
