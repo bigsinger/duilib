@@ -57,7 +57,10 @@ namespace DuiLib
 	LPVOID CChildLayoutUI::GetInterface( LPCTSTR pstrName )
 	{
 		if( _tcscmp(pstrName, DUI_CTR_CHILDLAYOUT) == 0 ) return static_cast<CChildLayoutUI*>(this);
-		return CControlUI::GetInterface(pstrName);
+		// ChildLayout is also a container. Delegating directly to CControlUI hid
+		// IContainer/Container from generic tree walkers (theme, accessibility,
+		// diagnostics), so they stopped before the XML child window.
+		return CContainerUI::GetInterface(pstrName);
 	}
 
 	LPCTSTR CChildLayoutUI::GetClass() const
