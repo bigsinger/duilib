@@ -715,6 +715,7 @@ namespace DuiLib
 				m_uThumbState |= UISTATE_CAPTURED | UISTATE_PUSHED;
 				ptLastMouse = event.ptMouse;
 				m_nLastScrollPos = m_nScrollPos;
+				m_pManager->KillTimer(this, DEFAULT_TIMERID);
 			}
 			else {
 				if( !m_bHorizontal ) {
@@ -765,20 +766,30 @@ namespace DuiLib
 		{
 			if( (m_uThumbState & UISTATE_CAPTURED) != 0 ) {
 				if( !m_bHorizontal ) {
-
-					int vRange = m_rcItem.bottom - m_rcItem.top - m_rcThumb.bottom + m_rcThumb.top - 2 * m_cxyFixed.cx;
-
-					if (vRange != 0)
+					const int vRange = m_rcButton2.top - m_rcButton1.bottom -
+						(m_rcThumb.bottom - m_rcThumb.top);
+					if (vRange > 0)
 						m_nLastScrollOffset = (event.ptMouse.y - ptLastMouse.y) * m_nRange / vRange;
-					
 				}
 				else {
-
-					int hRange = m_rcItem.right - m_rcItem.left - m_rcThumb.right + m_rcThumb.left - 2 * m_cxyFixed.cy;
-
-					if (hRange != 0)
+					const int hRange = m_rcButton2.left - m_rcButton1.right -
+						(m_rcThumb.right - m_rcThumb.left);
+					if (hRange > 0)
 						m_nLastScrollOffset = (event.ptMouse.x - ptLastMouse.x) * m_nRange / hRange;
 				}
+				if( !m_bHorizontal ) {
+					if( m_pOwner != NULL ) m_pOwner->SetScrollPos(CSize(
+						m_pOwner->GetScrollPos().cx, m_nLastScrollPos + m_nLastScrollOffset));
+					else SetScrollPos(m_nLastScrollPos + m_nLastScrollOffset);
+				}
+				else {
+					if( m_pOwner != NULL ) m_pOwner->SetScrollPos(CSize(
+						m_nLastScrollPos + m_nLastScrollOffset, m_pOwner->GetScrollPos().cy));
+					else SetScrollPos(m_nLastScrollPos + m_nLastScrollOffset);
+				}
+				if( m_pManager != NULL && m_pOwner == NULL )
+					m_pManager->SendNotify(this, DUI_MSGTYPE_SCROLL);
+				Invalidate();
 			}
 			else {
 				if( (m_uThumbState & UISTATE_HOT) != 0 ) {

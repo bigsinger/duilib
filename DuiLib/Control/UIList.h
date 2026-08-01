@@ -518,7 +518,6 @@ public:
 		{
 			return;
 		}
-		TListInfoUI* pInfo = m_pOwner->GetListInfo();
 		int nCount = m_items.GetSize();
 		for (int i = 0; i < nCount; i++)
 		{

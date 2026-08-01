@@ -43,9 +43,13 @@ namespace DuiLib
 		if (m_hWnd == NULL)
 		{
 			RECT rcPos = CalPos();
-			UINT uStyle = WS_CHILD;
+			UINT uStyle = WS_CHILD | m_pOwner->GetNativeStyle();
 			Create(m_pOwner->GetManager()->GetPaintWindow(), NULL, uStyle, 0, rcPos);
 			SetWindowFont(m_hWnd, m_pOwner->GetManager()->GetFontInfo(m_pOwner->GetFont())->hFont, TRUE);
+		}
+		if( m_pOwner->GetFormat() != NULL && *m_pOwner->GetFormat() != _T('\0') ) {
+			::SendMessage(m_hWnd, DTM_SETFORMAT, 0,
+				reinterpret_cast<LPARAM>(m_pOwner->GetFormat()));
 		}
 
 		if (m_pOwner->GetText().empty())
@@ -162,7 +166,7 @@ namespace DuiLib
 
 	//////////////////////////////////////////////////////////////////////////
 	//
-	CDateTimeUI::CDateTimeUI()
+	CDateTimeUI::CDateTimeUI() : m_mode(DateTimeModeDate)
 	{
 		::GetLocalTime(&m_sysTime);
 		m_bReadOnly = false;
@@ -190,8 +194,34 @@ namespace DuiLib
 
 	void CDateTimeUI::SetTime(SYSTEMTIME* pst)
 	{
+		if( pst == NULL ) return;
 		m_sysTime = *pst;
-		Invalidate();
+		m_nDTUpdateFlag = DT_UPDATE;
+		UpdateText();
+		m_nDTUpdateFlag = DT_NONE;
+	}
+
+	void CDateTimeUI::SetMode(DateTimeMode mode)
+	{
+		if( m_mode == mode ) return;
+		m_mode = mode;
+		m_nDTUpdateFlag = DT_UPDATE;
+		UpdateText();
+		m_nDTUpdateFlag = DT_NONE;
+	}
+
+	DateTimeMode CDateTimeUI::GetMode() const { return m_mode; }
+
+	void CDateTimeUI::SetFormat(LPCTSTR pstrFormat)
+	{
+		m_sFormat = pstrFormat == NULL ? _T("") : pstrFormat;
+	}
+
+	LPCTSTR CDateTimeUI::GetFormat() const { return m_sFormat.c_str(); }
+
+	DWORD CDateTimeUI::GetNativeStyle() const
+	{
+		return m_mode == DateTimeModeTime ? DTS_TIMEFORMAT | DTS_UPDOWN : DTS_SHORTDATEFORMAT;
 	}
 
 	void CDateTimeUI::SetReadOnly(bool bReadOnly)
@@ -212,10 +242,33 @@ namespace DuiLib
 		else if (m_nDTUpdateFlag == DT_UPDATE)
 		{
 			tstring sText;
-			DuiStringSmallFormat(sText, _T("%4d-%02d-%02d"),
-				m_sysTime.wYear, m_sysTime.wMonth, m_sysTime.wDay, m_sysTime.wHour, m_sysTime.wMinute);
+			if( m_mode == DateTimeModeTime ) {
+				DuiStringSmallFormat(sText, _T("%02d:%02d"),
+					m_sysTime.wHour, m_sysTime.wMinute);
+			}
+			else if( m_mode == DateTimeModeDateAndTime ) {
+				DuiStringSmallFormat(sText, _T("%4d-%02d-%02d %02d:%02d"),
+					m_sysTime.wYear, m_sysTime.wMonth, m_sysTime.wDay,
+					m_sysTime.wHour, m_sysTime.wMinute);
+			}
+			else {
+				DuiStringSmallFormat(sText, _T("%4d-%02d-%02d"),
+					m_sysTime.wYear, m_sysTime.wMonth, m_sysTime.wDay);
+			}
 			SetText(sText.c_str());
 		}
+	}
+
+	void CDateTimeUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
+	{
+		if( _tcscmp(pstrName, _T("readonly")) == 0 ) SetReadOnly(_tcscmp(pstrValue, _T("true")) == 0);
+		else if( _tcscmp(pstrName, _T("mode")) == 0 ) {
+			if( _tcsicmp(pstrValue, _T("time")) == 0 ) SetMode(DateTimeModeTime);
+			else if( _tcsicmp(pstrValue, _T("datetime")) == 0 ) SetMode(DateTimeModeDateAndTime);
+			else SetMode(DateTimeModeDate);
+		}
+		else if( _tcscmp(pstrName, _T("format")) == 0 ) SetFormat(pstrValue);
+		else CLabelUI::SetAttribute(pstrName, pstrValue);
 	}
 
 	void CDateTimeUI::DoEvent(TEventUI& event)

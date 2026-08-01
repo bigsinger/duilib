@@ -136,6 +136,7 @@ struct CPoint : public tagPOINT
 #include "Control/UIRichEdit.h"
 #include "Control/UIListEx.h"
 #include "Control/UIFadeButton.h"
+#include "Control/UIGroupedList.h"
 #endif
 
 #include "Control/UIExtraControls.h"

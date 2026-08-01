@@ -30,6 +30,10 @@ namespace DuiLib
 		TCHAR GetPasswordChar() const;
 		void SetNumberOnly(bool bNumberOnly);
 		bool IsNumberOnly() const;
+		LPCTSTR GetHintText() const;
+		void SetHintText(LPCTSTR pstrText);
+		DWORD GetHintTextColor() const;
+		void SetHintTextColor(DWORD dwColor);
 		int GetWindowStyls() const;
 		bool IsAutoVScrollBar() const;
 
@@ -73,6 +77,8 @@ namespace DuiLib
 		DWORD m_dwEditbkColor;
 		int m_iWindowStyls;
 		bool m_bAutoVScrollBar;
+		tstring m_sHintText;
+		DWORD m_dwHintTextColor;
 	};
 }
 #endif // __UIEDIT_H__

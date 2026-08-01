@@ -6,6 +6,12 @@
 namespace DuiLib
 {
 	class CDateTimeWnd;
+	enum DateTimeMode
+	{
+		DateTimeModeDate,
+		DateTimeModeTime,
+		DateTimeModeDateAndTime
+	};
 
 	/// 时间选择控件
 	class UILIB_API CDateTimeUI : public CLabelUI
@@ -18,6 +24,11 @@ namespace DuiLib
 
 		SYSTEMTIME& GetTime();
 		void SetTime(SYSTEMTIME* pst);
+		void SetMode(DateTimeMode mode);
+		DateTimeMode GetMode() const;
+		void SetFormat(LPCTSTR pstrFormat);
+		LPCTSTR GetFormat() const;
+		DWORD GetNativeStyle() const;
 
 		void SetReadOnly(bool bReadOnly);
 		bool IsReadOnly() const;
@@ -25,6 +36,7 @@ namespace DuiLib
 		void UpdateText();
 
 		void DoEvent(TEventUI& event);
+		void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
 
 	protected:
 		SYSTEMTIME m_sysTime;
@@ -32,6 +44,8 @@ namespace DuiLib
 		bool       m_bReadOnly;
 
 		CDateTimeWnd* m_pWindow;
+		DateTimeMode m_mode;
+		tstring m_sFormat;
 	};
 }
 #endif // __UIDATETIME_H__

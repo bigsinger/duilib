@@ -19,6 +19,7 @@ namespace DuiLib
 		LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		LRESULT OnEditChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void UpdateAutoVScrollBar();
+		void UpdateCueBanner();
 
 	protected:
 		CEditUI* m_pOwner;
@@ -53,6 +54,7 @@ namespace DuiLib
 		Edit_SetReadOnly(m_hWnd, m_pOwner->IsReadOnly() == true);
 		::ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
 		Edit_SetText(m_hWnd, m_pOwner->m_sText.c_str());
+		UpdateCueBanner();
 		Edit_SetModify(m_hWnd, FALSE);
 		UpdateAutoVScrollBar();
 		::SetFocus(m_hWnd);
@@ -173,6 +175,14 @@ namespace DuiLib
 			SWP_FRAMECHANGED);
 	}
 
+	void CEditWnd::UpdateCueBanner()
+	{
+		if( m_hWnd == NULL || m_pOwner == NULL ) return;
+		const UINT setCueBanner = 0x1501;
+		::SendMessage(m_hWnd, setCueBanner, TRUE,
+			reinterpret_cast<LPARAM>(m_pOwner->GetHintText()));
+	}
+
 	LRESULT CEditWnd::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		LRESULT lRes = ::DefWindowProc(m_hWnd, uMsg, wParam, lParam);
@@ -203,7 +213,7 @@ namespace DuiLib
 	CEditUI::CEditUI() : m_pWindow(NULL), m_uMaxChar(255), m_bReadOnly(false), 
 		m_bPasswordMode(false), m_cPasswordChar(_T('*')), m_uButtonState(0), 
 		m_dwEditbkColor(0xFFFFFFFF), m_iWindowStyls(ES_AUTOHSCROLL),
-		m_bAutoVScrollBar(false)
+		m_bAutoVScrollBar(false), m_dwHintTextColor(0xFF7A7A7A)
 	{
 		SetTextPadding(CDuiRect(4, 3, 4, 3));
 		SetBkColor(0xFFFFFFFF);
@@ -398,6 +408,29 @@ namespace DuiLib
 		return m_iWindowStyls;
 	}
 
+	LPCTSTR CEditUI::GetHintText() const
+	{
+		return m_sHintText.c_str();
+	}
+
+	void CEditUI::SetHintText(LPCTSTR pstrText)
+	{
+		m_sHintText = pstrText == NULL ? _T("") : pstrText;
+		if( m_pWindow != NULL ) m_pWindow->UpdateCueBanner();
+		Invalidate();
+	}
+
+	DWORD CEditUI::GetHintTextColor() const
+	{
+		return m_dwHintTextColor;
+	}
+
+	void CEditUI::SetHintTextColor(DWORD dwColor)
+	{
+		m_dwHintTextColor = dwColor;
+		Invalidate();
+	}
+
 	bool CEditUI::IsAutoVScrollBar() const
 	{
 		return m_bAutoVScrollBar;
@@ -570,6 +603,14 @@ namespace DuiLib
 		else if( _tcscmp(pstrName, _T("hotimage")) == 0 ) SetHotImage(pstrValue);
 		else if( _tcscmp(pstrName, _T("focusedimage")) == 0 ) SetFocusedImage(pstrValue);
 		else if( _tcscmp(pstrName, _T("disabledimage")) == 0 ) SetDisabledImage(pstrValue);
+		else if( _tcscmp(pstrName, _T("hinttext")) == 0 ||
+			_tcscmp(pstrName, _T("tipvalue")) == 0 ) SetHintText(pstrValue);
+		else if( _tcscmp(pstrName, _T("hintcolor")) == 0 ||
+			_tcscmp(pstrName, _T("tipvaluecolor")) == 0 ) {
+			if( *pstrValue == _T('#') ) pstrValue = ::CharNext(pstrValue);
+			LPTSTR pstr = NULL;
+			SetHintTextColor(_tcstoul(pstrValue, &pstr, 16));
+		}
 		else if( _tcscmp(pstrName, _T("nativebkcolor")) == 0 ) {
 			if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
 			LPTSTR pstr = NULL;
@@ -616,10 +657,11 @@ namespace DuiLib
 		if( m_dwTextColor == 0 ) m_dwTextColor = m_pManager->GetDefaultFontColor();
 		if( m_dwDisabledTextColor == 0 ) m_dwDisabledTextColor = m_pManager->GetDefaultDisabledColor();
 
-		if( m_sText.empty() ) return;
+		if( m_sText.empty() && (m_sHintText.empty() || m_pWindow != NULL) ) return;
 
-		tstring sText = m_sText;
-		if( m_bPasswordMode ) {
+		const bool showingHint = m_sText.empty();
+		tstring sText = showingHint ? m_sHintText : m_sText;
+		if( m_bPasswordMode && !showingHint ) {
 			sText.clear();
 			LPCTSTR p = m_sText.c_str();
 			while( *p != _T('\0') ) {
@@ -642,7 +684,8 @@ namespace DuiLib
 			textStyle |= DT_SINGLELINE;
 		}
 		if( IsEnabled() ) {
-			CRenderEngine::DrawText(hDC, m_pManager, rc, sText.c_str(), m_dwTextColor, \
+			CRenderEngine::DrawText(hDC, m_pManager, rc, sText.c_str(),
+				showingHint ? m_dwHintTextColor : m_dwTextColor, \
 				m_iFont, textStyle);
 		}
 		else {

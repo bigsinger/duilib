@@ -23,6 +23,10 @@ void ApplyOne(CControlUI* control, const DuiColorMapper& mapper,
         label->SetTextColor(Map(mapper, label->GetTextColor()));
         label->SetDisabledTextColor(Map(mapper, label->GetDisabledTextColor()));
     }
+    if( CEditUI* edit = static_cast<CEditUI*>(
+        control->GetInterface(DUI_CTR_EDIT)) ) {
+        edit->SetHintTextColor(Map(mapper, edit->GetHintTextColor()));
+    }
     if( CButtonUI* button = static_cast<CButtonUI*>(control->GetInterface(DUI_CTR_BUTTON)) ) {
         button->SetHotBkColor(Map(mapper, button->GetHotBkColor()));
         button->SetHotTextColor(Map(mapper, button->GetHotTextColor()));
@@ -62,6 +66,16 @@ void ApplyOne(CControlUI* control, const DuiColorMapper& mapper,
         combo->SetDisabledItemBkColor(Map(mapper, combo->GetDisabledItemBkColor()));
         combo->SetItemLineColor(Map(mapper, combo->GetItemLineColor()));
     }
+#if DUI_HAS_FULL_CONTROLS
+    if( CRichEditUI* richEdit = static_cast<CRichEditUI*>(
+        control->GetInterface(DUI_CTR_RICHEDIT)) ) {
+        richEdit->SetTextColor(Map(mapper, richEdit->GetTextColor()));
+    }
+    if( CGroupedListRowUI* row = static_cast<CGroupedListRowUI*>(
+        control->GetInterface(DUI_CTR_GROUPEDLISTROW)) ) {
+        row->SetHotBkColor(Map(mapper, row->GetHotBkColor()));
+    }
+#endif
     if( customizer ) customizer(control);
 
     IContainerUI* container = static_cast<IContainerUI*>(control->GetInterface(_T("IContainer")));

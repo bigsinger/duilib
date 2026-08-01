@@ -397,6 +397,9 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
                 else if( _tcscmp(pstrClass, DUI_CTR_COMBOBUTTON) == 0 )       pControl = new CComboButtonUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_FILTERCOMBO) == 0 )       pControl = new CFilterComboUI;
 #endif
+#if DUI_HAS_FULL_CONTROLS
+                else if( _tcscmp(pstrClass, DUI_CTR_GROUPEDLIST) == 0 )       pControl = new CGroupedListUI;
+#endif
 				break;
             case 12:
                 if( _tcscmp(pstrClass, DUI_CTR_SWITCHBUTTON) == 0 )           pControl = new CSwitchButtonUI;
@@ -412,6 +415,9 @@ CControlUI* CDialogBuilder::_Parse(CMarkupNode* pRoot, CControlUI* pParent, CPai
             case 14:
                 if( _tcscmp(pstrClass, DUI_CTR_VERTICALLAYOUT) == 0 )         pControl = new CVerticalLayoutUI;
                 else if( _tcscmp(pstrClass, DUI_CTR_LISTHEADERITEM) == 0 )    pControl = new CListHeaderItemUI;
+#if DUI_HAS_FULL_CONTROLS
+                else if( _tcscmp(pstrClass, DUI_CTR_GROUPEDLISTROW) == 0 )    pControl = new CGroupedListRowUI;
+#endif
 #if DUI_HAS_STANDARD_CONTROLS
                 else if( _tcscmp(pstrClass, DUI_CTR_VIRTUALLISTBOX) == 0 )    pControl = new CVirtualListBoxUI;
 #endif

@@ -136,8 +136,8 @@
     <CodeAnalysisRuleAssemblies />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='lib_release|x64'">
-    <OutDir>..\Lib\x64\</OutDir>
-    <IntDir>$(MSBuildThisFileDirectory)..\temp\$(ProjectName)_$(Platform)_$(Configuration)\</IntDir>
+    <OutDir>..\Lib\x64Full\</OutDir>
+    <IntDir>E:\temp\duilib\$(ProjectName)_$(Platform)_$(Configuration)\</IntDir>
     <TargetName>duilib_u</TargetName>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules />
@@ -152,8 +152,8 @@
     <CodeAnalysisRuleAssemblies />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='lib_debug|x64'">
-    <OutDir>..\Lib\x64\</OutDir>
-    <IntDir>$(MSBuildThisFileDirectory)..\temp\$(ProjectName)_$(Platform)_$(Configuration)\</IntDir>
+    <OutDir>..\Lib\x64Full\</OutDir>
+    <IntDir>E:\temp\duilib\$(ProjectName)_$(Platform)_$(Configuration)\</IntDir>
     <TargetName>duilib_ud</TargetName>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules />
@@ -257,7 +257,7 @@
     <ClCompile>
       <Optimization>MinSpace</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <PreprocessorDefinitions>WIN32;_WIN64;NDEBUG;UILIB_STATIC;DUI_CONTROLS_FLAG=0x01;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WIN64;NDEBUG;UILIB_STATIC;DUI_CONTROLS_FLAG=0x07;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -275,7 +275,7 @@
       <Culture>0x0406</Culture>
     </ResourceCompile>
     <Lib>
-      <OutputFile>..\Lib\x64\duilib_u.lib</OutputFile>
+      <OutputFile>..\Lib\x64Full\duilib_u.lib</OutputFile>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -329,7 +329,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WIN64;_DEBUG;UILIB_STATIC;DUI_CONTROLS_FLAG=0x01;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WIN64;_DEBUG;UILIB_STATIC;DUI_CONTROLS_FLAG=0x07;_ITERATOR_DEBUG_LEVEL=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
@@ -347,7 +347,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
-      <OutputFile>..\Lib\x64\duilib_ud.lib</OutputFile>
+      <OutputFile>..\Lib\x64Full\duilib_ud.lib</OutputFile>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -534,6 +534,7 @@
     </ClCompile>
     <ClCompile Include="Control\UIGifAnim.cpp">
     </ClCompile>
+    <ClCompile Include="Control\UIGroupedList.cpp" />
     <ClCompile Include="Control\UIGroupBox.cpp" />
     <ClCompile Include="Control\UIHotKey.cpp" />
     <ClCompile Include="Control\UIIPAddress.cpp">
@@ -637,6 +638,7 @@
     <ClInclude Include="Control\UIExtraControls.h" />
     <ClInclude Include="Control\UIFadeButton.h" />
     <ClInclude Include="Control\UIGifAnim.h" />
+    <ClInclude Include="Control\UIGroupedList.h" />
     <ClInclude Include="Control\UIGroupBox.h" />
     <ClInclude Include="Control\UIHotKey.h" />
     <ClInclude Include="Control\UIIPAddress.h" />

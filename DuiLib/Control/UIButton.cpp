@@ -416,8 +416,10 @@ namespace DuiLib
 			}
 			else if(m_dwHotBkColor != 0) {
 				CRenderEngine::DrawColor(hDC, m_rcPaint, GetAdjustColor(m_dwHotBkColor));
-				if (!m_sForeImage.empty())
-					goto Label_ForeImage;
+				if( !m_sNormalImage.empty() ) {
+					if( !DrawImage(hDC, m_sNormalImage.c_str()) ) m_sNormalImage.clear();
+				}
+				if( !m_sForeImage.empty() ) goto Label_ForeImage;
 				return;
 			}
 		}

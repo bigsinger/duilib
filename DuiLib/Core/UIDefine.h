@@ -306,6 +306,9 @@ protected:                                                                \
 #define  DUI_CTR_COMBOBUTTON                     (_T("ComboButton"))
 #define  DUI_CTR_FILTERCOMBO                     (_T("FilterCombo"))
 #define  DUI_CTR_PROPERTYGRID                    (_T("PropertyGrid"))
+#define  DUI_CTR_GROUPEDLIST                     (_T("GroupedList"))
+#define  DUI_CTR_GROUPEDLISTROW                  (_T("GroupedListRow"))
+#define  DUI_CTR_GROUPEDLISTGROUP                (_T("GroupedListGroup"))
 
 #define  DUI_CTR_DIRECTORYTREE                   (_T("DirectoryTree"))
 

@@ -8,9 +8,9 @@
 
 当前维护方向是 VS2026 + C++20，并提供三档控件 profile。默认头文件启用轻量版、标准版和全量版全部控件，开关集中在 [UIProfile.h](DuiLib/Core/UIProfile.h)：
 
-- 轻量版：`DUI_CONTROLS_LIGHT`，包含基础布局、表单、菜单、列表、Progress、Slider、DateTime、GroupBox、PageControl、HotKey、SwitchButton、NumberEdit、HyperLink、Line。
+- 轻量版：`DUI_CONTROLS_LIGHT`，包含基础布局、表单、菜单、列表、Progress、Slider、DateTime、GroupBox、PageControl、HotKey、SwitchButton、NumberEdit、HyperLink、Line。基础 `Edit` 内置 `hinttext`/`hintcolor` 提示能力，三档 profile 均可使用。
 - 标准版：`DUI_CONTROLS_STANDARD`，在轻量版基础上增加 GifAnim、IPAddress、TreeView/TreeNode、RollText、ComboButton、CheckCombo、FilterCombo、VirtualListBox、Splitter、MenuBar。
-- 全量版：`DUI_CONTROLS_FULL`，在标准版基础上增加 RichEdit、ListEx/ListTextExtElement、FadeButton、PropertyGrid、DirectoryTree、AddressBar。
+- 全量版：`DUI_CONTROLS_FULL`，在标准版基础上增加 RichEdit、ListEx/ListTextExtElement、GroupedList、FadeButton、PropertyGrid、DirectoryTree、AddressBar。
 
 ```cpp
 #define DUI_CONTROLS_FLAG (DUI_CONTROLS_LIGHT | DUI_CONTROLS_STANDARD | DUI_CONTROLS_FULL)
