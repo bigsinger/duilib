@@ -260,7 +260,11 @@ namespace DuiLib
 		}
 		if( event.Type == UIEVENT_SETFOCUS && IsEnabled() ) 
 		{
-			if( m_pWindow ) return;
+			if( m_pWindow ) {
+				HWND hEdit = m_pWindow->GetHWND();
+				if( ::IsWindow(hEdit) && ::GetFocus() != hEdit ) ::SetFocus(hEdit);
+				return;
+			}
 			m_pWindow = new CEditWnd();
 			ASSERT(m_pWindow);
 			m_pWindow->Init(this);
@@ -291,6 +295,8 @@ namespace DuiLib
 				}
 				else if( m_pWindow != NULL )
 				{
+					HWND hEdit = m_pWindow->GetHWND();
+					if( ::IsWindow(hEdit) && ::GetFocus() != hEdit ) ::SetFocus(hEdit);
 #if 1
 					int nSize = GetWindowTextLength(*m_pWindow);
 					if( nSize == 0 )
