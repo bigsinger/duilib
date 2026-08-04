@@ -21,6 +21,12 @@ DuiLib 主库只保留四个配置：`Debug/Release` 是 Unicode DLL 配置，�
 DLL 配置默认使用全量档 `0x07`，静态 lib 配置默认使用轻量档 `0x01`。
 工程的 PCH 和编译 PDB 已隔离到各自中间目录，项目引用交替构建时不再共用旧 `DuiLib\Build` 预编译头。
 
+图片加载链路原生支持 UTF-8 SVG 文件。SVG 与 PNG/JPG 使用相同的 `normalimage`、`hotimage`、`selectedimage`、`bkimage` 等属性，不需要新增控件；首次加载通过 Windows Direct2D 光栅化为 64×64 预乘 Alpha 位图，随后进入现有 `CPaintManagerUI` 图片缓存。该能力要求 Windows 10 1703 或更高版本，不可用时只返回图片加载失败，不影响普通位图。示例：
+
+```xml
+<Button normalimage="file='icons\settings.svg' dest='8,6,26,24'" />
+```
+
 不再进入支持 profile 的旧控件包括 Animation、AnimationTabLayout、ColorPalette、Loading、Ring。ActiveX、WebBrowser、Flash 及其事件处理辅助类已从新版主库源码和工程入口移除。
 
 构建示例：
@@ -168,5 +174,4 @@ if (lang.LoadFromFile(_T("lang_zh_cn.ini"))) {
     lang.Apply(&m_PaintManager);
 }
 ```
-
 

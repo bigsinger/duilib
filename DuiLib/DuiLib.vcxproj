@@ -564,6 +564,7 @@
     <ClCompile Include="Core\UIManager.cpp" />
     <ClCompile Include="Core\UIMarkup.cpp" />
     <ClCompile Include="Core\UIRender.cpp" />
+    <ClCompile Include="Core\UISvg.cpp" />
     <ClCompile Include="Layout\UIChildLayout.cpp" />
     <ClCompile Include="Layout\UIHorizontalLayout.cpp" />
     <ClCompile Include="Layout\UITabLayout.cpp" />
@@ -664,6 +665,7 @@
     <ClInclude Include="Core\UIMarkup.h" />
     <ClInclude Include="Core\UIProfile.h" />
     <ClInclude Include="Core\UIRender.h" />
+    <ClInclude Include="Core\UISvg.h" />
     <ClInclude Include="Layout\UIChildLayout.h" />
     <ClInclude Include="Layout\UIHorizontalLayout.h" />
     <ClInclude Include="Layout\UITabLayout.h" />

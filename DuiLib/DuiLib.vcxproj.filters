@@ -87,6 +87,9 @@
     <ClCompile Include="Core\UIRender.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\UISvg.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
     <ClCompile Include="Layout\UIChildLayout.cpp">
       <Filter>Source Files\Layout</Filter>
     </ClCompile>
@@ -231,6 +234,9 @@
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\UIRender.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\UISvg.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Layout\UIChildLayout.h">

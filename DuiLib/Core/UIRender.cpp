@@ -1,6 +1,8 @@
 ﻿#include "StdAfx.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////
+#include "UISvg.h"
+
 DECLARE_HANDLE(HZIP);	// An HZIP identifies a zip file that has been opened
 typedef DWORD ZRESULT;
 typedef struct
@@ -375,6 +377,12 @@ TImageInfo* CRenderEngine::LoadImage(STRINGorID bitmap, LPCTSTR type, DWORD mask
 		//::MessageBox(0, _T("读取图片数据失败！"), _T("抓BUG"), MB_OK);
 		return NULL;
 	}
+
+    if (IsSvgImageData(pData, dwSize)) {
+        TImageInfo* image = LoadSvgImageFromMemory(pData, dwSize);
+        delete[] pData;
+        return image;
+    }
 
     LPBYTE pImage = NULL;
     int x,y,n;
