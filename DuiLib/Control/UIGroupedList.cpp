@@ -73,7 +73,7 @@ namespace DuiLib
 	CGroupedListRowUI::CGroupedListRowUI()
 		: m_dwHotBkColor(0), m_uButtonState(0)
 	{
-		SetMouseChildEnabled(false);
+		SetMouseChildEnabled(true);
 	}
 
 	LPCTSTR CGroupedListRowUI::GetClass() const
@@ -91,6 +91,29 @@ namespace DuiLib
 	{
 		return (IsKeyboardEnabled() ? UIFLAG_TABSTOP : 0) |
 			(IsEnabled() ? UIFLAG_SETCURSOR : 0);
+	}
+
+	void CGroupedListRowUI::SetPos(RECT rc)
+	{
+		CHorizontalLayoutUI::SetPos(rc);
+		const int nContentTop = m_rcItem.top + m_rcInset.top;
+		const int nContentBottom = m_rcItem.bottom - m_rcInset.bottom;
+		for( int i = 0; i < m_items.GetSize(); ++i ) {
+			CControlUI* pControl = static_cast<CControlUI*>(m_items[i]);
+			if( pControl == NULL || !pControl->IsVisible() || pControl->IsFloat() ||
+				pControl->GetFixedHeight() <= 0 ) continue;
+
+			const RECT rcPadding = pControl->GetPadding();
+			const int nTop = nContentTop + rcPadding.top;
+			const int nBottom = nContentBottom - rcPadding.bottom;
+			RECT rcControl = pControl->GetPos();
+			const int nHeight = rcControl.bottom - rcControl.top;
+			if( nHeight <= 0 || nHeight >= nBottom - nTop ) continue;
+
+			rcControl.top = nTop + (nBottom - nTop - nHeight) / 2;
+			rcControl.bottom = rcControl.top + nHeight;
+			pControl->SetPos(rcControl);
+		}
 	}
 
 	bool CGroupedListRowUI::Activate()
@@ -157,7 +180,9 @@ namespace DuiLib
 
 	void CGroupedListRowUI::PaintBkColor(HDC hDC)
 	{
-		if( (m_uButtonState & (UISTATE_HOT | UISTATE_PUSHED)) != 0 &&
+		const bool bChildHovered = IsMouseChildEnabled() && IsEnabled() &&
+			m_pManager != NULL && ::PtInRect(&m_rcItem, m_pManager->GetMousePos()) != FALSE;
+		if( ((m_uButtonState & (UISTATE_HOT | UISTATE_PUSHED)) != 0 || bChildHovered) &&
 			m_dwHotBkColor != 0 ) {
 			CRenderEngine::DrawColor(hDC, m_rcPaint, GetAdjustColor(m_dwHotBkColor));
 			return;

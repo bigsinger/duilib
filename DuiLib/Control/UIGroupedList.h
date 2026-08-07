@@ -17,6 +17,7 @@ namespace DuiLib
 		LPCTSTR GetClass() const;
 		LPVOID GetInterface(LPCTSTR pstrName);
 		UINT GetControlFlags() const;
+		void SetPos(RECT rc);
 		bool Activate();
 		void DoEvent(TEventUI& event);
 		void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
