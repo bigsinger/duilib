@@ -1,6 +1,102 @@
 ﻿#include "stdafx.h"
 #include "UIHotKey.h"
+#include <algorithm>
 namespace DuiLib{
+	namespace {
+		struct HotKeyNameEntry
+		{
+			WORD key;
+			LPCTSTR name;
+		};
+
+		const HotKeyNameEntry kHotKeyNames[] = {
+			{ VK_SPACE, _T("Space") }, { VK_RETURN, _T("Enter") },
+			{ VK_ESCAPE, _T("Esc") }, { VK_TAB, _T("Tab") },
+			{ VK_BACK, _T("Backspace") }, { VK_DELETE, _T("Delete") },
+			{ VK_INSERT, _T("Insert") }, { VK_HOME, _T("Home") },
+			{ VK_END, _T("End") }, { VK_PRIOR, _T("PageUp") },
+			{ VK_NEXT, _T("PageDown") }, { VK_LEFT, _T("Left") },
+			{ VK_RIGHT, _T("Right") }, { VK_UP, _T("Up") },
+			{ VK_DOWN, _T("Down") }, { VK_SNAPSHOT, _T("PrintScreen") },
+			{ VK_PAUSE, _T("Pause") }, { VK_CAPITAL, _T("CapsLock") },
+			{ VK_NUMLOCK, _T("NumLock") }, { VK_SCROLL, _T("ScrollLock") },
+			{ VK_MULTIPLY, _T("Multiply") }, { VK_ADD, _T("Add") },
+			{ VK_SUBTRACT, _T("Subtract") }, { VK_DECIMAL, _T("Decimal") },
+			{ VK_DIVIDE, _T("Divide") }, { VK_OEM_PLUS, _T("Plus") },
+			{ VK_OEM_MINUS, _T("Minus") }, { VK_OEM_COMMA, _T("Comma") },
+			{ VK_OEM_PERIOD, _T("Period") }, { VK_OEM_1, _T("Semicolon") },
+			{ VK_OEM_2, _T("Slash") }, { VK_OEM_3, _T("Backtick") },
+			{ VK_OEM_4, _T("LeftBracket") }, { VK_OEM_5, _T("Backslash") },
+			{ VK_OEM_6, _T("RightBracket") }, { VK_OEM_7, _T("Quote") },
+			{ VK_ESCAPE, _T("Escape") }, { VK_DELETE, _T("Del") },
+			{ VK_INSERT, _T("Ins") },
+		};
+
+		tstring TrimAndLower(tstring value)
+		{
+			const tstring whitespace = _T(" \t\r\n");
+			const size_t first = value.find_first_not_of(whitespace);
+			if( first == tstring::npos ) return tstring();
+			const size_t last = value.find_last_not_of(whitespace);
+			value = value.substr(first, last - first + 1);
+			std::transform(value.begin(), value.end(), value.begin(),
+				[](TCHAR ch) { return static_cast<TCHAR>(_totlower(ch)); });
+			return value;
+		}
+
+		tstring NumberText(UINT value)
+		{
+			TCHAR buffer[16] = { 0 };
+			_stprintf_s(buffer, _countof(buffer), _T("%u"), value);
+			return buffer;
+		}
+
+		WORD KeyFromCanonicalName(tstring value)
+		{
+			value = TrimAndLower(std::move(value));
+			if( value.size() == 1 ) {
+				const TCHAR ch = static_cast<TCHAR>(_totupper(value[0]));
+				if( (ch >= _T('A') && ch <= _T('Z')) ||
+					(ch >= _T('0') && ch <= _T('9')) ) return static_cast<WORD>(ch);
+			}
+			if( value.size() > 1 && value[0] == _T('f') ) {
+				const int functionKey = _ttoi(value.c_str() + 1);
+				if( functionKey >= 1 && functionKey <= 24 &&
+					value == _T("f") + NumberText(functionKey) ) {
+					return static_cast<WORD>(VK_F1 + functionKey - 1);
+				}
+			}
+			if( value.compare(0, 6, _T("numpad")) == 0 ) {
+				const int digit = _ttoi(value.c_str() + 6);
+				if( digit >= 0 && digit <= 9 &&
+					value == _T("numpad") + NumberText(digit) ) {
+					return static_cast<WORD>(VK_NUMPAD0 + digit);
+				}
+			}
+			for( const HotKeyNameEntry& entry : kHotKeyNames ) {
+				if( _tcsicmp(value.c_str(), entry.name) == 0 ) return entry.key;
+			}
+			return 0;
+		}
+
+		tstring CanonicalKeyName(WORD key)
+		{
+			if( (key >= _T('A') && key <= _T('Z')) ||
+				(key >= _T('0') && key <= _T('9')) ) {
+				return tstring(1, static_cast<TCHAR>(key));
+			}
+			if( key >= VK_F1 && key <= VK_F24 ) {
+				return _T("F") + NumberText(key - VK_F1 + 1);
+			}
+			if( key >= VK_NUMPAD0 && key <= VK_NUMPAD9 ) {
+				return _T("Numpad") + NumberText(key - VK_NUMPAD0);
+			}
+			for( const HotKeyNameEntry& entry : kHotKeyNames ) {
+				if( key == entry.key ) return entry.name;
+			}
+			return tstring();
+		}
+	}
 	CHotKeyWnd::CHotKeyWnd(void) : m_pOwner(NULL), m_hBkBrush(NULL), m_bInit(false)
 	{
 	}
@@ -69,9 +165,6 @@ namespace DuiLib{
 				::GetClientRect(m_hWnd, &rcClient);
 				::InvalidateRect(m_hWnd, &rcClient, FALSE);
 			}
-		}
-		else if( uMsg == WM_KEYDOWN && TCHAR(wParam) == VK_RETURN ) {
-			m_pOwner->GetManager()->SendNotify(m_pOwner, _T("return"));
 		}
 		else if( uMsg == WM_KEYDOWN && (wParam == VK_DELETE || wParam == VK_BACK) ) {
 			SetHotKey(0, 0);
@@ -193,7 +286,7 @@ namespace DuiLib{
 			nScanCode |= 0x100;
 		}
 		if (fExtended)
-			nScanCode |= 0x01000000L;
+			nScanCode |= 0x100;
 
 		TCHAR szStr[ MAX_PATH ] = {0};
 		::GetKeyNameText( nScanCode << 16, szStr, MAX_PATH );
@@ -205,50 +298,69 @@ namespace DuiLib{
 	tstring CHotKeyWnd::GetHotKeyName()
 	{
 		ASSERT(::IsWindow(m_hWnd));
-
-		tstring strKeyName;
 		WORD wCode = 0;
 		WORD wModifiers = 0;
-		const TCHAR szPlus[] = _T(" + ");
-
 		GetHotKey(wCode, wModifiers);
-		if (wCode != 0 || wModifiers != 0)
-		{
-			if (wModifiers & HOTKEYF_CONTROL)
-			{
-				strKeyName += GetKeyName(VK_CONTROL, FALSE);
-				strKeyName += szPlus;
-			}
-
-
-			if (wModifiers & HOTKEYF_SHIFT)
-			{
-				strKeyName += GetKeyName(VK_SHIFT, FALSE);
-				strKeyName += szPlus;
-			}
-
-
-			if (wModifiers & HOTKEYF_ALT)
-			{
-				strKeyName += GetKeyName(VK_MENU, FALSE);
-				strKeyName += szPlus;
-			}
-
-
-			strKeyName += GetKeyName(wCode, wModifiers & HOTKEYF_EXT);
-		}
-
-		return strKeyName;
+		return CHotKeyUI::FormatHotKey(wCode, wModifiers);
 	}
 
 
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DUICONTROL(CHotKeyUI)
 
+	bool CHotKeyUI::ParseHotKey(
+		LPCTSTR pstrText, WORD& wVirtualKeyCode, WORD& wModifiers)
+	{
+		if( pstrText == NULL ) return false;
+		WORD key = 0;
+		WORD modifiers = 0;
+		const tstring text(pstrText);
+		size_t start = 0;
+		while( start <= text.size() ) {
+			const size_t separator = text.find(_T('+'), start);
+			const tstring token = TrimAndLower(text.substr(start,
+				separator == tstring::npos ? tstring::npos : separator - start));
+			if( token.empty() ) return false;
+			if( token == _T("ctrl") || token == _T("control") ) modifiers |= HOTKEYF_CONTROL;
+			else if( token == _T("alt") ) modifiers |= HOTKEYF_ALT;
+			else if( token == _T("shift") ) modifiers |= HOTKEYF_SHIFT;
+			else if( token == _T("win") || token == _T("windows") ) modifiers |= kHotKeyModifierWin;
+			else {
+				if( key != 0 ) return false;
+				key = KeyFromCanonicalName(token);
+				if( key == 0 ) return false;
+			}
+			if( separator == tstring::npos ) break;
+			start = separator + 1;
+		}
+		if( key == 0 ) return false;
+		wVirtualKeyCode = key;
+		wModifiers = modifiers;
+		return true;
+	}
+
+	tstring CHotKeyUI::FormatHotKey(WORD wVirtualKeyCode, WORD wModifiers)
+	{
+		const tstring keyName = CanonicalKeyName(wVirtualKeyCode);
+		if( keyName.empty() ) return tstring();
+		tstring result;
+		const auto append = [&result](LPCTSTR text) {
+			if( !result.empty() ) result += _T(" + ");
+			result += text;
+		};
+		if( wModifiers & HOTKEYF_CONTROL ) append(_T("Ctrl"));
+		if( wModifiers & HOTKEYF_ALT ) append(_T("Alt"));
+		if( wModifiers & HOTKEYF_SHIFT ) append(_T("Shift"));
+		if( wModifiers & kHotKeyModifierWin ) append(_T("Win"));
+		append(keyName.c_str());
+		return result;
+	}
+
 	CHotKeyUI::CHotKeyUI() : m_pWindow(NULL), m_wVirtualKeyCode(0), m_wModifiers(0), m_uButtonState(0), m_dwHotKeybkColor(0xFFFFFFFF)
 	{
 		SetTextPadding(CDuiRect(4, 3, 4, 3));
 		SetBkColor(0xFFFFFFFF);
+		SetToolTip(_T("单击后直接按组合键修改，按 Delete 或 Backspace 清除"));
 	}
 
 	LPCTSTR CHotKeyUI::GetClass() const
@@ -410,7 +522,12 @@ namespace DuiLib{
 
 	void CHotKeyUI::SetNativeBkColor(DWORD dwBkColor)
 	{
+		if( m_dwHotKeybkColor == dwBkColor ) return;
 		m_dwHotKeybkColor = dwBkColor;
+		if( m_pWindow != NULL && ::IsWindow(m_pWindow->GetHWND()) ) {
+			::InvalidateRect(m_pWindow->GetHWND(), NULL, TRUE);
+		}
+		Invalidate();
 	}
 
 	DWORD CHotKeyUI::GetNativeBkColor() const
@@ -527,11 +644,14 @@ namespace DuiLib{
 	{
 		m_wVirtualKeyCode = wVirtualKeyCode;
 		m_wModifiers = wModifiers;
-
-		if( m_pWindow ) return;
-		m_pWindow = new CHotKeyWnd();
-		ASSERT(m_pWindow);
-		m_pWindow->Init(this);
+		if( m_pWindow != NULL ) {
+			m_pWindow->SetHotKey(wVirtualKeyCode, wModifiers);
+			m_sText = m_pWindow->GetHotKeyName();
+		}
+		else {
+			m_sText = FormatHotKey(wVirtualKeyCode, wModifiers);
+		}
+		if( wVirtualKeyCode == 0 ) m_sText = _T("无");
 		Invalidate();
 	}
 

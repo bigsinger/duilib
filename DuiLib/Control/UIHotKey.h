@@ -37,6 +37,10 @@ namespace DuiLib{
 		DECLARE_DUICONTROL(CHotKeyUI)
 		friend CHotKeyWnd;
 	public:
+		static constexpr WORD kHotKeyModifierWin = 0x10;
+		static bool ParseHotKey(LPCTSTR pstrText, WORD& wVirtualKeyCode, WORD& wModifiers);
+		static tstring FormatHotKey(WORD wVirtualKeyCode, WORD wModifiers);
+
 		CHotKeyUI();
 		LPCTSTR GetClass() const;
 		LPVOID GetInterface(LPCTSTR pstrName);
