@@ -21,7 +21,7 @@ BEGIN_MESSAGE_MAP(CClassViewTree, CTreeCtrl)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CClassViewTree ÏûÏ¢´¦Àí³ÌĞò
+// CClassViewTree æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 void CClassViewTree::OnTvnSelChanged(NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -39,7 +39,7 @@ void CClassViewTree::OnTvnSelChanged(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CClassViewTree::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	switch(nChar)
 	{
 	case VK_DELETE:
@@ -71,7 +71,7 @@ BEGIN_MESSAGE_MAP(CClassView, CDockablePane)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CClassView ÏûÏ¢´¦Àí³ÌĞò
+// CClassView æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -81,14 +81,14 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
 
-	// ´´½¨ÊÓÍ¼:
+	// åˆ›å»ºè§†å›¾:
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | 
 		TVS_SHOWSELALWAYS | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 
 	if (!m_wndClassView.Create(dwViewStyle, rectDummy, this, 2))
 	{
-		TRACE0("Î´ÄÜ´´½¨ÀàÊÓÍ¼\n");
-		return -1;      // Î´ÄÜ´´½¨
+		TRACE0("æœªèƒ½åˆ›å»ºç±»è§†å›¾\n");
+		return -1;      // æœªèƒ½åˆ›å»º
 	}
 
 	OnChangeVisualStyle();
@@ -115,7 +115,7 @@ void CClassView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 	if (point != CPoint(-1, -1))
 	{
-		// Ñ¡ÔñÒÑµ¥»÷µÄÏî:
+		// é€‰æ‹©å·²å•å‡»çš„é¡¹:
 		CPoint ptTree = point;
 		pWndTree->ScreenToClient(&ptTree);
 
@@ -165,7 +165,7 @@ BOOL CClassView::PreTranslateMessage(MSG* pMsg)
 
 void CClassView::OnPaint()
 {
-	CPaintDC dc(this); // ÓÃÓÚ»æÖÆµÄÉè±¸ÉÏÏÂÎÄ
+	CPaintDC dc(this); // ç”¨äºç»˜åˆ¶çš„è®¾å¤‡ä¸Šä¸‹æ–‡
 
 	CRect rectTree;
 	m_wndClassView.GetWindowRect(rectTree);
@@ -191,7 +191,7 @@ void CClassView::OnChangeVisualStyle()
 	CBitmap bmp;
 	if (!bmp.LoadBitmap(uiBmpId))
 	{
-		TRACE(_T("ÎŞ·¨¼ÓÔØÎ»Í¼: %x\n"), uiBmpId);
+		TRACE(_T("æ— æ³•åŠ è½½ä½å›¾: %x\n"), uiBmpId);
 		ASSERT(FALSE);
 		return;
 	}
@@ -285,11 +285,11 @@ BOOL CClassView::RemoveUITreeItem(HTREEITEM hItem)
 	return m_wndClassView.DeleteItem(hItem);
 }
 
-//ĞŞ¸ÄDuiDesigner, ÔöÇ¿Ñ¡ÔñÔªËØºóµÄÓÃ»§ÌåÑé http://blog.csdn.net/lostspeed/article/details/30980485
+//ä¿®æ”¹DuiDesigner, å¢å¼ºé€‰æ‹©å…ƒç´ åçš„ç”¨æˆ·ä½“éªŒ http://blog.csdn.net/lostspeed/article/details/30980485
 void CClassView::SelectUITreeItem(CControlUI* pControl)
 {
 	HTREEITEM hItemCur = NULL;  
-    HTREEITEM hItemPrev = NULL; ///< ÉÏÒ»¸ö±»Ñ¡ÖĞµÄItem  
+    HTREEITEM hItemPrev = NULL; ///< ä¸Šä¸€ä¸ªè¢«é€‰ä¸­çš„ Item
   
     if(pControl==NULL)  
     {  
@@ -301,14 +301,14 @@ void CClassView::SelectUITreeItem(CControlUI* pControl)
         hItemPrev = m_wndClassView.GetSelectedItem();  
         if (NULL != hItemPrev)  
         {  
-            /// ÇåµôÉÏÒ»´ÎÑ¡ÔñµÄItemÎª²»Ñ¡Ôñ×´Ì¬×´Ì¬  
+            /// æ¸…æ‰ä¸Šä¸€æ¬¡é€‰æ‹©é¡¹çš„é«˜äº®çŠ¶æ€ã€‚
             m_wndClassView.SetItemState(hItemPrev, 0, TVIS_BOLD | TVIS_SELECTED);  
         }  
   
         hItemCur = (HTREEITEM)(((ExtendedAttributes*)pControl->GetTag())->hItem);  
         if (NULL != hItemCur)  
         {  
-            /// ÉèÖÃÕâ´ÎÑ¡ÖĞµÄItemÎªÍ»³öÏÔÊ¾  
+            /// å°†æœ¬æ¬¡é€‰æ‹©é¡¹è®¾ä¸ºé«˜äº®çŠ¶æ€ã€‚
             m_wndClassView.SelectItem(hItemCur);  
             m_wndClassView.SetItemState(hItemCur,TVIS_BOLD | TVIS_SELECTED,TVIS_BOLD | TVIS_SELECTED);  
         }  

@@ -192,7 +192,7 @@ int CToolElement::GetExpandedSubTools(BOOL bIncludeHidden) const
 
 	int nCount = 0;
 	if(bIncludeHidden)
-		nCount=m_lstSubTools.GetCount();
+		nCount=static_cast<int>(m_lstSubTools.GetCount());
 	else
 	{
 		for (POSITION pos = m_lstSubTools.GetHeadPosition(); pos != NULL;)
@@ -580,8 +580,8 @@ void CToolBoxCtrl::ExpandAll(BOOL bExpand/* = TRUE*/)
 void CToolBoxCtrl::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-	// TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
-	// ²»Îª»æÍ¼ÏûÏ¢µ÷ÓÃ CWnd::OnPaint()
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
+	// ä¸ä¸ºç»˜å›¾æ¶ˆæ¯è°ƒç”¨ CWnd::OnPaint()
 	CMemDC memDC(dc, this);
 	CDC* pDC = &memDC.GetDC();
 
@@ -918,7 +918,7 @@ void CToolBoxCtrl::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
-	// TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
 	AdjustLayout();
 }
 

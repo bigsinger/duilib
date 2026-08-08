@@ -163,7 +163,7 @@ public:
 	CControlUI* GetFocused() const;
 	BOOL GetSelected(CArray<CControlUI*,CControlUI*>& arrSelected);
 	BOOL IsEmpty() const { return m_arrTracker.IsEmpty(); }
-	int  GetSize() const { return m_arrTracker.GetSize(); }
+	int  GetSize() const { return static_cast<int>(m_arrTracker.GetSize()); }
 
 	SIZE GetFormSize() const { return m_szForm; }
 	void SetFormSize(SIZE size) { m_szForm=size; }

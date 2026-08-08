@@ -8,7 +8,7 @@ using DuiLib::CControlUI;
 
 class CClassViewTree : public CViewTree
 {
-// ¹¹Ôì
+// æ„é€ 
 public:
 	CClassViewTree();
 	virtual ~CClassViewTree();
@@ -47,7 +47,7 @@ private:
 	CClassViewTree m_wndClassView;
 	CImageList m_ClassViewImages;
 
-// ÖØĞ´
+// é‡å†™
 public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 

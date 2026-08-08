@@ -1,5 +1,5 @@
 
-// UIDesignerDoc.cpp : CUIDesignerDoc ÀàµÄÊµÏÖ
+// UIDesignerDoc.cpp : CUIDesignerDoc ç±»çš„å®ç°
 //
 
 #include "stdafx.h"
@@ -24,11 +24,11 @@ BEGIN_MESSAGE_MAP(CUIDesignerDoc, CDocument)
 END_MESSAGE_MAP()
 
 
-// CUIDesignerDoc ¹¹Ôì/Îö¹¹
+// CUIDesignerDoc æ„é€ /ææ„
 
 CUIDesignerDoc::CUIDesignerDoc()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÒ»´ÎĞÔ¹¹Ôì´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸€æ¬¡æ€§æ„é€ ä»£ç 
 
 }
 
@@ -41,8 +41,8 @@ BOOL CUIDesignerDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	// TODO: ÔÚ´ËÌí¼ÓÖØĞÂ³õÊ¼»¯´úÂë
-	// (SDI ÎÄµµ½«ÖØÓÃ¸ÃÎÄµµ)
+	// TODO: åœ¨æ­¤æ·»åŠ é‡æ–°åˆå§‹åŒ–ä»£ç 
+	// (SDI æ–‡æ¡£å°†é‡ç”¨è¯¥æ–‡æ¡£)
 	CDialogSkinFileNew dlg;
 	dlg.m_strUITitle = this->GetTitle();
 	if(dlg.DoModal() == IDOK)
@@ -62,22 +62,22 @@ BOOL CUIDesignerDoc::OnNewDocument()
 
 
 
-// CUIDesignerDoc ĞòÁĞ»¯
+// CUIDesignerDoc åºåˆ—åŒ–
 
 void CUIDesignerDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		// TODO: ÔÚ´ËÌí¼Ó´æ´¢´úÂë
+		// TODO: åœ¨æ­¤æ·»åŠ å­˜å‚¨ä»£ç 
 	}
 	else
 	{
-		// TODO: ÔÚ´ËÌí¼Ó¼ÓÔØ´úÂë
+		// TODO: åœ¨æ­¤æ·»åŠ åŠ è½½ä»£ç 
 	}
 }
 
 
-// CUIDesignerDoc Õï¶Ï
+// CUIDesignerDoc è¯Šæ–­
 
 #ifdef _DEBUG
 void CUIDesignerDoc::AssertValid() const
@@ -92,11 +92,11 @@ void CUIDesignerDoc::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 
-// CUIDesignerDoc ÃüÁî
+// CUIDesignerDoc å‘½ä»¤
 
 BOOL CUIDesignerDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	POSITION pos = this->GetFirstViewPosition();
 	while(pos)
 	{
@@ -112,7 +112,7 @@ BOOL CUIDesignerDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 void CUIDesignerDoc::SetTitle(LPCTSTR lpszTitle)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	if(m_strTitle != lpszTitle)
 	{
 		POSITION pos = this->GetFirstViewPosition();
@@ -130,7 +130,7 @@ void CUIDesignerDoc::SetTitle(LPCTSTR lpszTitle)
 
 void CUIDesignerDoc::SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	if(*lpszPathName == _T('\0'))
 		m_strPathName.Empty();
 	else
@@ -141,7 +141,7 @@ void CUIDesignerDoc::OnMdiCopyFullPath()
 {
 	if(m_strPathName.IsEmpty())
 	{
-		MessageBox(NULL, _T("ÇëÏÈ±£´æµ±Ç°ÎÄ¼ş¡£"), _T("ÌáÊ¾"), MB_ICONINFORMATION);
+		MessageBox(NULL, _T("è¯·å…ˆä¿å­˜å½“å‰æ–‡ä»¶ã€‚"), _T("æç¤º"), MB_ICONINFORMATION);
 		return;
 	}
 
@@ -164,13 +164,13 @@ void CUIDesignerDoc::OnMdiOpenFullPath()
 {
 	if(m_strPathName.IsEmpty())
 	{
-		MessageBox(NULL, _T("ÇëÏÈ±£´æµ±Ç°ÎÄ¼ş¡£"), _T("ÌáÊ¾"), MB_ICONINFORMATION);
+		MessageBox(NULL, _T("è¯·å…ˆä¿å­˜å½“å‰æ–‡ä»¶ã€‚"), _T("æç¤º"), MB_ICONINFORMATION);
 		return;
 	}
 	
 	CString strFileName = m_strPathName;
 	if ( GetFileAttributes(strFileName)==-1 ){	
-		//ÎÄ¼ş²»´æÔÚ´ò¿ªËüËùÔÚµÄÄ¿Â¼
+		//æ–‡ä»¶ä¸å­˜åœ¨æ‰“å¼€å®ƒæ‰€åœ¨çš„ç›®å½•
 		CString strFolder;
 		int nPos=strFileName.ReverseFind('\\');
 		if ( nPos!=-1 ){
@@ -178,7 +178,7 @@ void CUIDesignerDoc::OnMdiOpenFullPath()
 		}
 
 		if ( GetFileAttributes(strFolder)==-1 ){
-			//AfxMessageBox("ÒÔÏÂÎÄ¼ş²»´æÔÚ£¬¿ÉÄÜÒÑ¾­±»É¾³ıÁË£º\n"+strFileName);
+			//AfxMessageBox("ä»¥ä¸‹æ–‡ä»¶ä¸å­˜åœ¨ï¼Œå¯èƒ½å·²ç»è¢«åˆ é™¤äº†ï¼š\n"+strFileName);
 		}else{
 			ShellExecute(NULL,_T("open"),_T("explorer.exe"),strFolder,NULL,SW_NORMAL);
 		}

@@ -123,7 +123,7 @@ void CWindowUI::SetPos(RECT rc)
 	CControlUI* pControl=static_cast<CControlUI*>(m_items[0]);
 	if(pControl==NULL)
 		return;
-	pControl->SetPos(rc);//·Å´óµ½Õû¸ö¿Í»§Çø
+	pControl->SetPos(rc);//æ”¾å¤§åˆ°æ•´ä¸ªå®¢æˆ·åŒº
 }
 
 void CWindowUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
@@ -661,6 +661,7 @@ void CLayoutManager::DrawGrid(CDC* pDC, CRect& rect)
 CControlUI* CLayoutManager::NewUI(int nClass,const CRect& rect,CControlUI* pParent, CLayoutManager* pLayout)
 {
 	CControlUI* pControl=NULL;
+	bool bFloatControl = false;
 
 	ExtendedAttributes* pExtended=new ExtendedAttributes;
 	ZeroMemory(pExtended,sizeof(ExtendedAttributes));
@@ -674,87 +675,190 @@ CControlUI* CLayoutManager::NewUI(int nClass,const CRect& rect,CControlUI* pPare
 		break;
 	case classControl:
 		pControl=new CControlUI;
-		pExtended->nClass=classControl;
-		pControl->SetFloat(true);
+		bFloatControl = true;
 		break;
 	case classLabel:
 		pControl=new CLabelUI;
-		pExtended->nClass=classLabel;
-		pControl->SetFloat(true);
+		bFloatControl = true;
 		break;
 	case classText:
 		pControl=new CTextUI;
-		pExtended->nClass=classText;
-		pControl->SetFloat(true);
+		bFloatControl = true;
+		break;
+	case classLine:
+		pControl=new CLineUI;
+		bFloatControl = true;
 		break;
 	case classButton:
 		pControl=new CButtonUI;
-		pExtended->nClass=classButton;
-		pControl->SetFloat(true);
+		bFloatControl = true;
+		break;
+	case classFadeButton:
+		pControl=new CFadeButtonUI;
+		bFloatControl = true;
+		break;
+	case classComboButton:
+		pControl=new CComboButtonUI;
+		bFloatControl = true;
 		break;
 	case classSwitchButton:
 		pControl=new CSwitchButtonUI;
-		pExtended->nClass=classSwitchButton;
-		pControl->SetFloat(true);
+		bFloatControl = true;
+		break;
+	case classHyperLink:
+		pControl=new CHyperLinkUI;
+		bFloatControl = true;
 		break;
 	case classEdit:
 		pControl=new CEditUI;
-		pExtended->nClass=classEdit;
-		pControl->SetFloat(true);
+		bFloatControl = true;
+		break;
+	case classNumberEdit:
+		pControl=new CNumberEditUI;
+		bFloatControl = true;
+		break;
+	case classAddressBar:
+		pControl=new CAddressBarUI;
+		bFloatControl = true;
+		break;
+	case classRichEdit:
+		pControl=new CRichEditUI;
+		bFloatControl = true;
+		break;
+	case classHotKey:
+		pControl=new CHotKeyUI;
+		bFloatControl = true;
+		break;
+	case classDateTime:
+		pControl=new CDateTimeUI;
+		bFloatControl = true;
+		break;
+	case classIPAddress:
+		pControl=new CIPAddressUI;
+		bFloatControl = true;
 		break;
 	case classOption:
 		pControl=new COptionUI;
-		pExtended->nClass=classOption;
-		pControl->SetFloat(true);
+		bFloatControl = true;
 		break;
 	case classCheckBox:
 		pControl=new CCheckBoxUI;
-		pExtended->nClass=classCheckBox;
-		pControl->SetFloat(true);
+		bFloatControl = true;
 		break;
 	case classProgress:
 		pControl=new CProgressUI;
-		pExtended->nClass=classProgress;
-		pControl->SetFloat(true);
+		bFloatControl = true;
 		break;
 	case classSlider:
 		pControl=new CSliderUI;
-		pExtended->nClass=classSlider;
-		pControl->SetFloat(true);
+		bFloatControl = true;
 		break;
 	case classCombo:
 		pControl=new CComboUI;
-		pExtended->nClass=classCombo;
-		pControl->SetFloat(true);
+		bFloatControl = true;
+		break;
+	case classComboBox:
+		pControl=new CComboBoxUI;
+		bFloatControl = true;
+		break;
+	case classCheckCombo:
+		pControl=new CCheckComboUI;
+		bFloatControl = true;
+		break;
+	case classFilterCombo:
+		pControl=new CFilterComboUI;
+		bFloatControl = true;
 		break;
 	case classList:
 		pControl=new CListUI;
-		pExtended->nClass=classList;
-		pControl->SetFloat(false);
+		break;
+	case classListEx:
+		pControl=new CListExUI;
+		break;
+	case classVirtualListBox:
+		pControl=new CVirtualListBoxUI;
+		break;
+	case classGroupedList:
+		pControl=new CGroupedListUI;
 		break;
 	case classContainer:
 		pControl=new CContainerUI;
-		pExtended->nClass=classContainer;
+		break;
+	case classGroupBox:
+		pControl=new CGroupBoxUI;
 		break;
 	case classVerticalLayout:
 		pControl=new CVerticalLayoutUI;
-		pExtended->nClass=classVerticalLayout;
 		break;
 	case classHorizontalLayout:
 		pControl=new CHorizontalLayoutUI;
-		pExtended->nClass=classHorizontalLayout;
 		break;
 	case classTileLayout:
 		pControl=new CTileLayoutUI;
-		pExtended->nClass=classTileLayout;
 		break;
 	case classTabLayout:
 		pControl=new CTabLayoutUI;
-		pExtended->nClass=classTabLayout;
+		break;
+	case classPageControl:
+		pControl=new CPageControlUI;
+		break;
+	case classChildLayout:
+		pControl=new CChildLayoutUI;
+		break;
+	case classSplitter:
+		pControl=new CSplitterUI;
+		bFloatControl = true;
+		break;
+	case classMenu:
+		pControl=new CMenuUI;
+		break;
+	case classMenuBar:
+		pControl=new CMenuBarUI;
+		break;
+	case classMenuElement:
+		pControl=new CMenuElementUI;
+		bFloatControl = true;
 		break;
 	case classScrollBar:
 		pControl=new CScrollBarUI;
-		pExtended->nClass=classScrollBar;
+		bFloatControl = true;
+		break;
+	case classTreeView:
+		pControl=new CTreeViewUI;
+		break;
+	case classTreeNode:
+		pControl=new CTreeNodeUI;
+		break;
+	case classDirectoryTree:
+		pControl=new CDirectoryTreeUI;
+		break;
+	case classPropertyGrid:
+		pControl=new CPropertyGridUI;
+		break;
+	case classListHeader:
+		pControl=new CListHeaderUI;
+		break;
+	case classListHeaderItem:
+		pControl=new CListHeaderItemUI;
+		bFloatControl = true;
+		break;
+	case classListTextElement:
+		pControl=new CListTextElementUI;
+		bFloatControl = true;
+		break;
+	case classListTextExtElement:
+		pControl=new CListTextExtElementUI;
+		bFloatControl = true;
+		break;
+	case classListLabelElement:
+		pControl=new CListLabelElementUI;
+		bFloatControl = true;
+		break;
+	case classListContainerElement:
+		pControl=new CListContainerElementUI;
+		break;
+	case classGroupedListRow:
+		pControl=new CGroupedListRowUI;
 		break;
 	default:
 		delete pExtended;
@@ -765,6 +869,8 @@ CControlUI* CLayoutManager::NewUI(int nClass,const CRect& rect,CControlUI* pPare
 		delete pExtended;
 		return NULL;
 	}
+	pExtended->nClass = nClass;
+	if (bFloatControl) pControl->SetFloat(true);
 	pControl->SetTag((UINT_PTR)pExtended);
 
 	//pos
@@ -937,7 +1043,7 @@ void CLayoutManager::TestForm(LPCTSTR pstrFile)
 	HWND h_wnd =pFrame->Create(m_Manager.GetPaintWindow(),_T("FormTest"),UI_WNDSTYLE_FRAME,0,0,0,size.cx,size.cy);
 
 	// CControlUI* pRoot=CloneControls(GetForm()->GetItemAt(0));
-	// Ê¹ÓÃĞÂ½¨µÄXMLÊ÷À´Ô¤ÀÀ£¬²»»á¹Òµô
+	// ä½¿ç”¨æ–°å»ºçš„XMLæ ‘æ¥é¢„è§ˆï¼Œä¸ä¼šæŒ‚æ‰
 	pManager->Init(h_wnd);
 	CDialogBuilder builder;
 	CContainerUI* pRoot=static_cast<CContainerUI*>(builder.Create(pstrFile,NULL,NULL,pManager));
@@ -968,7 +1074,7 @@ void CLayoutManager::TestForm(LPCTSTR pstrFile)
 		}
 		if( msg.message == WM_QUIT ) break;
 	}
-	if( msg.message == WM_QUIT ) ::PostQuitMessage(msg.wParam);
+	if( msg.message == WM_QUIT ) ::PostQuitMessage(static_cast<int>(msg.wParam));
 
 	g_HookAPI.EnableInvalidate(true);
 
@@ -1067,10 +1173,10 @@ CControlUI* CLayoutManager::CloneControl(CControlUI* pControl)
 		pCopyControl = new CListContainerElementUI(*static_cast<CListContainerElementUI*>(pControl->GetInterface(_T("ListContainerElement"))));
 		break;
 	case classList:
-		{//0917 by µË¾°ÈÊ(cddjr) , ÔÚ²»¸Ä¶¯duilibµÄÇ°ÌáÏÂ£¬Ö»ÄÜ²ÉÓÃÈçÏÂ´úÂë 
+		{// 0917 é‚“æ™¯ä»(cddjr)ï¼šåœ¨ä¸æ”¹åŠ¨ DuiLib çš„å‰æä¸‹ï¼Œåªèƒ½é‡‡ç”¨å¦‚ä¸‹ä»£ç ã€‚
 			CListUI &copyList = *static_cast<CListUI*>(pControl->GetInterface(_T("List")));
 			if (copyList.GetHorizontalScrollBar() || copyList.GetVerticalScrollBar())
-			{//²âÊÔ´°ÌåÖĞ£¬Ôİ²»Ö§³Ö¹ö¶¯Ìõ
+			{//æµ‹è¯•çª—ä½“ä¸­ï¼Œæš‚ä¸æ”¯æŒæ»šåŠ¨æ¡
 				copyList.EnableScrollBar(false, false);
 			}
 			pCopyControl = new CListUI();
@@ -1079,7 +1185,20 @@ CControlUI* CLayoutManager::CloneControl(CControlUI* pControl)
 		}
 		break;
 	default:
-		pCopyControl = new CUserDefineUI(*static_cast<CUserDefineUI*>(pControl));
+		if (CUserDefineUI* pUserDefined = static_cast<CUserDefineUI*>(pControl->GetInterface(_T("UserDefinedControl")))) {
+			pCopyControl = new CUserDefineUI(*pUserDefined);
+		}
+		else {
+			const RECT rc = pControl->GetPos();
+			pCopyControl = NewUI(nClass, CRect(rc), NULL, NULL);
+			if (pCopyControl != NULL) {
+				ExtendedAttributes* pNewExtended = reinterpret_cast<ExtendedAttributes*>(pCopyControl->GetTag());
+				delete pNewExtended;
+				*static_cast<CControlUI*>(pCopyControl) = *static_cast<CControlUI*>(pControl);
+				pCopyControl->SetTag(reinterpret_cast<UINT_PTR>(new ExtendedAttributes(*reinterpret_cast<ExtendedAttributes*>(pControl->GetTag()))));
+				pCopyControl->SetManager(NULL, NULL);
+			}
+		}
 		break;
 	}
 
@@ -1259,7 +1378,7 @@ void CLayoutManager::AlignHorizontal(CControlUI* pFocused,CArray<CControlUI*,CCo
 		rectUnion.UnionRect(&rectUnion,&pControl->GetPos());
 	}
 
-	int nCount=arrSelected.GetSize();
+	int nCount=static_cast<int>(arrSelected.GetSize());
 	if(nCount<3)
 		return;
 	int nSpaceX=(rectUnion.Width()-nTotalWidth)/(nCount-1);
@@ -1313,7 +1432,7 @@ void CLayoutManager::AlignVertical(CControlUI* pFocused,CArray<CControlUI*,CCont
 		rectUnion.UnionRect(&rectUnion,&pControl->GetPos());
 	}
 
-	int nCount=arrSelected.GetSize();
+	int nCount=static_cast<int>(arrSelected.GetSize());
 	if(nCount<3)
 		return;
 	int nSpaceY=(rectUnion.Height()-nTotalHeight)/(nCount-1);
@@ -1486,7 +1605,7 @@ void CLayoutManager::SaveControlProperty(CControlUI* pControl, TiXmlElement* pNo
 	if(!pControl->GetName().empty())
 	{
 			CString strUIName=pControl->GetName().c_str();
-			//ÃüÃû¹æ·¶£ºname²»ÔÊĞíÒÔÀàÃû´òÍ·
+			//å‘½åè§„èŒƒï¼šnameä¸å…è®¸ä»¥ç±»åæ‰“å¤´
 			if (strUIName.Find(pControl->GetClass()) != 0)
 			{
 				CString strControlName = pControl->GetName().c_str();
@@ -1505,7 +1624,7 @@ void CLayoutManager::SaveControlProperty(CControlUI* pControl, TiXmlElement* pNo
 		CControlUI* pParent = pControl->GetParent();
 		if((pParent != NULL) && ((static_cast<IContainerUI*>(pParent->GetInterface(_T("IContainer"))) != NULL) && (static_cast<CContainerUI*>(pParent->GetInterface(_T("Container"))) != NULL)))
 		{
-			// Èç¹ûÍ¬Ò»²ãÖĞËùÓĞÔªËØ¶¼ÊÇ²»¿É¼ûµÄ£¬Ôò²»ÉèÖÃÊôĞÔ
+			// å¦‚æœåŒä¸€å±‚ä¸­æ‰€æœ‰å…ƒç´ éƒ½æ˜¯ä¸å¯è§çš„ï¼Œåˆ™ä¸è®¾ç½®å±æ€§
 			bool bVisible = false;
 			CContainerUI* pContainerUI = static_cast<CContainerUI*>(pParent->GetInterface(_T("Container")));
 			for( int it = 0; it < pContainerUI->GetCount(); it++ )
@@ -1571,8 +1690,8 @@ void CLayoutManager::SaveControlProperty(CControlUI* pControl, TiXmlElement* pNo
 	}
 #endif // 0
 
-	// ÔÚ¾ø¶Ô×ø±êÏÂÊä³öpos×ø±ê£¬Ê¹ÓÃÇ°Á½¸öÖµ±íÊ¾×ø±ê
-	// Ê¼ÖÕÊä³öwidthºÍheightÀ´±íÊ¾¿Ø¼ş´óĞ¡
+	// åœ¨ç»å¯¹åæ ‡ä¸‹è¾“å‡ºposåæ ‡ï¼Œä½¿ç”¨å‰ä¸¤ä¸ªå€¼è¡¨ç¤ºåæ ‡
+	// å§‹ç»ˆè¾“å‡ºwidthå’Œheightæ¥è¡¨ç¤ºæ§ä»¶å¤§å°
 	if(pControl->IsFloat())
 	{
 		pNode->SetAttribute("float", "true");
@@ -2254,17 +2373,7 @@ void CLayoutManager::SaveProperties(CControlUI* pControl, TiXmlElement* pParentN
 	{
 		pExtended = &mDummy;
 		ZeroMemory(pExtended, sizeof(ExtendedAttributes));
-		LPCTSTR pstrClass = pControl->GetClass();
-		SIZE_T cchLen = _tcslen(pstrClass);
-		switch( cchLen )
-		{
-		case 16:
-			if (_tcscmp(_T("ListHeaderItemUI"), pstrClass)==0) pExtended->nClass = classListHeaderItem;
-			break;
-		case 12:
-			if (_tcscmp(_T("ListHeaderUI"), pstrClass)==0) pExtended->nClass = classListHeader;
-			break;
-		}
+		pExtended->nClass = gGetUIClass(pControl);
 	}
 
 	switch(pExtended->nClass)
@@ -2281,12 +2390,19 @@ void CLayoutManager::SaveProperties(CControlUI* pControl, TiXmlElement* pParentN
 		break;
 	case classLabel:
 	case classText:
+	case classRollText:
+	case classHyperLink:
 		SaveLabelProperty(pControl, pNode);
 		break;
 	case classButton:
+	case classFadeButton:
+	case classComboButton:
+	case classSwitchButton:
 		SaveButtonProperty(pControl, pNode);
 		break;
 	case classEdit:
+	case classNumberEdit:
+	case classAddressBar:
 		SaveEditProperty(pControl, pNode);
 		break;
 	case classOption:
@@ -2299,11 +2415,23 @@ void CLayoutManager::SaveProperties(CControlUI* pControl, TiXmlElement* pParentN
 	case classSlider:
 		SaveSliderProperty(pControl, pNode);
 		break;
-	case classCombo: 
+	case classCombo:
+	case classComboBox:
+	case classCheckCombo:
+	case classFilterCombo:
 		SaveComboProperty(pControl, pNode);
 		break;
 	case classList:
+	case classListEx:
+	case classVirtualListBox:
+	case classPropertyGrid:
 		SaveListProperty(pControl, pNode);
+		break;
+	case classListTextElement:
+	case classListTextExtElement:
+	case classListLabelElement:
+	case classGroupedListRow:
+		SaveListElementProperty(pControl, pNode);
 		break;
 	case classListContainerElement:
 		SaveListContainerElementProperty(pControl, pNode);
@@ -2315,7 +2443,15 @@ void CLayoutManager::SaveProperties(CControlUI* pControl, TiXmlElement* pParentN
 		SaveListHeaderProperty(pControl,pNode);
 		break;
 	case classContainer:
+	case classGroupBox:
 	case classVerticalLayout:
+	case classPageControl:
+	case classMenu:
+	case classMenuBar:
+	case classTreeView:
+	case classTreeNode:
+	case classDirectoryTree:
+	case classGroupedList:
 		SaveContainerProperty(pControl,pNode);
 		break;
 	case classTabLayout:
@@ -2329,6 +2465,16 @@ void CLayoutManager::SaveProperties(CControlUI* pControl, TiXmlElement* pParentN
 		break;
 	case classChildLayout:
 		SaveChildWindowProperty(pControl,pNode);
+		break;
+	case classLine:
+	case classGifAnim:
+	case classHotKey:
+	case classDateTime:
+	case classIPAddress:
+	case classSplitter:
+	case classMenuElement:
+	case classScrollBar:
+		SaveControlProperty(pControl, pNode);
 		break;
 	default:
 		break;

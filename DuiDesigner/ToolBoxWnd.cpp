@@ -1,4 +1,4 @@
-// ToolBoxWnd.cpp : ÊµÏÖÎÄ¼þ
+// ToolBoxWnd.cpp : å®žçŽ°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -27,7 +27,7 @@ END_MESSAGE_MAP()
 
 
 
-// CToolBoxWnd ÏûÏ¢´¦Àí³ÌÐò
+// CToolBoxWnd æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 int CToolBoxWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -70,27 +70,68 @@ void CToolBoxWnd::AdjustLayout()
 
 void CToolBoxWnd::InitToolList()
 {
-	CToolElement* pControlTab=new CToolElement(_T("¿Ø¼þ"));
-	pControlTab->AddSubTool(new CToolElement(_T("Ö¸Õë"),classPointer,IDI_TOOLBOX_POINTER));
+	CToolElement* pControlTab=new CToolElement(_T("åŸºç¡€æŽ§ä»¶"));
+	pControlTab->AddSubTool(new CToolElement(_T("æŒ‡é’ˆ"),classPointer,IDI_TOOLBOX_POINTER));
 	pControlTab->AddSubTool(new CToolElement(_T("Control"),classControl,IDI_TOOLBOX_CONTROL));
 	pControlTab->AddSubTool(new CToolElement(_T("Label"),classLabel,IDI_TOOLBOX_LABEL));
 	pControlTab->AddSubTool(new CToolElement(_T("Text"),classText,IDI_TOOLBOX_TEXT));
-	pControlTab->AddSubTool(new CToolElement(_T("Edit"),classEdit,IDI_TOOLBOX_EDIT));
-	pControlTab->AddSubTool(new CToolElement(_T("Option"),classOption,IDI_TOOLBOX_OPTION));
-	pControlTab->AddSubTool(new CToolElement(_T("Combo"),classCombo,IDI_TOOLBOX_COMBO));
-	pControlTab->AddSubTool(new CToolElement(_T("List"),classList,IDI_TOOLBOX_COMBO));
+	pControlTab->AddSubTool(new CToolElement(_T("Line"),classLine,IDI_TOOLBOX_CONTROL));
 	pControlTab->AddSubTool(new CToolElement(_T("Button"),classButton,IDI_TOOLBOX_BUTTON));
+	pControlTab->AddSubTool(new CToolElement(_T("FadeButton"),classFadeButton,IDI_TOOLBOX_BUTTON));
+	pControlTab->AddSubTool(new CToolElement(_T("ComboButton"),classComboButton,IDI_TOOLBOX_BUTTON));
 	pControlTab->AddSubTool(new CToolElement(_T("SwitchButton"),classSwitchButton,IDI_TOOLBOX_BUTTON));
+	pControlTab->AddSubTool(new CToolElement(_T("HyperLink"),classHyperLink,IDI_TOOLBOX_LABEL));
+	pControlTab->AddSubTool(new CToolElement(_T("Edit"),classEdit,IDI_TOOLBOX_EDIT));
+	pControlTab->AddSubTool(new CToolElement(_T("NumberEdit"),classNumberEdit,IDI_TOOLBOX_EDIT));
+	pControlTab->AddSubTool(new CToolElement(_T("AddressBar"),classAddressBar,IDI_TOOLBOX_EDIT));
+	pControlTab->AddSubTool(new CToolElement(_T("RichEdit"),classRichEdit,IDI_TOOLBOX_EDIT));
+	pControlTab->AddSubTool(new CToolElement(_T("HotKey"),classHotKey,IDI_TOOLBOX_EDIT));
+	pControlTab->AddSubTool(new CToolElement(_T("DateTime"),classDateTime,IDI_TOOLBOX_EDIT));
+	pControlTab->AddSubTool(new CToolElement(_T("IPAddress"),classIPAddress,IDI_TOOLBOX_EDIT));
+	pControlTab->AddSubTool(new CToolElement(_T("Option"),classOption,IDI_TOOLBOX_OPTION));
+	pControlTab->AddSubTool(new CToolElement(_T("CheckBox"),classCheckBox,IDI_TOOLBOX_OPTION));
 	pControlTab->AddSubTool(new CToolElement(_T("Progress"),classProgress,IDI_TOOLBOX_PROGRESS));
 	pControlTab->AddSubTool(new CToolElement(_T("Slider"),classSlider,IDI_TOOLBOX_SLIDER));
+	pControlTab->AddSubTool(new CToolElement(_T("GifAnim"),classGifAnim,IDI_TOOLBOX_CONTROL));
+	pControlTab->AddSubTool(new CToolElement(_T("RollText"),classRollText,IDI_TOOLBOX_TEXT));
 	m_ctlToolList.AddToolTab(pControlTab);
 
-	CToolElement* pLayoutTab=new CToolElement(_T("²¼¾Ö"));
+	CToolElement* pListTab=new CToolElement(_T("é€‰æ‹©ä¸Žåˆ—è¡¨"));
+	pListTab->AddSubTool(new CToolElement(_T("Combo"),classCombo,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("ComboBox"),classComboBox,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("CheckCombo"),classCheckCombo,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("FilterCombo"),classFilterCombo,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("List"),classList,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("ListEx"),classListEx,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("VirtualListBox"),classVirtualListBox,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("GroupedList"),classGroupedList,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("ListHeader"),classListHeader,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("ListHeaderItem"),classListHeaderItem,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("ListTextElement"),classListTextElement,IDI_TOOLBOX_TEXT));
+	pListTab->AddSubTool(new CToolElement(_T("ListTextExtElement"),classListTextExtElement,IDI_TOOLBOX_TEXT));
+	pListTab->AddSubTool(new CToolElement(_T("ListLabelElement"),classListLabelElement,IDI_TOOLBOX_LABEL));
+	pListTab->AddSubTool(new CToolElement(_T("ListContainerElement"),classListContainerElement,IDI_TOOLBOX_CONTAINER));
+	pListTab->AddSubTool(new CToolElement(_T("GroupedListRow"),classGroupedListRow,IDI_TOOLBOX_CONTAINER));
+	pListTab->AddSubTool(new CToolElement(_T("TreeView"),classTreeView,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("TreeNode"),classTreeNode,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("DirectoryTree"),classDirectoryTree,IDI_TOOLBOX_COMBO));
+	pListTab->AddSubTool(new CToolElement(_T("PropertyGrid"),classPropertyGrid,IDI_TOOLBOX_COMBO));
+	m_ctlToolList.AddToolTab(pListTab);
+
+	CToolElement* pLayoutTab=new CToolElement(_T("å¸ƒå±€ä¸Žèœå•"));
 	pLayoutTab->AddSubTool(new CToolElement(_T("Container"),classContainer,IDI_TOOLBOX_CONTAINER));
+	pLayoutTab->AddSubTool(new CToolElement(_T("GroupBox"),classGroupBox,IDI_TOOLBOX_CONTAINER));
 	pLayoutTab->AddSubTool(new CToolElement(_T("VerticalLayout"),classVerticalLayout,IDI_TOOLBOX_VERTICAL_LAYOUT));
 	pLayoutTab->AddSubTool(new CToolElement(_T("HorizontalLayout"),classHorizontalLayout,IDI_TOOLBOX_HORIZONTAL_LAYOUT));
 	pLayoutTab->AddSubTool(new CToolElement(_T("TileLayout"),classTileLayout,IDI_TOOLBOX_TILE_LAYOUT));
 	pLayoutTab->AddSubTool(new CToolElement(_T("TabLayout"),classTabLayout,IDI_TOOLBOX_TAB_LAYOUT));
+	pLayoutTab->AddSubTool(new CToolElement(_T("PageControl"),classPageControl,IDI_TOOLBOX_TAB_LAYOUT));
+	pLayoutTab->AddSubTool(new CToolElement(_T("ChildLayout"),classChildLayout,IDI_TOOLBOX_CONTAINER));
+	pLayoutTab->AddSubTool(new CToolElement(_T("Splitter"),classSplitter,IDI_TOOLBOX_SCROLLBAR));
+	pLayoutTab->AddSubTool(new CToolElement(_T("ScrollBar"),classScrollBar,IDI_TOOLBOX_SCROLLBAR));
+	pLayoutTab->AddSubTool(new CToolElement(_T("Menu"),classMenu,IDI_TOOLBOX_CONTAINER));
+	pLayoutTab->AddSubTool(new CToolElement(_T("MenuBar"),classMenuBar,IDI_TOOLBOX_HORIZONTAL_LAYOUT));
+	pLayoutTab->AddSubTool(new CToolElement(_T("MenuElement"),classMenuElement,IDI_TOOLBOX_BUTTON));
 	m_ctlToolList.AddToolTab(pLayoutTab);
 
 	m_ctlToolList.SetCurSel(classPointer);

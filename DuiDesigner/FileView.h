@@ -6,12 +6,12 @@
 //CFileViewTree
 class CFileViewTree : public CTreeCtrl
 {
-	// ¹¹Ôì
+	// æ„é€ 
 public:
 	CFileViewTree();
 	virtual ~CFileViewTree();
 
-	// ÖØĞ´
+	// é‡å†™
 protected:
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
 
@@ -43,21 +43,21 @@ class CFileView : public CDockablePane
 {
 	friend class CFileViewTree;
 
-// ¹¹Ôì
+// æ„é€ 
 public:
 	CFileView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
 
-// ÊôĞÔ
+// å±æ€§
 protected:
 
 	CFileViewTree m_wndFileView;
 	CImageList m_FileViewImages;
 	CFileViewToolBar m_wndToolBar;
 
-// ÊµÏÖ
+// å®ç°
 public:
 	virtual ~CFileView();
 

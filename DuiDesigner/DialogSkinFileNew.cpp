@@ -44,7 +44,7 @@ BOOL CDialogSkinFileNew::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  Add extra initialization here
-	m_lstStyles.AddString(_T("(ÎÞ)"));
+	m_lstStyles.AddString(_T("(æ— )"));
 	m_lstStyles.SetCurSel(0);
 	FindStyleFiles(CGlobalVariable::GetStylesDir());
 

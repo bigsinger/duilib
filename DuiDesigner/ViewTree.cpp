@@ -23,7 +23,7 @@ BEGIN_MESSAGE_MAP(CViewTree, CTreeCtrl)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CViewTree 消息处理程序
+// CViewTree 娑堟伅澶勭悊绋嬪簭
 
 BOOL CViewTree::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {

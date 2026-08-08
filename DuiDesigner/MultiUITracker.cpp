@@ -1189,7 +1189,7 @@ BOOL CMultiUITracker::Remove(CTrackerElement * pTracker)
 {
 	ASSERT(pTracker);
 
-	int len=m_arrTracker.GetSize();
+	int len=static_cast<int>(m_arrTracker.GetSize());
 	for (int i=0;i<len;i++)
 	{
 		int j = i;
@@ -1212,7 +1212,7 @@ BOOL CMultiUITracker::Remove(CTrackerElement * pTracker)
 
 void CMultiUITracker::RemoveAll()
 {
-	int len=m_arrTracker.GetSize();
+	int len=static_cast<int>(m_arrTracker.GetSize());
 	for (int i=0;i<len;i++)
 	{
 		delete m_arrTracker.GetAt(i);
@@ -1287,7 +1287,7 @@ CTrackerElement* CMultiUITracker::FindTracker(CControlUI* pControl) const
 
 void CMultiUITracker::ExcludeChildren(CArray<CControlUI*,CControlUI*>& arrSelected)
 {
-	int size = arrSelected.GetSize();
+	int size = static_cast<int>(arrSelected.GetSize());
 	int* pDepth = new int[size];
 	for(int i=0; i<size; i++)
 	{

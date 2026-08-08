@@ -1,6 +1,6 @@
-// stdafx.h : ±ê×¼ÏµÍ³°üº¬ÎÄ¼şµÄ°üº¬ÎÄ¼ş£¬
-// »òÊÇ¾­³£Ê¹ÓÃµ«²»³£¸ü¸ÄµÄ
-// ÌØ¶¨ÓÚÏîÄ¿µÄ°üº¬ÎÄ¼ş
+// stdafx.h : æ ‡å‡†ç³»ç»ŸåŒ…å«æ–‡ä»¶çš„åŒ…å«æ–‡ä»¶ï¼Œ
+// æˆ–æ˜¯ç»å¸¸ä½¿ç”¨ä½†ä¸å¸¸æ›´æ”¹çš„
+// ç‰¹å®šäºé¡¹ç›®çš„åŒ…å«æ–‡ä»¶
 
 #pragma once
 
@@ -9,31 +9,31 @@
 #endif
 
 #ifndef VC_EXTRALEAN
-#define VC_EXTRALEAN            // ´Ó Windows Í·ÖĞÅÅ³ı¼«ÉÙÊ¹ÓÃµÄ×ÊÁÏ
+#define VC_EXTRALEAN            // ä» Windows å¤´ä¸­æ’é™¤æå°‘ä½¿ç”¨çš„èµ„æ–™
 #endif
 
 #include "targetver.h"
 
 #define _CRT_SECURE_NO_WARNINGS
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // Ä³Ğ© CString ¹¹Ôìº¯Êı½«ÊÇÏÔÊ½µÄ
+#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // æŸäº› CString æ„é€ å‡½æ•°å°†æ˜¯æ˜¾å¼çš„
 
-// ¹Ø±Õ MFC ¶ÔÄ³Ğ©³£¼ûµ«¾­³£¿É·ÅĞÄºöÂÔµÄ¾¯¸æÏûÏ¢µÄÒş²Ø
+// å…³é—­ MFC å¯¹æŸäº›å¸¸è§ä½†ç»å¸¸å¯æ”¾å¿ƒå¿½ç•¥çš„è­¦å‘Šæ¶ˆæ¯çš„éšè—
 #define _AFX_ALL_WARNINGS
 
-#include <afxwin.h>         // MFC ºËĞÄ×é¼şºÍ±ê×¼×é¼ş
-#include <afxext.h>         // MFC À©Õ¹
+#include <afxwin.h>         // MFC æ ¸å¿ƒç»„ä»¶å’Œæ ‡å‡†ç»„ä»¶
+#include <afxext.h>         // MFC æ‰©å±•
 #include <atlstr.h>
 
-#include <afxdisp.h>        // MFC ×Ô¶¯»¯Àà
+#include <afxdisp.h>        // MFC è‡ªåŠ¨åŒ–ç±»
 
 #ifndef _AFX_NO_OLE_SUPPORT
-#include <afxdtctl.h>           // MFC ¶Ô Internet Explorer 4 ¹«¹²¿Ø¼şµÄÖ§³Ö
+#include <afxdtctl.h>           // MFC å¯¹ Internet Explorer 4 å…¬å…±æ§ä»¶çš„æ”¯æŒ
 #endif
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>             // MFC ¶Ô Windows ¹«¹²¿Ø¼şµÄÖ§³Ö
+#include <afxcmn.h>             // MFC å¯¹ Windows å…¬å…±æ§ä»¶çš„æ”¯æŒ
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-#include <afxcontrolbars.h>     // ¹¦ÄÜÇøºÍ¿Ø¼şÌõµÄ MFC Ö§³Ö
+#include <afxcontrolbars.h>     // åŠŸèƒ½åŒºå’Œæ§ä»¶æ¡çš„ MFC æ”¯æŒ
 
 #ifdef _UNICODE
 #if defined _M_IX86
@@ -102,7 +102,7 @@
 #define UIDESIGNER_VERSION _T("2015.10.29")
 #define UIDESIGNER_VERSION_CHECK_URL _T("http://www.taxue.org/uidesigner-version.txt")
 
-//UI type
+// UI ç±»å‹
 enum UIType
 {
 	typeControl=1,
@@ -110,38 +110,66 @@ enum UIType
 	typeForm,
 };
 
-//UI class
+// UI æ§ä»¶ç±»å‹ã€‚æ•°å€¼åªåœ¨è®¾è®¡å™¨è¿›ç¨‹å†…ä½¿ç”¨ï¼Œä¸å†™å…¥çš®è‚¤ XMLã€‚
 enum UIClass
 {
-	classPointer=100,
-	classRichEdit = 100,
+	classPointer = 100,
 	classWindow,
 	classControl,
 	classButton,
+	classFadeButton,
+	classComboButton,
+	classSwitchButton,
+	classHyperLink,
 	classEdit,
+	classNumberEdit,
+	classAddressBar,
+	classRichEdit,
+	classHotKey,
+	classDateTime,
+	classIPAddress,
 	classLabel,
 	classText,
+	classLine,
+	classRollText,
+	classGifAnim,
 	classOption,
 	classCheckBox,
 	classCombo,
+	classComboBox,
+	classCheckCombo,
+	classFilterCombo,
 	classList,
+	classListEx,
+	classVirtualListBox,
+	classGroupedList,
 	classSlider,
 	classProgress,
 	classContainer,
+	classGroupBox,
 	classVerticalLayout,
 	classHorizontalLayout,
 	classTabLayout,
+	classPageControl,
 	classTileLayout,
+	classChildLayout,
+	classSplitter,
+	classMenu,
+	classMenuBar,
+	classMenuElement,
+	classScrollBar,
+	classTreeView,
+	classTreeNode,
+	classDirectoryTree,
+	classPropertyGrid,
 	classListHeader,
 	classListHeaderItem,
 	classListTextElement,
+	classListTextExtElement,
 	classListLabelElement,
-	classListExpandElement,
 	classListContainerElement,
-	classSwitchButton,
+	classGroupedListRow,
 	classItem,
-	classScrollBar,
-	classChildLayout,
 };
 
 typedef struct tagExtendedAttributes
@@ -183,36 +211,65 @@ using DuiLib::CRenderEngine;
 using DuiLib::CDialogBuilder;
 using DuiLib::CControlUI;
 using DuiLib::CButtonUI;
+using DuiLib::CFadeButtonUI;
+using DuiLib::CComboButtonUI;
 using DuiLib::CSwitchButtonUI;
+using DuiLib::CHyperLinkUI;
 using DuiLib::CEditUI;
+using DuiLib::CNumberEditUI;
+using DuiLib::CAddressBarUI;
 using DuiLib::CRichEditUI;
+using DuiLib::CHotKeyUI;
+using DuiLib::CDateTimeUI;
+using DuiLib::CIPAddressUI;
 using DuiLib::CLabelUI;
 using DuiLib::CTextUI;
+using DuiLib::CLineUI;
+using DuiLib::CRollTextUI;
+using DuiLib::CGifAnimUI;
 using DuiLib::COptionUI;
 using DuiLib::CCheckBoxUI;
 using DuiLib::CComboUI;
+using DuiLib::CComboBoxUI;
+using DuiLib::CCheckComboUI;
+using DuiLib::CFilterComboUI;
 using DuiLib::CListUI;
+using DuiLib::CListExUI;
+using DuiLib::CVirtualListBoxUI;
+using DuiLib::CGroupedListUI;
+using DuiLib::CGroupedListRowUI;
 using DuiLib::CSliderUI;
 using DuiLib::CProgressUI;
-using DuiLib::CContainerUI;
+using DuiLib::CGroupBoxUI;
 using DuiLib::CChildLayoutUI;
 using DuiLib::CVerticalLayoutUI;
 using DuiLib::CHorizontalLayoutUI;
 using DuiLib::CTabLayoutUI;
+using DuiLib::CPageControlUI;
 using DuiLib::CTileLayoutUI;
+using DuiLib::CSplitterUI;
+using DuiLib::CMenuUI;
+using DuiLib::CMenuBarUI;
+using DuiLib::CMenuElementUI;
 using DuiLib::CListHeaderUI;
 using DuiLib::CListElementUI;
 using DuiLib::CListHeaderItemUI;
 using DuiLib::CListTextElementUI;
+using DuiLib::CListTextExtElementUI;
 using DuiLib::CListLabelElementUI;
 using DuiLib::CListContainerElementUI;
 using DuiLib::CScrollBarUI;
+using DuiLib::CTreeViewUI;
+using DuiLib::CTreeNodeUI;
+using DuiLib::CDirectoryTreeUI;
+using DuiLib::CPropertyGridUI;
 using DuiLib::IContainerUI;
 using DuiLib::STRINGorID;
 using DuiLib::TImageInfo;
 using DuiLib::TFontInfo;
 using DuiLib::TEventUI;
 using DuiLib::EVENTTYPE_UI;
+using DuiLib::tstring;
 
 extern CMainFrame* g_pMainFrame;
 extern CToolBoxWnd* g_pToolBoxWnd;

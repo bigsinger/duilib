@@ -1,6 +1,6 @@
-// stdafx.cpp : ÷ª∞¸¿®±Í◊º∞¸∫¨Œƒº˛µƒ‘¥Œƒº˛
-// UIDesigner.pch Ω´◊˜Œ™‘§±‡“ÎÕ∑
-// stdafx.obj Ω´∞¸∫¨‘§±‡“Î¿‡–Õ–≈œ¢
+// stdafx.cpp : Âè™ÂåÖÊã¨Ê†áÂáÜÂåÖÂê´Êñá‰ª∂ÁöÑÊ∫êÊñá‰ª∂
+// UIDesigner.pch Â∞Ü‰Ωú‰∏∫È¢ÑÁºñËØëÂ§¥
+// stdafx.obj Â∞ÜÂåÖÂê´È¢ÑÁºñËØëÁ±ªÂûã‰ø°ÊÅØ
 
 #include "stdafx.h"
 
@@ -14,63 +14,81 @@ CHookAPI g_pHookAPI;
 
 int gGetUIClass(LPCTSTR pstrClass)
 {
-	int nClass = classPointer;
-	SIZE_T cchLen = _tcslen(pstrClass);
-	switch( cchLen ) {
-		case 6:
-			if( _tcscmp(pstrClass, _T("FormUI")) == 0 )                   nClass=classWindow;
-			else if( _tcscmp(pstrClass, _T("EditUI")) == 0 )              nClass=classEdit;
-			else if( _tcscmp(pstrClass, _T("ListUI")) == 0 )              nClass=classList;
-			else if( _tcscmp(pstrClass, _T("TextUI")) == 0 )              nClass=classText;
-			break;
-		case 7:
-			if( _tcscmp(pstrClass, _T("ComboUI")) == 0 )                  nClass=classCombo;
-			else if( _tcscmp(pstrClass, _T("LabelUI")) == 0 )             nClass=classLabel;
-		case 8:
-			if( _tcscmp(pstrClass, _T("ButtonUI")) == 0 )                 nClass=classButton;
-			else if( _tcscmp(pstrClass, _T("OptionUI")) == 0 )            nClass=classOption;
-			else if( _tcscmp(pstrClass, _T("SliderUI")) == 0 )            nClass=classSlider;
-			break;
-		case 9:
-			if( _tcscmp(pstrClass, _T("ControlUI")) == 0 )                nClass=classControl;
-			break;
-		case 10:
-			if( _tcscmp(pstrClass, _T("ProgressUI")) == 0 )               nClass=classProgress;
-			if( _tcscmp(pstrClass, _T("CheckBoxUI")) == 0 )               nClass=classCheckBox;
-			break;
-		case 11:
-			if( _tcscmp(pstrClass, _T("ContainerUI")) == 0 )              nClass=classContainer;
-			else if( _tcscmp(pstrClass, _T("TabLayoutUI")) == 0 )         nClass=classTabLayout;
-			break;
-		case 12:
-			if( _tcscmp(pstrClass, _T("ListHeaderUI")) == 0 )             nClass=classListHeader;
-			else if( _tcscmp(pstrClass, _T("TileLayoutUI")) == 0 )        nClass=classTileLayout;
-			else if (_tcscmp(pstrClass, _T("VScrollBarUI")) == 0 )			nClass=classScrollBar;
-			else if (_tcscmp(pstrClass, _T("HScrollBarUI")) == 0 )			nClass=classScrollBar;
-			break;
-		case 13:
-			if( _tcscmp(pstrClass, _T("ChildLayoutUI")) == 0 )             nClass=classChildLayout;
-			break;
-		case 14:
-			if( _tcscmp(pstrClass, _T("SwitchButtonUI")) == 0 )           nClass=classSwitchButton;
-			break;
-		case 16:
-			if( _tcscmp(pstrClass, _T("VerticalLayoutUI")) == 0 )         nClass=classVerticalLayout;
-			else if( _tcscmp(pstrClass, _T("ListHeaderItemUI")) == 0 )    nClass=classListHeaderItem;
-			break;
-		case 17:
-			if( _tcscmp(pstrClass, _T("ListTextElementUI")) == 0 )        nClass=classListTextElement;
-			break;
-		case 18:
-			if( _tcscmp(pstrClass, _T("HorizontalLayoutUI")) == 0 )       nClass=classHorizontalLayout;
-			else if( _tcscmp(pstrClass, _T("ListLabelElementUI")) == 0 )  nClass=classListLabelElement;
-			break;
-		case 22:
-			if( _tcscmp(pstrClass, _T("ListContainerElementUI")) == 0 )   nClass=classListContainerElement;
-			break;
-	}
+	if (pstrClass == NULL || *pstrClass == _T('\0')) return classPointer;
 
-	return nClass;
+	struct UIClassEntry
+	{
+		LPCTSTR name;
+		int type;
+	};
+
+	// ÈááÁî®Ë°®È©±Âä®Êò†Â∞ÑÔºåÊñ∞Â¢ûÊéß‰ª∂Êó∂‰∏ç‰ºöÂÜçÂèóÁ±ªÂêçÈïøÂ∫¶ÂàÜÊîØÂΩ±Âìç„ÄÇ
+	static const UIClassEntry entries[] = {
+		{ _T("FormUI"), classWindow },
+		{ _T("ControlUI"), classControl },
+		{ _T("ButtonUI"), classButton },
+		{ _T("FadeButtonUI"), classFadeButton },
+		{ _T("ComboButtonUI"), classComboButton },
+		{ _T("SwitchButtonUI"), classSwitchButton },
+		{ _T("HyperLinkUI"), classHyperLink },
+		{ _T("EditUI"), classEdit },
+		{ _T("NumberEditUI"), classNumberEdit },
+		{ _T("AddressBarUI"), classAddressBar },
+		{ _T("RichEditUI"), classRichEdit },
+		{ _T("HotKeyUI"), classHotKey },
+		{ _T("DateTimeUI"), classDateTime },
+		{ _T("IPAddressUI"), classIPAddress },
+		{ _T("LabelUI"), classLabel },
+		{ _T("TextUI"), classText },
+		{ _T("LineUI"), classLine },
+		{ _T("RollTextUI"), classRollText },
+		{ _T("GifAnimUI"), classGifAnim },
+		{ _T("OptionUI"), classOption },
+		{ _T("CheckBoxUI"), classCheckBox },
+		{ _T("ComboUI"), classCombo },
+		{ _T("ComboBoxUI"), classComboBox },
+		{ _T("CheckComboUI"), classCheckCombo },
+		{ _T("FilterComboUI"), classFilterCombo },
+		{ _T("ListUI"), classList },
+		{ _T("ListExUI"), classListEx },
+		{ _T("VirtualListBoxUI"), classVirtualListBox },
+		{ _T("GroupedListUI"), classGroupedList },
+		{ _T("SliderUI"), classSlider },
+		{ _T("ProgressUI"), classProgress },
+		{ _T("ContainerUI"), classContainer },
+		{ _T("GroupBoxUI"), classGroupBox },
+		{ _T("VerticalLayoutUI"), classVerticalLayout },
+		{ _T("HorizontalLayoutUI"), classHorizontalLayout },
+		{ _T("TabLayoutUI"), classTabLayout },
+		{ _T("PageControlUI"), classPageControl },
+		{ _T("TileLayoutUI"), classTileLayout },
+		{ _T("ChildLayoutUI"), classChildLayout },
+		{ _T("SplitterUI"), classSplitter },
+		{ _T("MenuUI"), classMenu },
+		{ _T("MenuBarUI"), classMenuBar },
+		{ _T("MenuElementUI"), classMenuElement },
+		{ _T("ScrollBarUI"), classScrollBar },
+		{ _T("VScrollBarUI"), classScrollBar },
+		{ _T("HScrollBarUI"), classScrollBar },
+		{ _T("TreeViewUI"), classTreeView },
+		{ _T("TreeNodeUI"), classTreeNode },
+		{ _T("DirectoryTreeUI"), classDirectoryTree },
+		{ _T("PropertyGridUI"), classPropertyGrid },
+		{ _T("ListHeaderUI"), classListHeader },
+		{ _T("ListHeaderItemUI"), classListHeaderItem },
+		{ _T("ListElementUI"), classItem },
+		{ _T("ListTextElementUI"), classListTextElement },
+		{ _T("ListTextExtElementUI"), classListTextExtElement },
+		{ _T("ListLabelElementUI"), classListLabelElement },
+		{ _T("ListContainerElementUI"), classListContainerElement },
+		{ _T("GroupedListRowUI"), classGroupedListRow },
+		{ _T("GroupedListGroupUI"), classVerticalLayout },
+	};
+
+	for (const UIClassEntry& entry : entries) {
+		if (_tcscmp(pstrClass, entry.name) == 0) return entry.type;
+	}
+	return classPointer;
 }
 int gGetUIClass(CControlUI* pControl)
 {

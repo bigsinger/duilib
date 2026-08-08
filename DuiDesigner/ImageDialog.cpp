@@ -229,7 +229,7 @@ BOOL CImageDialog::OnInitDialog()
 	}
 	m_ctlFade.SetPos(m_nFade);
 
-	int nIndex=m_lstImages.AddString(_T("(ÎŞ)"));
+	int nIndex=m_lstImages.AddString(_T("(æ— )"));
 	m_lstImages.SetItemDataPtr(nIndex,(void*)(LPCTSTR)m_strNullImage);
 
 	LPCTSTR pstrImage=NULL;
@@ -247,7 +247,7 @@ BOOL CImageDialog::OnInitDialog()
 	}
 	int nPos = m_strImagePathName.ReverseFind(_T('\\'));
 	CString strFileName = (nPos==-1) ? m_strImagePathName : m_strImagePathName.Right(m_strImagePathName.GetLength() - nPos - 1);
-	m_strImagePathName.IsEmpty()?m_lstImages.SelectString(-1,_T("(ÎŞ)")):m_lstImages.SelectString(-1,strFileName);
+	m_strImagePathName.IsEmpty()?m_lstImages.SelectString(-1,_T("(æ— )")):m_lstImages.SelectString(-1,strFileName);
 
 	UpdateData(FALSE);
 	SetImageProperty(m_strImagePathName);
@@ -258,7 +258,7 @@ BOOL CImageDialog::OnInitDialog()
 
 void CImageDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	m_nFade=m_ctlFade.GetPos();
 	UpdateData(FALSE);
 	SetImageProperty(m_strImagePathName);
@@ -268,13 +268,13 @@ void CImageDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 void CImageDialog::OnBnClickedButtonImageImport()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
-	CFileDialog dlg(TRUE,_T(""),NULL,OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT,_T("Í¼Æ¬ÎÄ¼ş(*.bmp;*.jpg;*.png)|*.bmp;*.jpg;*.png|ËùÓĞÎÄ¼ş(*.*)|*.*||"));
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
+	CFileDialog dlg(TRUE,_T(""),NULL,OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT,_T("å›¾ç‰‡æ–‡ä»¶(*.bmp;*.jpg;*.png)|*.bmp;*.jpg;*.png|æ‰€æœ‰æ–‡ä»¶(*.*)|*.*||"));
 	if(dlg.DoModal()==IDOK)
 	{
 		CString strFileName = dlg.GetFileName();
 		int nIndex = m_lstImages.AddString(strFileName);
-		int nPos = m_strImageArray.Add(dlg.GetPathName());
+		INT_PTR nPos = m_strImageArray.Add(dlg.GetPathName());
 		LPCTSTR pstrPath = m_strImageArray[nPos];
 		m_lstImages.SetItemDataPtr(nIndex,(void*)pstrPath);
 		m_lstImages.SelectString(-1, strFileName);
@@ -284,7 +284,7 @@ void CImageDialog::OnBnClickedButtonImageImport()
 
 void CImageDialog::OnBnClickedButtonImageClear()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_strDest=_T("0,0,0,0");
 	m_strSource=_T("0,0,0,0");
 	m_strCorner=_T("0,0,0,0");

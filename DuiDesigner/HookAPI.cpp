@@ -58,16 +58,16 @@ FARPROC CHookAPI::HookAPI(LPCTSTR pstrDllName,LPCSTR pstrFuncName,FARPROC pfnNew
 		return NULL;
 
 	ULONG size;
-	//»ñÈ¡Ö¸ÏòPEÎÄ¼şÖĞµÄImportÖĞIMAGE_DIRECTORY_DESCRIPTORÊı×éµÄÖ¸Õë
+	//è·å–æŒ‡å‘PEæ–‡ä»¶ä¸­çš„Importä¸­IMAGE_DIRECTORY_DESCRIPTORæ•°ç»„çš„æŒ‡é’ˆ
 	PIMAGE_IMPORT_DESCRIPTOR pImportDesc=(PIMAGE_IMPORT_DESCRIPTOR)
 		ImageDirectoryEntryToData(hModCaller,TRUE,IMAGE_DIRECTORY_ENTRY_IMPORT,&size);
 	if(pImportDesc==NULL)
 		return NULL;
 	HMODULE hModule=LoadLibrary(pstrDllName);
-	//¼ÍÂ¼º¯ÊıµØÖ·
+	//çºªå½•å‡½æ•°åœ°å€
 	FARPROC pfnOriginFunc=GetProcAddress(hModule,pstrFuncName);
 
-	//²éÕÒ¼ÇÂ¼,¿´¿´ÓĞÃ»ÓĞÎÒÃÇÏëÒªµÄDLL
+	//æŸ¥æ‰¾è®°å½•,çœ‹çœ‹æœ‰æ²¡æœ‰æˆ‘ä»¬æƒ³è¦çš„DLL
 	USES_CONVERSION;
 	char* pstrDest=W2A(pstrDllName);
 	for(;pImportDesc->Name;pImportDesc++)
@@ -80,16 +80,16 @@ FARPROC CHookAPI::HookAPI(LPCTSTR pstrDllName,LPCSTR pstrFuncName,FARPROC pfnNew
 	{
 		return NULL;
 	}
-	//Ñ°ÕÒÎÒÃÇÏëÒªµÄº¯Êı
+	//å¯»æ‰¾æˆ‘ä»¬æƒ³è¦çš„å‡½æ•°
 	PIMAGE_THUNK_DATA pThunk=(PIMAGE_THUNK_DATA)((PBYTE)hModCaller+pImportDesc->FirstThunk);
 	for(;pThunk->u1.Function;pThunk++)
 	{
-		//ppfn¼ÇÂ¼ÁËÓëIAT±íÏàÓ¦µÄµØÖ·
+		//ppfnè®°å½•äº†ä¸IATè¡¨ç›¸åº”çš„åœ°å€
 		PROC*ppfn=(PROC*)&pThunk->u1.Function ;
 		if(*ppfn==pfnOriginFunc)
 		{
 			DWORD dwOldProtect;
-			//ĞŞ¸ÄÄÚ´æ°üº¬ÊôĞÔ
+			//ä¿®æ”¹å†…å­˜åŒ…å«å±æ€§
 			VirtualProtect(ppfn, sizeof(PROC), PAGE_READWRITE, &dwOldProtect);
 			WriteProcessMemory(GetCurrentProcess(),ppfn,&(pfnNewFunc),sizeof(pfnNewFunc),NULL);
 			return pfnOriginFunc;

@@ -292,13 +292,13 @@ BOOL CUICommandHistory::AddUICommand(CUICommandNode* pNode)
 		break;
 	}
 
-	int count = m_lstCommandNodes.GetCount();
+	int count = static_cast<int>(m_lstCommandNodes.GetCount());
 	while(m_nCommandIndex < count--)
 		delete m_lstCommandNodes.RemoveTail();
 	if(m_lstCommandNodes.GetCount() >= UI_COMMAND_HISTORY)
 		delete m_lstCommandNodes.RemoveHead();
 	m_lstCommandNodes.AddTail(pNode);
-	m_nCommandIndex = m_lstCommandNodes.GetCount();
+	m_nCommandIndex = static_cast<int>(m_lstCommandNodes.GetCount());
 
 	return TRUE;
 }

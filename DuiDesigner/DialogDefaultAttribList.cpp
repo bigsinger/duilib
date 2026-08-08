@@ -77,7 +77,7 @@ BOOL CDialogDefaultAttribList::OnInitDialog()
 
 void CDialogDefaultAttribList::OnBnClickedButtonAttribAdd()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	int nClass;
 	switch(m_btnAdd.m_nMenuResult)
 	{
@@ -132,7 +132,7 @@ void CDialogDefaultAttribList::OnBnClickedButtonAttribAdd()
 	strName = strName.Left(strName.GetLength() - 2);
 	if(m_pManager->GetDefaultAttributeList(strName) != NULL)
 	{
-		MessageBox(_T("´Ë¿Ø¼şµÄÄ¬ÈÏÊôĞÔÒÑ¾­´æÔÚ£¬ÎŞ·¨´´½¨£¡"), _T("ÌáÊ¾"), MB_ICONINFORMATION);
+		MessageBox(_T("æ­¤æ§ä»¶çš„é»˜è®¤å±æ€§å·²ç»å­˜åœ¨ï¼Œæ— æ³•åˆ›å»ºï¼"), _T("æç¤º"), MB_ICONINFORMATION);
 		CLayoutManager::DeleteUI(pControl);
 		return;
 	}
@@ -143,7 +143,7 @@ void CDialogDefaultAttribList::OnBnClickedButtonAttribAdd()
 		CString strValue;
 		if(GetDefaultAttrib(pControl, strValue) == FALSE)
 		{
-			MessageBox(_T("´´½¨Ä¬ÈÏÊôĞÔÊ§°Ü£¡"), _T("ÌáÊ¾"), MB_ICONINFORMATION);
+			MessageBox(_T("åˆ›å»ºé»˜è®¤å±æ€§å¤±è´¥ï¼"), _T("æç¤º"), MB_ICONINFORMATION);
 			CLayoutManager::DeleteUI(pControl);
 			return;
 		}
@@ -160,13 +160,13 @@ void CDialogDefaultAttribList::OnBnClickedButtonAttribAdd()
 
 void CDialogDefaultAttribList::OnBnClickedButtonAttribDelete()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	int nIndex = m_lstDefaultAttrib.GetCurSel();
 	if(nIndex == -1)
 		return;
 
-	if(MessageBox(_T("Ä¬ÈÏÊôĞÔÉ¾³ıºó£¬½«ÎŞ·¨»¹Ô­£¡\nÄúÈ·¶¨ÒªÉ¾³ı´ËÄ¬ÈÏÊôĞÔ£¿")
-		, _T("ÌáÊ¾"), MB_ICONINFORMATION | MB_YESNO) == IDNO)
+	if(MessageBox(_T("é»˜è®¤å±æ€§åˆ é™¤åï¼Œå°†æ— æ³•è¿˜åŸï¼\næ‚¨ç¡®å®šè¦åˆ é™¤æ­¤é»˜è®¤å±æ€§ï¼Ÿ")
+		, _T("æç¤º"), MB_ICONINFORMATION | MB_YESNO) == IDNO)
 		return;
 
 	CString strUIName;
@@ -176,8 +176,8 @@ void CDialogDefaultAttribList::OnBnClickedButtonAttribDelete()
 		CControlUI* pControl = (CControlUI*)m_lstDefaultAttrib.GetItemDataPtr(nIndex);
 		CLayoutManager::DeleteUI(pControl);
 		m_lstDefaultAttrib.DeleteString(nIndex);
-		MessageBox(_T("ÒÑ³É¹¦½«´ËÄ¬ÈÏÊôĞÔÉ¾³ı£¬ÇëÖØĞÂ´ò¿ª´ËUIÎÄ¼ş£¬¸üĞÂÏÔÊ¾£¡")
-			, _T("ÌáÊ¾"), MB_ICONINFORMATION);
+		MessageBox(_T("å·²æˆåŠŸå°†æ­¤é»˜è®¤å±æ€§åˆ é™¤ï¼Œè¯·é‡æ–°æ‰“å¼€æ­¤UIæ–‡ä»¶ï¼Œæ›´æ–°æ˜¾ç¤ºï¼")
+			, _T("æç¤º"), MB_ICONINFORMATION);
 		m_wndUIProperties.ShowProperty(NULL);
 		g_pMainFrame->GetActiveUIView()->SetModifiedFlag();
 	}
@@ -185,7 +185,7 @@ void CDialogDefaultAttribList::OnBnClickedButtonAttribDelete()
 
 void CDialogDefaultAttribList::OnBnClickedButtonAttribModify()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	int nIndex = m_lstDefaultAttrib.GetCurSel();
 	if(nIndex == -1)
 		return;
@@ -199,7 +199,7 @@ void CDialogDefaultAttribList::OnBnClickedButtonAttribModify()
 		int nClass = gGetUIClass(strDefaultAttribName + _T("UI"));
 		if(nClass == classPointer)
 		{
-			MessageBox(_T("ÎŞ·¨Ê¶±ğ´Ë¿Ø¼ş£¡"), _T("ÌáÊ¾"), MB_ICONINFORMATION);
+			MessageBox(_T("æ— æ³•è¯†åˆ«æ­¤æ§ä»¶ï¼"), _T("æç¤º"), MB_ICONINFORMATION);
 			return;
 		}
 		pControl = CLayoutManager::NewUI(nClass, CRect(0, 0, 0, 0), NULL, NULL);
@@ -215,7 +215,7 @@ void CDialogDefaultAttribList::OnBnClickedButtonAttribModify()
 		CString strValue;
 		if(GetDefaultAttrib(pCopyControl, strValue) == FALSE)
 		{
-			MessageBox(_T("ĞŞ¸ÄÄ¬ÈÏÊôĞÔÊ§°Ü£¡"), _T("ÌáÊ¾"), MB_ICONINFORMATION);
+			MessageBox(_T("ä¿®æ”¹é»˜è®¤å±æ€§å¤±è´¥ï¼"), _T("æç¤º"), MB_ICONINFORMATION);
 			delete pCopyControl;
 			return;
 		}
@@ -233,7 +233,7 @@ void CDialogDefaultAttribList::OnBnClickedButtonAttribModify()
 
 void CDialogDefaultAttribList::OnLbnSelchangeListDefaultAttrib()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	int nIndex = m_lstDefaultAttrib.GetCurSel();
 	if(nIndex == -1)
 		return;
@@ -248,7 +248,7 @@ void CDialogDefaultAttribList::OnLbnSelchangeListDefaultAttrib()
 		int nClass = gGetUIClass(strUIName);
 		if(nClass == classPointer)
 		{
-			MessageBox(_T("ÎŞ·¨Ê¶±ğ´Ë¿Ø¼ş£¡"), _T("ÌáÊ¾"), MB_ICONINFORMATION);
+			MessageBox(_T("æ— æ³•è¯†åˆ«æ­¤æ§ä»¶ï¼"), _T("æç¤º"), MB_ICONINFORMATION);
 			return;
 		}
 		pControl = CLayoutManager::NewUI(nClass, CRect(0, 0, 0, 0), NULL, NULL);

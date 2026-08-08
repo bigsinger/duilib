@@ -6,9 +6,9 @@ using DuiLib::TImageInfo;
 
 typedef struct tagHOOKSTRUCT
 {
-	FARPROC pfnFuncAddr;//���ڱ���API������ַ
-	BYTE    OldCode[5]; //����ԭAPIǰ5���ֽ�
-	BYTE    NewCode[5]; //JMP XXXX����XXXXJMP�ĵ�ַ
+	FARPROC pfnFuncAddr;//用于保存API函数地址
+	BYTE    OldCode[5]; //保存原API前5个字节
+	BYTE    NewCode[5]; //JMP XXXX其中XXXXJMP的地址
 }HOOKSTRUCT;
 
 typedef HANDLE (WINAPI *pfnCreateFile)(

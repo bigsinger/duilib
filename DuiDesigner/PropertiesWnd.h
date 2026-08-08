@@ -11,12 +11,12 @@
 
 class CPropertiesWnd : public CDockablePane
 {
-// ¹¹Ôì
+// æž„é€ 
 public:
 	CPropertiesWnd();
 	virtual ~CPropertiesWnd();
 
-// ÊµÏÖ
+// å®žçŽ°
 public:
 	void AdjustLayout();
 	void SetVSDotNetLook(BOOL bSet);
